@@ -416,7 +416,7 @@
       function addMapMarker(lon, lat) {
         var marker = new ol.Feature({
           geometry: new ol.geom.Point(
-            ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)])
+            ol.proj.fromLonLat([lon, lat])
           ) // NOT WORKING
         });
 
@@ -444,8 +444,6 @@
         }).always(() => {
           console.log("getLonLat completed");
         });
-
-        console.log("Longitude and Latitude:", lonLat);
         return lonLat;
       }
 
@@ -571,8 +569,6 @@
           }
           const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
           const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
-          console.log('Labels:', labelsArray);
-          console.log('Data:', dataArray);
 
           // Set new default font family and font color to mimic Bootstrap's default styling
           Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
@@ -625,12 +621,6 @@
             }
           }
 
-          /*
-                        <tr>
-                          <td>License</td>
-                          <td>3</td>
-                        </tr>
-          */
           //#endregion
 
           //#region Locations
@@ -640,9 +630,9 @@
           var interval = 1 * 1000; // 1 second
 
           $.each(locationsUsage, (i, location) => {
-            setTimeout(function (i) {
-              let lonlat = getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
-              addMapMarker(lonlat.lon, lonlat.lat);
+            setTimeout(async (i) => {
+              let lonlat = await getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
+              addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
             }, interval * i, i);
           });
 
