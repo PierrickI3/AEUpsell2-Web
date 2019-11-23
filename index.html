@@ -115,14 +115,18 @@
               </div>
             </div>
 
-            <!-- Users -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- Contact Center -->
+            <div class="col-xl-2 col-md-3 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Users</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalUsersUsage_active">0</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage_active" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small>
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -132,8 +136,25 @@
               </div>
             </div>
 
+            <!-- Dialer Campaigns -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Dialer Campaigns</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDialerCampaigns">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-phone-volume fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Artificial Intelligence -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-2 col-md-4 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -193,12 +214,9 @@
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                  <div class="chart-pie pt-4 pb-2">
+                  <div class="chart-pie pt-0 pb-1">
                     <canvas id="myPieChart"></canvas>
                   </div>
-                  <!-- <div class="mt-4 text-center small">
-                    <span class="mr-2"><i class="fas fa-circle"></i> TODO</span>
-                  </div> -->
                 </div>
               </div>
             </div>
@@ -235,7 +253,7 @@
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                  <div class="chart-pie pt-4 pb-2">
+                  <div class="chart-pie pt-0 pb-1">
                     <div id="map" class="map"></div>
                   </div>
                 </div>
@@ -635,6 +653,15 @@
               addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
             }, interval * i, i);
           });
+
+          //#endregion
+
+          //#region Dialer Campaigns Usage
+
+          if (data.usages.hasOwnProperty('dialerCampaigns') && data.usages.dialerCampaigns.length > 0) {
+            let totalDialerCampaignsUsage = sum(data.usages.dialerCampaigns);
+            $("#totalDialerCampaigns").text(data.usages.dialerCampaigns.length);
+          }
 
           //#endregion
 
