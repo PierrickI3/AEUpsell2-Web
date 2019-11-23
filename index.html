@@ -33,7 +33,7 @@
 
   <div id="fadeMe" style="display:none">
     <div class="spinner"></div>
-    <div class="spinner-text">Loading... Please Wait...</div>
+    <div class="spinner-text" id="spinner-text"></div>
   </div>
   <!-- Page Wrapper -->
   <div id="wrapper">
@@ -50,8 +50,50 @@
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
-            <button id="getData" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
             <button href="#" disabled class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
+          </div>
+
+          <!-- Configuration Modal -->
+          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="configModalLabel">Configuration</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="form-group">
+                      <label for="clientId" class="col-form-label">OAuth Client Id:</label>
+                      <input type="text" class="form-control" id="clientId" value="79eb3eb8-fbb8-4b50-ba45-9df2297f2425">
+                    </div>
+                    <div class="form-group">
+                      <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
+                      <input type="text" class="form-control" id="clientSecret" value="pwauKqLeTf7PdJf5d-ONDtLZtOuJtvw6rVe4D2i9Z3E">
+                    </div>
+                    <div class="form-group">
+                      <label for="environment" class="col-form-label">PureCloud Environment:</label>
+                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
+                    </div>
+                    <div class="form-group">
+                      <label for="startDate" class="col-form-label">Start Date:</label>
+                      <input type="text" class="form-control" id="startDate" placeholder="e.g. 2019-11-20T00:00:00.000Z" value="2019-11-20T00:00:00.000Z">
+                    </div>
+                    <div class="form-group">
+                      <label for="endDate" class="col-form-label">End Date:</label>
+                      <input type="text" class="form-control" id="endDate" placeholder="e.g. 2019-11-23T00:00:00.000Z" value="2019-11-23T00:00:00.000Z">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="getData">Go!</button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Content Row -->
@@ -417,6 +459,7 @@
 
       // Geocodng (locationiq) token
       var locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7';
+      var urlBasePath = 'http://localhost:3000';
 
       var map = new ol.Map({
         target: 'map',
@@ -475,12 +518,34 @@
         $("#fadeMe").hide();
       }
 
-      async function getData() {
+      //#region Get Data 
+
+      async function getData(clientId, clientSecret, environment, startDate, endDate) {
+        var usages = {};
+
+        $("#spinner-text").text("Loading... Please Wait...");
+        
+        let mediaUsage = await getMedia(clientId, clientSecret, environment, startDate, endDate);
+        usages.media = mediaUsage.media;
+        usages.recordings = mediaUsage.recordings;
+
+        return usages;
+      }
+
+      async function getMedia(clientId, clientSecret, environment, startDate, endDate) {
+        $("#spinner-text").text("Getting Media Usage...");
         return await $.ajax({
           method: 'GET',
-          url: `http://localhost:3000/data`,
+          url: `${urlBasePath}/media`,
           contentType: 'application/json',
-          dataType: 'json'
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment,
+            startDate: startDate,
+            endDate: endDate
+          }
         })
           .done((data, textStatus, jqXHR) => {
             try {
@@ -498,172 +563,193 @@
             }
           })
           .always(() => {
-            console.log("getData completed");
+            console.log("getMedia completed");
           });
       }
+
+      //TODO CONTINUE HERE
+      
+      //#endregion
+
+      $('#configModal').on('show.bs.modal', function (event) {
+        $("#configModal #clientId").trigger('focus'); //TODO Not working
+      });
 
       $("#getData").on("click", async (e) => {
         e.preventDefault();
         try {
           console.log('Getting data...');
 
+          let clientId = $("#configModal #clientId").val();
+          let clientSecret = $("#configModal #clientSecret").val();
+          let environment = $("#configModal #environment").val();
+          let startDate = $("#configModal #startDate").val();
+          let endDate = $("#configModal #endDate").val();
+
+          if (!clientId || !clientSecret || !environment || !startDate || !endDate) {
+            alert('Invalid or missing parameters');
+            return;
+          }
+
+          $('#configModal').modal('toggle')
           showSpinner();
 
-          var data = await getData();
+          var data = await getData(clientId, clientSecret, environment, startDate, endDate);
+          console.log("DATA:", data);
 
           //#region Media Usage
 
-          let totalMediaUsage = sum(data.usages.media);
+          let totalMediaUsage = sum(data.media);
           $("#totalMediaUsage").text(totalMediaUsage);
-          $("#totalMediaUsage_calls").text(data.usages.media.calls);
-          $("#totalMediaUsage_chats").text(data.usages.media.chats);
-          $("#totalMediaUsage_emails").text(data.usages.media.emails);
-          $("#totalMediaUsage_callbacks").text(data.usages.media.callbacks);
-          $("#totalMediaUsage_cobrowses").text(data.usages.media.cobrowses);
-          $("#totalMediaUsage_screenshares").text(data.usages.media.screenshares);
-          $("#totalMediaUsage_messages").text(data.usages.media.messages);
+          $("#totalMediaUsage_calls").text(data.media.calls);
+          $("#totalMediaUsage_chats").text(data.media.chats);
+          $("#totalMediaUsage_emails").text(data.media.emails);
+          $("#totalMediaUsage_callbacks").text(data.media.callbacks);
+          $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
+          $("#totalMediaUsage_screenshares").text(data.media.screenshares);
+          $("#totalMediaUsage_messages").text(data.media.messages);
 
           // Set colors
-          $("#calls").addClass(parseInt(data.usages.media.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats").addClass(parseInt(data.usages.media.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails").addClass(parseInt(data.usages.media.emails) === 0 ? "text-danger" : "text-success");
-          $("#callbacks").addClass(parseInt(data.usages.media.callbacks) === 0 ? "text-danger" : "text-success");
-          $("#cobrowses").addClass(parseInt(data.usages.media.cobrowses) === 0 ? "text-danger" : "text-success");
-          $("#screenshares").addClass(parseInt(data.usages.media.screenshares) === 0 ? "text-danger" : "text-success");
-          $("#messages").addClass(parseInt(data.usages.media.messages) === 0 ? "text-danger" : "text-success");
+          $("#calls").addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats").addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails").addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
+          $("#callbacks").addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
+          $("#cobrowses").addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
+          $("#screenshares").addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
+          $("#messages").addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
 
           //#endregion
 
           //#region Recordings Usage
 
-          let totalRecordingsUsage = sum(data.usages.recordings);
-          let percRecordings = Math.round(totalRecordingsUsage * 100 / (data.usages.media.calls + data.usages.media.chats + data.usages.media.emails + data.usages.media.messages));
+          let totalRecordingsUsage = sum(data.recordings);
+          let percRecordings = Math.round(totalRecordingsUsage * 100 / (data.media.calls + data.media.chats + data.media.emails + data.media.messages));
           $("#percRecordings").text(percRecordings + '%');
           $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-          $("#totalRecordingsUsage_calls").text(data.usages.recordings.calls);
-          $("#totalRecordingsUsage_chats").text(data.usages.recordings.chats);
-          $("#totalRecordingsUsage_emails").text(data.usages.recordings.emails);
-          $("#totalRecordingsUsage_messages").text(data.usages.recordings.messages);
+          $("#totalRecordingsUsage_calls").text(data.recordings.calls);
+          $("#totalRecordingsUsage_chats").text(data.recordings.chats);
+          $("#totalRecordingsUsage_emails").text(data.recordings.emails);
+          $("#totalRecordingsUsage_messages").text(data.recordings.messages);
 
           // Set colors
-          $("#calls_recordings").addClass(parseInt(data.usages.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").addClass(parseInt(data.usages.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").addClass(parseInt(data.usages.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").addClass(parseInt(data.usages.recordings.messages) === 0 ? "text-danger" : "text-success");
+          $("#calls_recordings").addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
 
           //#endregion
 
-          //#region Users Usage
+          // //#region Users Usage
 
-          let totalUsersUsage = sum(data.usages.users);
-          $("#totalUsersUsage_active").text(data.usages.users.active);
+          // let totalUsersUsage = sum(data.usages.users);
+          // $("#totalUsersUsage_active").text(data.usages.users.active);
 
-          //#endregion
+          // //#endregion
 
-          //#region AI Usage
+          // //#region AI Usage
 
-          let totalArtificialIntelligenceUsage = sum(data.usages.bots) + sum(data.usages.tts);
-          $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
-          $("#totalBotsUsage").text(sum(data.usages.bots));
-          $("#totalTTSUsage").text(sum(data.usages.tts));
+          // let totalArtificialIntelligenceUsage = sum(data.usages.bots) + sum(data.usages.tts);
+          // $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
+          // $("#totalBotsUsage").text(sum(data.usages.bots));
+          // $("#totalTTSUsage").text(sum(data.usages.tts));
 
-          // Set colors
-          $("#bots_usage").addClass(sum(data.usages.bots) === 0 ? "text-danger" : "text-success");
-          $("#tts_usage").addClass(sum(data.usages.tts) === 0 ? "text-danger" : "text-success");
+          // // Set colors
+          // $("#bots_usage").addClass(sum(data.usages.bots) === 0 ? "text-danger" : "text-success");
+          // $("#tts_usage").addClass(sum(data.usages.tts) === 0 ? "text-danger" : "text-success");
 
-          //#endregion
+          // //#endregion
 
-          //#region Integrations
+          // //#region Integrations
 
-          let integrationsUsage = data.usages.integrations;
+          // let integrationsUsage = data.usages.integrations;
 
-          // Build array for pie chart
-          let labelsArray = [], dataArray = [];
-          for (var integration in integrationsUsage) {
-            if (integrationsUsage.hasOwnProperty(integration)) {
-              labelsArray.push(integration);
-              dataArray.push(parseInt(integrationsUsage[integration]));
-            }
-          }
-          const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
-          const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
+          // // Build array for pie chart
+          // let labelsArray = [], dataArray = [];
+          // for (var integration in integrationsUsage) {
+          //   if (integrationsUsage.hasOwnProperty(integration)) {
+          //     labelsArray.push(integration);
+          //     dataArray.push(parseInt(integrationsUsage[integration]));
+          //   }
+          // }
+          // const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
+          // const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
 
-          // Set new default font family and font color to mimic Bootstrap's default styling
-          Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-          Chart.defaults.global.defaultFontColor = '#858796';
+          // // Set new default font family and font color to mimic Bootstrap's default styling
+          // Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+          // Chart.defaults.global.defaultFontColor = '#858796';
 
-          // Pie Chart
-          var ctx = document.getElementById("myPieChart");
-          var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: labelsArray,
-              datasets: [{
-                data: dataArray,
-                backgroundColor: backgroudColors,
-                hoverBackgroundColor: hoverBackgroudColors,
-                hoverBorderColor: "rgba(234, 0, 0, 1)",
-              }],
-            },
-            options: {
-              maintainAspectRatio: false,
-              tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-              },
-              legend: {
-                display: false
-              },
-              cutoutPercentage: 80,
-            },
-          });
+          // // Pie Chart
+          // var ctx = document.getElementById("myPieChart");
+          // var myPieChart = new Chart(ctx, {
+          //   type: 'doughnut',
+          //   data: {
+          //     labels: labelsArray,
+          //     datasets: [{
+          //       data: dataArray,
+          //       backgroundColor: backgroudColors,
+          //       hoverBackgroundColor: hoverBackgroudColors,
+          //       hoverBorderColor: "rgba(234, 0, 0, 1)",
+          //     }],
+          //   },
+          //   options: {
+          //     maintainAspectRatio: false,
+          //     tooltips: {
+          //       backgroundColor: "rgb(255,255,255)",
+          //       bodyFontColor: "#858796",
+          //       borderColor: '#dddfeb',
+          //       borderWidth: 1,
+          //       xPadding: 15,
+          //       yPadding: 15,
+          //       displayColors: false,
+          //       caretPadding: 10,
+          //     },
+          //     legend: {
+          //       display: false
+          //     },
+          //     cutoutPercentage: 80,
+          //   },
+          // });
 
-          //#endregion
+          // //#endregion
 
-          //#region Licenses
+          // //#region Licenses
 
-          let licensesUsage = data.usages.licenses;
+          // let licensesUsage = data.usages.licenses;
 
-          $("#licensesBody").empty();
-          for (var license in licensesUsage) {
-            if (licensesUsage.hasOwnProperty(license)) {
-              let row = $("<tr/>", {}).appendTo("#licensesBody");
-              $("<td/>").text(license).appendTo(row);
-              $("<td/>").text(licensesUsage[license]).appendTo(row);
-            }
-          }
+          // $("#licensesBody").empty();
+          // for (var license in licensesUsage) {
+          //   if (licensesUsage.hasOwnProperty(license)) {
+          //     let row = $("<tr/>", {}).appendTo("#licensesBody");
+          //     $("<td/>").text(license).appendTo(row);
+          //     $("<td/>").text(licensesUsage[license]).appendTo(row);
+          //   }
+          // }
 
-          //#endregion
+          // //#endregion
 
-          //#region Locations
+          // //#region Locations
 
-          let locationsUsage = data.usages.locations;
+          // let locationsUsage = data.usages.locations;
 
-          var interval = 1 * 1000; // 1 second
+          // var interval = 1 * 1000; // 1 second
 
-          $.each(locationsUsage, (i, location) => {
-            setTimeout(async (i) => {
-              let lonlat = await getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
-              addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-            }, interval * i, i);
-          });
+          // $.each(locationsUsage, (i, location) => {
+          //   setTimeout(async (i) => {
+          //     let lonlat = await getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
+          //     addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+          //   }, interval * i, i);
+          // });
 
-          //#endregion
+          // //#endregion
 
-          //#region Dialer Campaigns Usage
+          // //#region Dialer Campaigns Usage
 
-          if (data.usages.hasOwnProperty('dialerCampaigns') && data.usages.dialerCampaigns.length > 0) {
-            let totalDialerCampaignsUsage = sum(data.usages.dialerCampaigns);
-            $("#totalDialerCampaigns").text(data.usages.dialerCampaigns.length);
-          }
+          // if (data.usages.hasOwnProperty('dialerCampaigns') && data.usages.dialerCampaigns.length > 0) {
+          //   let totalDialerCampaignsUsage = sum(data.usages.dialerCampaigns);
+          //   $("#totalDialerCampaigns").text(data.usages.dialerCampaigns.length);
+          // }
 
-          //#endregion
+          // //#endregion
 
         } catch (error) {
           alert(error.message);
