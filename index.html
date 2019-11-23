@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>AE Upsell 2</title>
+
+  <!-- Custom fonts-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Open Layers -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="css/main.css">
+
+</head>
+
+<body id="page-top">
+
+  <div id="fadeMe" style="display:none">
+    <div class="spinner"></div>
+    <div class="spinner-text">Loading... Please Wait...</div>
+  </div>
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid mt-4">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
+            <button id="getData" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
+            <button href="#" disabled class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <!-- Medias -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Channels Usage</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMediaUsage">0</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span id="totalMediaUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Callbacks" id="callbacks"><i class="ml-2 fas fa-undo"></i><span id="totalMediaUsage_callbacks" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Co-Browse Sessions" id="cobrowses"><i class="ml-2 fas fa-globe"></i><span id="totalMediaUsage_cobrowses" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Screen Shares" id="screenshares"><i class="ml-2 fas fa-desktop"></i><span id="totalMediaUsage_screenshares" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Messages" id="messages"><i class="ml-2 far fa-sticky-note"></i><span id="totalMediaUsage_messages" class="ml-1">0</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-phone fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recordings -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Recordings</div>
+                      <div class="row no-gutters align-items-center">
+                        <div class="col-auto">
+                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="percRecordings">0%</div>
+                        </div>
+                        <div class="col">
+                          <div class="progress progress-sm mr-2">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="recordings_progressbar"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Recorded Calls" id="calls_recordings"><i class="fas fa-phone"></i><span id="totalRecordingsUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Chats" id="chats_recordings"><i class="ml-2 fas fa-comments"></i><span id="totalRecordingsUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Emails" id="emails_recordings"><i class="ml-2 far fa-envelope"></i><span id="totalRecordingsUsage_emails" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Messages" id="messages_recordings"><i class="ml-2 far fa-sticky-note"></i><span id="totalRecordingsUsage_messages" class="ml-1">0</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-file-audio fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Users -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Users</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalUsersUsage_active">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Artificial Intelligence -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Artificial Intelligence</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalArtificialIntelligenceUsage">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-robot fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                  <div class="row ml-0">
+                    <small data-toggle="tooltip" title="Bots" id="bots_usage"><i class="fas fa-robot"></i><span id="totalBotsUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Row -->
+
+          <div class="row">
+
+            <!-- Area Chart -->
+            <!-- <div class="col-xl-8 col-lg-7">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Dropdown Header:</div>
+                      <a class="dropdown-item" href="#">Action</a>
+                      <a class="dropdown-item" href="#">Another action</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- Pie Chart -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Integrations</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2">
+                    <canvas id="myPieChart"></canvas>
+                  </div>
+                  <!-- <div class="mt-4 text-center small">
+                    <span class="mr-2"><i class="fas fa-circle"></i> TODO</span>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Licenses -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="licensesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Locations -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Locations</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2">
+                    <div id="map" class="map"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+
+              <!-- Content Column -->
+              <div class="col-lg-6 mb-4">
+
+                <!-- Project Card Example -->
+                <!-- <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                </div>
+                <div class="card-body">
+                  <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
+                  <div class="progress mb-4">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                  <div class="progress mb-4">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
+                  <div class="progress mb-4">
+                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                  <div class="progress mb-4">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                  <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div> -->
+
+                <!-- Color System -->
+                <!-- <div class="row">
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-primary text-white shadow">
+                    <div class="card-body">
+                      Primary
+                      <div class="text-white-50 small">#4e73df</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-success text-white shadow">
+                    <div class="card-body">
+                      Success
+                      <div class="text-white-50 small">#1cc88a</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-info text-white shadow">
+                    <div class="card-body">
+                      Info
+                      <div class="text-white-50 small">#36b9cc</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-warning text-white shadow">
+                    <div class="card-body">
+                      Warning
+                      <div class="text-white-50 small">#f6c23e</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-danger text-white shadow">
+                    <div class="card-body">
+                      Danger
+                      <div class="text-white-50 small">#e74a3b</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <div class="card bg-secondary text-white shadow">
+                    <div class="card-body">
+                      Secondary
+                      <div class="text-white-50 small">#858796</div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+              </div>
+
+              <div class="col-lg-6 mb-4">
+
+                <!-- Illustrations -->
+                <!-- <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
+                </div>
+                <div class="card-body">
+                  <div class="text-center">
+                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_posting_photo.svg" alt="">
+                  </div>
+                  <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a constantly updated collection of beautiful svg images that you can use completely free and without attribution!</p>
+                  <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on unDraw &rarr;</a>
+                </div>
+              </div> -->
+
+              </div>
+            </div>
+
+          </div>
+          <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Genesys 2020</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+
+      </div>
+      <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- #region Imports -->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- Open Layers -->
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+
+    <!-- Chart Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+    <!-- #endregion -->
+
+    <script>
+
+      // Geocodng (locationiq) token
+      var locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7';
+
+      var map = new ol.Map({
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        view: new ol.View({
+          center: ol.proj.fromLonLat([0, 40]),
+          zoom: 1
+        })
+      });
+
+      function addMapMarker(lon, lat) {
+        var marker = new ol.Feature({
+          geometry: new ol.geom.Point(
+            ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)])
+          ) // NOT WORKING
+        });
+
+        var vectorSource = new ol.source.Vector({
+          features: [marker]
+        });
+
+        var markerVectorLayer = new ol.layer.Vector({
+          source: vectorSource,
+        });
+        map.addLayer(markerVectorLayer);
+      }
+
+      async function getLonLat(address) {
+
+        var lonLat = {};
+        await $.ajax({
+          method: 'GET',
+          dataType: 'json',
+          url: `https://eu1.locationiq.com/v1/search.php?key=${locationIqToken}&q=${address}&format=json`
+        }).done((data, textStatus, jqXHR) => {
+          if (!data || data.length === 0) { return undefined };
+          lonLat.lon = data[0].lon;
+          lonLat.lat = data[0].lat;
+        }).always(() => {
+          console.log("getLonLat completed");
+        });
+
+        console.log("Longitude and Latitude:", lonLat);
+        return lonLat;
+      }
+
+      function showSpinner() {
+        $("#fadeMe").addClass("fadeMe");
+        $("#fadeMe").show();
+      }
+
+      function hideSpinner() {
+        $("#fadeMe").removeClass("fadeMe");
+        $("#fadeMe").hide();
+      }
+
+      async function getData() {
+        return await $.ajax({
+          method: 'GET',
+          url: `http://localhost:3000/data`,
+          contentType: 'application/json',
+          dataType: 'json'
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getData completed");
+          });
+      }
+
+      $("#getData").on("click", async (e) => {
+        e.preventDefault();
+        try {
+          console.log('Getting data...');
+
+          showSpinner();
+
+          var data = await getData();
+
+          //#region Media Usage
+
+          let totalMediaUsage = sum(data.usages.media);
+          $("#totalMediaUsage").text(totalMediaUsage);
+          $("#totalMediaUsage_calls").text(data.usages.media.calls);
+          $("#totalMediaUsage_chats").text(data.usages.media.chats);
+          $("#totalMediaUsage_emails").text(data.usages.media.emails);
+          $("#totalMediaUsage_callbacks").text(data.usages.media.callbacks);
+          $("#totalMediaUsage_cobrowses").text(data.usages.media.cobrowses);
+          $("#totalMediaUsage_screenshares").text(data.usages.media.screenshares);
+          $("#totalMediaUsage_messages").text(data.usages.media.messages);
+
+          // Set colors
+          $("#calls").addClass(parseInt(data.usages.media.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats").addClass(parseInt(data.usages.media.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails").addClass(parseInt(data.usages.media.emails) === 0 ? "text-danger" : "text-success");
+          $("#callbacks").addClass(parseInt(data.usages.media.callbacks) === 0 ? "text-danger" : "text-success");
+          $("#cobrowses").addClass(parseInt(data.usages.media.cobrowses) === 0 ? "text-danger" : "text-success");
+          $("#screenshares").addClass(parseInt(data.usages.media.screenshares) === 0 ? "text-danger" : "text-success");
+          $("#messages").addClass(parseInt(data.usages.media.messages) === 0 ? "text-danger" : "text-success");
+
+          //#endregion
+
+          //#region Recordings Usage
+
+          let totalRecordingsUsage = sum(data.usages.recordings);
+          let percRecordings = Math.round(totalRecordingsUsage * 100 / (data.usages.media.calls + data.usages.media.chats + data.usages.media.emails + data.usages.media.messages));
+          $("#percRecordings").text(percRecordings + '%');
+          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+          $("#totalRecordingsUsage_calls").text(data.usages.recordings.calls);
+          $("#totalRecordingsUsage_chats").text(data.usages.recordings.chats);
+          $("#totalRecordingsUsage_emails").text(data.usages.recordings.emails);
+          $("#totalRecordingsUsage_messages").text(data.usages.recordings.messages);
+
+          // Set colors
+          $("#calls_recordings").addClass(parseInt(data.usages.recordings.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").addClass(parseInt(data.usages.recordings.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").addClass(parseInt(data.usages.recordings.emails) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").addClass(parseInt(data.usages.recordings.messages) === 0 ? "text-danger" : "text-success");
+
+          //#endregion
+
+          //#region Users Usage
+
+          let totalUsersUsage = sum(data.usages.users);
+          $("#totalUsersUsage_active").text(data.usages.users.active);
+
+          //#endregion
+
+          //#region AI Usage
+
+          let totalArtificialIntelligenceUsage = sum(data.usages.bots) + sum(data.usages.tts);
+          $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
+          $("#totalBotsUsage").text(sum(data.usages.bots));
+          $("#totalTTSUsage").text(sum(data.usages.tts));
+
+          // Set colors
+          $("#bots_usage").addClass(sum(data.usages.bots) === 0 ? "text-danger" : "text-success");
+          $("#tts_usage").addClass(sum(data.usages.tts) === 0 ? "text-danger" : "text-success");
+
+          //#endregion
+
+          //#region Integrations
+
+          let integrationsUsage = data.usages.integrations;
+
+          // Build array for pie chart
+          let labelsArray = [], dataArray = [];
+          for (var integration in integrationsUsage) {
+            if (integrationsUsage.hasOwnProperty(integration)) {
+              labelsArray.push(integration);
+              dataArray.push(parseInt(integrationsUsage[integration]));
+            }
+          }
+          const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
+          const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
+          console.log('Labels:', labelsArray);
+          console.log('Data:', dataArray);
+
+          // Set new default font family and font color to mimic Bootstrap's default styling
+          Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+          Chart.defaults.global.defaultFontColor = '#858796';
+
+          // Pie Chart
+          var ctx = document.getElementById("myPieChart");
+          var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labelsArray,
+              datasets: [{
+                data: dataArray,
+                backgroundColor: backgroudColors,
+                hoverBackgroundColor: hoverBackgroudColors,
+                hoverBorderColor: "rgba(234, 0, 0, 1)",
+              }],
+            },
+            options: {
+              maintainAspectRatio: false,
+              tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+              },
+              legend: {
+                display: false
+              },
+              cutoutPercentage: 80,
+            },
+          });
+
+          //#endregion
+
+          //#region Licenses
+
+          let licensesUsage = data.usages.licenses;
+
+          $("#licensesBody").empty();
+          for (var license in licensesUsage) {
+            if (licensesUsage.hasOwnProperty(license)) {
+              let row = $("<tr/>", {}).appendTo("#licensesBody");
+              $("<td/>").text(license).appendTo(row);
+              $("<td/>").text(licensesUsage[license]).appendTo(row);
+            }
+          }
+
+          /*
+                        <tr>
+                          <td>License</td>
+                          <td>3</td>
+                        </tr>
+          */
+          //#endregion
+
+          //#region Locations
+
+          let locationsUsage = data.usages.locations;
+
+          var interval = 1 * 1000; // 1 second
+
+          $.each(locationsUsage, (i, location) => {
+            setTimeout(function (i) {
+              let lonlat = getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
+              addMapMarker(lonlat.lon, lonlat.lat);
+            }, interval * i, i);
+          });
+
+          //#endregion
+
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          hideSpinner();
+        }
+
+      });
+
+      function sum(obj) {
+        var sum = 0;
+        for (var el in obj) {
+          if (obj.hasOwnProperty(el)) {
+            sum += parseInt(obj[el]);
+          }
+        }
+        return sum;
+      }
+
+    </script>
+</body>
+
+</html>
