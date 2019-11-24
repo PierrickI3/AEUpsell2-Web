@@ -165,9 +165,9 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center</div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage_active" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Active Users" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage_active" class="ml-1">0</span></small>
+                        <!-- <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small> -->
                       </div>
                     </div>
                     <div class="col-auto">
@@ -459,8 +459,8 @@
 
       // Geocodng (locationiq) token
       var locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7';
-      var urlBasePath = 'http://localhost:3000';
-      //var urlBasePath = 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
+      //var urlBasePath = 'http://localhost:3000';
+      var urlBasePath = 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
 
       var map = new ol.Map({
         target: 'map',
@@ -471,7 +471,7 @@
         ],
         view: new ol.View({
           center: ol.proj.fromLonLat([0, 40]),
-          zoom: 1
+          zoom: 0 // Worldwide view
         })
       });
 
@@ -530,6 +530,27 @@
         usages.media = mediaUsage.media;
         usages.recordings = mediaUsage.recordings;
 
+        let usersUsage = await getUsers(clientId, clientSecret, environment, startDate, endDate);
+        usages.users = usersUsage.users;
+
+        let aiUsage = await getAI(clientId, clientSecret, environment);
+        usages.bots = aiUsage.bots;
+        usages.tts = aiUsage.tts;
+
+        let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
+        usages.licenses = licenseUsage.licenses;
+        
+        let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
+        usages.integrations = integrationsUsage.integrations;
+
+        let locationsUsage = await getLocations(clientId, clientSecret, environment);
+        usages.locations = locationsUsage.locations;
+
+        let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
+        usages.dialerCampaigns = dialerCampaignsUsage.dialerCampaigns;
+
+        //TODO CONTINUE HERE
+
         return usages;
       }
 
@@ -565,6 +586,208 @@
           })
           .always(() => {
             console.log("getMedia completed");
+          });
+      }
+
+      async function getUsers(clientId, clientSecret, environment, startDate, endDate) {
+        $("#spinner-text").text("Getting Users Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/users`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment,
+            startDate: startDate,
+            endDate: endDate
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getUsers completed");
+          });
+      }
+
+      async function getAI(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting AI Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/ai`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getAI completed");
+          });
+      }
+
+      async function getLicense(clientId, clientSecret, environment, startDate, endDate) {
+        $("#spinner-text").text("Getting License Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/licenses`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment,
+            startDate: startDate,
+            endDate: endDate
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getLicense completed");
+          });
+      }
+
+      async function getIntegrations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Integrations Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/integrations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getIntegrations completed");
+          });
+      }
+
+      async function getLocations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Locations...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/locations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getLocations completed");
+          });
+      }
+
+      async function getDialerCampaigns(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Dialer Campaigns...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/dialerCampaigns`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDialerCampaigns completed");
           });
       }
 
@@ -640,117 +863,121 @@
 
           //#endregion
 
-          // //#region Users Usage
+          //#region Users Usage
 
-          // let totalUsersUsage = sum(data.usages.users);
-          // $("#totalUsersUsage_active").text(data.usages.users.active);
+          let totalUsersUsage = sum(data.users);
+          $("#totalUsersUsage_active").text(data.users.active);
 
-          // //#endregion
+          //#endregion
 
-          // //#region AI Usage
+          //#region AI Usage
 
-          // let totalArtificialIntelligenceUsage = sum(data.usages.bots) + sum(data.usages.tts);
-          // $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
-          // $("#totalBotsUsage").text(sum(data.usages.bots));
-          // $("#totalTTSUsage").text(sum(data.usages.tts));
+          let totalArtificialIntelligenceUsage = sum(data.bots) + sum(data.tts);
+          $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
+          $("#totalBotsUsage").text(sum(data.bots));
+          $("#totalTTSUsage").text(sum(data.tts));
 
-          // // Set colors
-          // $("#bots_usage").addClass(sum(data.usages.bots) === 0 ? "text-danger" : "text-success");
-          // $("#tts_usage").addClass(sum(data.usages.tts) === 0 ? "text-danger" : "text-success");
+          // Set colors
+          $("#bots_usage").addClass(sum(data.bots) === 0 ? "text-danger" : "text-success");
+          $("#tts_usage").addClass(sum(data.tts) === 0 ? "text-danger" : "text-success");
 
-          // //#endregion
+          //#endregion
 
-          // //#region Integrations
+          //#region Integrations
 
-          // let integrationsUsage = data.usages.integrations;
+          let integrationsUsage = data.integrations;
 
-          // // Build array for pie chart
-          // let labelsArray = [], dataArray = [];
-          // for (var integration in integrationsUsage) {
-          //   if (integrationsUsage.hasOwnProperty(integration)) {
-          //     labelsArray.push(integration);
-          //     dataArray.push(parseInt(integrationsUsage[integration]));
-          //   }
-          // }
-          // const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
-          // const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
+          // Build array for pie chart
+          let labelsArray = [], dataArray = [];
+          for (var integration in integrationsUsage) {
+            if (integrationsUsage.hasOwnProperty(integration)) {
+              labelsArray.push(integration);
+              dataArray.push(parseInt(integrationsUsage[integration]));
+            }
+          }
+          const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
+          const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
 
-          // // Set new default font family and font color to mimic Bootstrap's default styling
-          // Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-          // Chart.defaults.global.defaultFontColor = '#858796';
+          // Set new default font family and font color to mimic Bootstrap's default styling
+          Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+          Chart.defaults.global.defaultFontColor = '#858796';
 
-          // // Pie Chart
-          // var ctx = document.getElementById("myPieChart");
-          // var myPieChart = new Chart(ctx, {
-          //   type: 'doughnut',
-          //   data: {
-          //     labels: labelsArray,
-          //     datasets: [{
-          //       data: dataArray,
-          //       backgroundColor: backgroudColors,
-          //       hoverBackgroundColor: hoverBackgroudColors,
-          //       hoverBorderColor: "rgba(234, 0, 0, 1)",
-          //     }],
-          //   },
-          //   options: {
-          //     maintainAspectRatio: false,
-          //     tooltips: {
-          //       backgroundColor: "rgb(255,255,255)",
-          //       bodyFontColor: "#858796",
-          //       borderColor: '#dddfeb',
-          //       borderWidth: 1,
-          //       xPadding: 15,
-          //       yPadding: 15,
-          //       displayColors: false,
-          //       caretPadding: 10,
-          //     },
-          //     legend: {
-          //       display: false
-          //     },
-          //     cutoutPercentage: 80,
-          //   },
-          // });
+          // Pie Chart
+          var ctx = document.getElementById("myPieChart");
+          var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labelsArray,
+              datasets: [{
+                data: dataArray,
+                backgroundColor: backgroudColors,
+                hoverBackgroundColor: hoverBackgroudColors,
+                hoverBorderColor: "rgba(234, 0, 0, 1)",
+              }],
+            },
+            options: {
+              maintainAspectRatio: false,
+              tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+              },
+              legend: {
+                display: false
+              },
+              cutoutPercentage: 80,
+            },
+          });
 
-          // //#endregion
+          //#endregion
 
-          // //#region Licenses
+          //#region Licenses
 
-          // let licensesUsage = data.usages.licenses;
+          let licensesUsage = data.licenses;
 
-          // $("#licensesBody").empty();
-          // for (var license in licensesUsage) {
-          //   if (licensesUsage.hasOwnProperty(license)) {
-          //     let row = $("<tr/>", {}).appendTo("#licensesBody");
-          //     $("<td/>").text(license).appendTo(row);
-          //     $("<td/>").text(licensesUsage[license]).appendTo(row);
-          //   }
-          // }
+          $("#licensesBody").empty();
+          for (var license in licensesUsage) {
+            if (licensesUsage.hasOwnProperty(license)) {
+              let row = $("<tr/>", {}).appendTo("#licensesBody");
+              $("<td/>").text(license).appendTo(row);
+              $("<td/>").text(licensesUsage[license]).appendTo(row);
+            }
+          }
 
-          // //#endregion
+          //#endregion
 
-          // //#region Locations
+          //#region Locations
 
-          // let locationsUsage = data.usages.locations;
+          let locationsUsage = data.locations;
 
-          // var interval = 1 * 1000; // 1 second
+          var interval = 1 * 1000; // 1 second
 
-          // $.each(locationsUsage, (i, location) => {
-          //   setTimeout(async (i) => {
-          //     let lonlat = await getLonLat(`${location.address.street1}, ${location.address.city}, ${location.address.countryName}`);
-          //     addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-          //   }, interval * i, i);
-          // });
+          $.each(locationsUsage, (i, location) => {
+            setTimeout(async (i) => {
+              if (location.hasOwnProperty('address')) {
+                let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+              addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+              } else {
+                console.log(`location ${JSON.stringify(location)} has no address set`);
+              }
+            }, interval * i, i);
+          });
 
-          // //#endregion
+          //#endregion
 
-          // //#region Dialer Campaigns Usage
+          //#region Dialer Campaigns Usage
 
-          // if (data.usages.hasOwnProperty('dialerCampaigns') && data.usages.dialerCampaigns.length > 0) {
-          //   let totalDialerCampaignsUsage = sum(data.usages.dialerCampaigns);
-          //   $("#totalDialerCampaigns").text(data.usages.dialerCampaigns.length);
-          // }
+          if (data.hasOwnProperty('dialerCampaigns') && data.dialerCampaigns.length > 0) {
+            let totalDialerCampaignsUsage = sum(data.dialerCampaigns);
+            $("#totalDialerCampaigns").text(data.dialerCampaigns.length);
+          }
 
-          // //#endregion
+          //#endregion
 
         } catch (error) {
           alert(error.message);
