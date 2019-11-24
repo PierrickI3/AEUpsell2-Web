@@ -195,6 +195,40 @@
               </div>
             </div>
 
+            <!-- Documents -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Documents</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDocuments">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="far fa-file fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- External Contacts -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">External Contacts</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalExternalContacts">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Artificial Intelligence -->
             <div class="col-xl-2 col-md-4 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
@@ -549,6 +583,12 @@
         let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
         usages.dialerCampaigns = dialerCampaignsUsage.dialerCampaigns;
 
+        let documentsUsage = await getDocuments(clientId, clientSecret, environment);
+        usages.documents = documentsUsage.documents;
+
+        let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
+        usages.externalContacts = externalContactsUsage.externalContacts;
+
         //TODO CONTINUE HERE
 
         return usages;
@@ -791,6 +831,72 @@
           });
       }
 
+      async function getDocuments(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Documents...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/documents`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDocuments completed");
+          });
+      }
+      
+      async function getExternalContacts(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting External Contacts...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/externalContacts`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getExternalContacts completed");
+          });
+      }
+
       //TODO CONTINUE HERE
 
       //#endregion
@@ -819,7 +925,7 @@
           showSpinner();
 
           var data = await getData(clientId, clientSecret, environment, startDate, endDate);
-          console.log("DATA:", data);
+          console.log("Data:", data);
 
           //#region Media Usage
 
@@ -975,6 +1081,29 @@
           if (data.hasOwnProperty('dialerCampaigns') && data.dialerCampaigns.length > 0) {
             let totalDialerCampaignsUsage = sum(data.dialerCampaigns);
             $("#totalDialerCampaigns").text(data.dialerCampaigns.length);
+          }
+
+          //#endregion
+
+          //#region Documents
+
+          if (data.hasOwnProperty('documents')) {
+            let totalDocumentsUsage = 0;
+            $.each(data.documents, (i, document) => {
+              if (document.type === "ALL") {
+                totalDocumentsUsage += parseInt(document.totalDocumentCount);
+              }
+            });
+            $("#totalDocuments").text(totalDocumentsUsage);
+          }
+
+          //#endregion
+          
+          //#region External Contacts
+
+          if (data.hasOwnProperty('externalContacts')) {
+            let totalExternalContactsUsage = parseInt(data.externalContacts);
+            $("#totalExternalContacts").text(totalExternalContactsUsage);
           }
 
           //#endregion
