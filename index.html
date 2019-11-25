@@ -158,7 +158,7 @@
             </div>
 
             <!-- Contact Center -->
-            <div class="col-xl-2 col-md-3 mb-4">
+            <div class="col-xl-3 col-md-3 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -166,8 +166,8 @@
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center</div>
                       <div class="row ml-0">
                         <small data-toggle="tooltip" title="Active Users" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage_active" class="ml-1">0</span></small>
-                        <!-- <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small> -->
+                        <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -239,7 +239,7 @@
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalGDPRRequests">0</div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                      <i class="fas fa-address-card fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -652,6 +652,26 @@
 
         let totalUsersUsage = sum(usages.users);
         $("#totalUsersUsage_active").text(usages.users.active);
+
+        //#endregion
+
+        //#region Evaluation Forms
+
+        let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
+        usages.evaluationForms = evaluationFormsUsage.evaluationForms;
+
+        let totalEvaluationFormsUsage = sum(usages.evaluationForms);
+        $("#totalEvaluationForms").text(parseInt(usages.evaluationForms) || 0);
+
+        //#endregion
+
+        //#region Response Libraries
+
+        let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
+        usages.responseLibraries = responseLibrariesUsage.responseLibraries;
+
+        let totalResponseLibrariesUsage = sum(usages.responseLibraries);
+        $("#totalResponseLibraries").text(parseInt(usages.responseLibraries) || 0);
 
         //#endregion
 
@@ -1207,6 +1227,72 @@
           })
           .always(() => {
             console.log("getRoutingLanguages completed");
+          });
+      }
+
+      async function getEvaluationForms(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Evaluation Forms...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/evaluationForms`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getEvaluationForms completed");
+          });
+      }
+
+      async function getResponseLibraries(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Response Libraries...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/responseLibraries`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getResponseLibraries completed");
           });
       }
 
