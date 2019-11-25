@@ -337,6 +337,28 @@
               </div>
             </div>
 
+            <!-- Routing Languages -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Routing Languages</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Language</th>
+                        </tr>
+                      </thead>
+                      <tbody id="routingLanguagesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Locations -->
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
@@ -790,12 +812,27 @@
         //#region GDPR
 
         let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
-        usages.gdprRequests = gdprUsage.requests;
+        usages.gdprRequests = gdprUsage.gdprRequests;
 
         if (usages.hasOwnProperty('gdprRequests')) {
-          let totalGDPRRequests = parseInt(usages.gdprRequests);
+          let totalGDPRRequests = parseInt(usages.gdprRequests) || 0;
           $("#totalGDPRRequests").text(totalGDPRRequests);
         }
+
+        //#endregion
+
+        //#region Routing Languages
+
+        let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
+        usages.routingLanguages = routingLanguagesUsage.routingLanguages;
+
+        $("#routingLanguagesBody").empty();
+        $.each(usages.routingLanguages, (i, routingLanguage) => {
+          let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
+            console.log('Routing Language:', routingLanguage);
+            console.log('Name:', routingLanguage.name);
+            $("<td/>").text(routingLanguage.name).appendTo(row);
+        });
 
         //#endregion
 
@@ -1137,6 +1174,39 @@
           })
           .always(() => {
             console.log("getGDPRRequests completed");
+          });
+      }
+
+      async function getRoutingLanguages(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Routing Languages...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/routingLanguages`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getRoutingLanguages completed");
           });
       }
 
