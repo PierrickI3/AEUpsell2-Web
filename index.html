@@ -168,6 +168,9 @@
                         <small data-toggle="tooltip" title="Active Users" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage_active" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Skills" id="skills"><i class="fas fa-chalkboard-teacher ml-2"></i><span id="totalSkills" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scripts" id="scripts"><i class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -675,6 +678,27 @@
 
         //#endregion
 
+        //#region Skills
+
+        let skillsUsage = await getSkills(clientId, clientSecret, environment);
+        $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
+
+        //#endregion
+
+        //#region Wrap Up Codes
+
+        let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
+        $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
+
+        //#endregion
+
+        //#region Scripts
+
+        let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+        $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
+
+        //#endregion
+
         //#region AI Usage
 
         let aiUsage = await getAI(clientId, clientSecret, environment);
@@ -849,9 +873,9 @@
         $("#routingLanguagesBody").empty();
         $.each(usages.routingLanguages, (i, routingLanguage) => {
           let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
-            console.log('Routing Language:', routingLanguage);
-            console.log('Name:', routingLanguage.name);
-            $("<td/>").text(routingLanguage.name).appendTo(row);
+          console.log('Routing Language:', routingLanguage);
+          console.log('Name:', routingLanguage.name);
+          $("<td/>").text(routingLanguage.name).appendTo(row);
         });
 
         //#endregion
@@ -1293,6 +1317,105 @@
           })
           .always(() => {
             console.log("getResponseLibraries completed");
+          });
+      }
+
+      async function getSkills(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Skills...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/skills`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getSkills completed");
+          });
+      }
+
+      async function getWrapUpCodes(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Wrapup Codes...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/wrapUpCodes`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getWrapUpCodes completed");
+          });
+      }
+
+      async function getScripts(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Scripts...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/scripts`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getScripts completed");
           });
       }
 
