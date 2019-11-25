@@ -72,7 +72,7 @@
                     </div>
                     <div class="form-group">
                       <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
-                      <input type="text" class="form-control" id="clientSecret" value="pwauKqLeTf7PdJf5d-ONDtLZtOuJtvw6rVe4D2i9Z3E">
+                      <input type="password" class="form-control" id="clientSecret" value="pwauKqLeTf7PdJf5d-ONDtLZtOuJtvw6rVe4D2i9Z3E">
                     </div>
                     <div class="form-group">
                       <label for="environment" class="col-form-label">PureCloud Environment:</label>
@@ -220,6 +220,23 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">External Contacts</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalExternalContacts">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GDPR Requests -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">GDPR Requests</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalGDPRRequests">0</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-id-card fa-2x text-gray-300"></i>
@@ -559,35 +576,228 @@
         var usages = {};
 
         $("#spinner-text").text("Loading... Please Wait...");
-        
+
+        //#region Media & Recordings Usage
+
         let mediaUsage = await getMedia(clientId, clientSecret, environment, startDate, endDate);
         usages.media = mediaUsage.media;
         usages.recordings = mediaUsage.recordings;
 
+        let totalMediaUsage = sum(usages.media);
+        $("#totalMediaUsage").text(totalMediaUsage);
+        $("#totalMediaUsage_calls").text(usages.media.calls);
+        $("#totalMediaUsage_chats").text(usages.media.chats);
+        $("#totalMediaUsage_emails").text(usages.media.emails);
+        $("#totalMediaUsage_callbacks").text(usages.media.callbacks);
+        $("#totalMediaUsage_cobrowses").text(usages.media.cobrowses);
+        $("#totalMediaUsage_screenshares").text(usages.media.screenshares);
+        $("#totalMediaUsage_messages").text(usages.media.messages);
+
+        // Set colors
+        $("#calls").addClass(parseInt(usages.media.calls) === 0 ? "text-danger" : "text-success");
+        $("#chats").addClass(parseInt(usages.media.chats) === 0 ? "text-danger" : "text-success");
+        $("#emails").addClass(parseInt(usages.media.emails) === 0 ? "text-danger" : "text-success");
+        $("#callbacks").addClass(parseInt(usages.media.callbacks) === 0 ? "text-danger" : "text-success");
+        $("#cobrowses").addClass(parseInt(usages.media.cobrowses) === 0 ? "text-danger" : "text-success");
+        $("#screenshares").addClass(parseInt(usages.media.screenshares) === 0 ? "text-danger" : "text-success");
+        $("#messages").addClass(parseInt(usages.media.messages) === 0 ? "text-danger" : "text-success");
+
+        //#region Recordings Usage
+
+        let totalRecordingsUsage = sum(usages.recordings);
+        let percRecordings = Math.round(totalRecordingsUsage * 100 / (usages.media.calls + usages.media.chats + usages.media.emails + usages.media.messages));
+        $("#percRecordings").text(percRecordings + '%');
+        $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+        $("#totalRecordingsUsage_calls").text(usages.recordings.calls);
+        $("#totalRecordingsUsage_chats").text(usages.recordings.chats);
+        $("#totalRecordingsUsage_emails").text(usages.recordings.emails);
+        $("#totalRecordingsUsage_messages").text(usages.recordings.messages);
+
+        // Set colors
+        $("#calls_recordings").addClass(parseInt(usages.recordings.calls) === 0 ? "text-danger" : "text-success");
+        $("#chats_recordings").addClass(parseInt(usages.recordings.chats) === 0 ? "text-danger" : "text-success");
+        $("#emails_recordings").addClass(parseInt(usages.recordings.emails) === 0 ? "text-danger" : "text-success");
+        $("#messages_recordings").addClass(parseInt(usages.recordings.messages) === 0 ? "text-danger" : "text-success");
+
+        //#endregion
+
+        //#endregion
+
+        //#region Users Usage
+
         let usersUsage = await getUsers(clientId, clientSecret, environment, startDate, endDate);
         usages.users = usersUsage.users;
+
+        let totalUsersUsage = sum(usages.users);
+        $("#totalUsersUsage_active").text(usages.users.active);
+
+        //#endregion
+
+        //#region AI Usage
 
         let aiUsage = await getAI(clientId, clientSecret, environment);
         usages.bots = aiUsage.bots;
         usages.tts = aiUsage.tts;
 
-        let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
-        usages.licenses = licenseUsage.licenses;
-        
+        let totalArtificialIntelligenceUsage = sum(usages.bots) + sum(usages.tts);
+        $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
+        $("#totalBotsUsage").text(sum(usages.bots));
+        $("#totalTTSUsage").text(sum(usages.tts));
+
+        // Set colors
+        $("#bots_usage").addClass(sum(usages.bots) === 0 ? "text-danger" : "text-success");
+        $("#tts_usage").addClass(sum(usages.tts) === 0 ? "text-danger" : "text-success");
+
+        //#endregion
+
+        //#region Integrations
+
         let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
         usages.integrations = integrationsUsage.integrations;
+
+        let integrations = usages.integrations;
+
+        // Build array for pie chart
+        let labelsArray = [], dataArray = [];
+        for (var integration in integrations) {
+          if (integrations.hasOwnProperty(integration)) {
+            labelsArray.push(integration);
+            dataArray.push(parseInt(integrations[integration]));
+          }
+        }
+        const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
+        const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
+
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        // Pie Chart
+        var ctx = document.getElementById("myPieChart");
+        var myPieChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: labelsArray,
+            datasets: [{
+              data: dataArray,
+              backgroundColor: backgroudColors,
+              hoverBackgroundColor: hoverBackgroudColors,
+              hoverBorderColor: "rgba(234, 0, 0, 1)",
+            }],
+          },
+          options: {
+            maintainAspectRatio: false,
+            tooltips: {
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#858796",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+            },
+            legend: {
+              display: false
+            },
+            cutoutPercentage: 80,
+          },
+        });
+
+        //#endregion
+
+        //#region Licenses
+
+        let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
+        usages.licenses = licenseUsage.licenses;
+
+        let licensesUsage = usages.licenses;
+
+        $("#licensesBody").empty();
+        for (var license in licensesUsage) {
+          if (licensesUsage.hasOwnProperty(license)) {
+            let row = $("<tr/>", {}).appendTo("#licensesBody");
+            $("<td/>").text(license).appendTo(row);
+            $("<td/>").text(licensesUsage[license]).appendTo(row);
+          }
+        }
+
+        //#endregion
+
+        //#region Locations
 
         let locationsUsage = await getLocations(clientId, clientSecret, environment);
         usages.locations = locationsUsage.locations;
 
+        let locations = usages.locations;
+
+        var interval = 1 * 1000; // 1 second
+
+        $.each(locations, (i, location) => {
+          setTimeout(async (i) => {
+            if (location.hasOwnProperty('address')) {
+              let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+              addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+            } else {
+              console.log(`location ${JSON.stringify(location)} has no address set`);
+            }
+          }, interval * i, i);
+        });
+
+        //#endregion
+
+        //#region Dialer Campaigns Usage
+
         let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
         usages.dialerCampaigns = dialerCampaignsUsage.dialerCampaigns;
+
+        if (usages.hasOwnProperty('dialerCampaigns') && usages.dialerCampaigns.length > 0) {
+          let totalDialerCampaignsUsage = sum(usages.dialerCampaigns);
+          $("#totalDialerCampaigns").text(usages.dialerCampaigns.length);
+        }
+
+        //#endregion
+
+        //#region Documents
 
         let documentsUsage = await getDocuments(clientId, clientSecret, environment);
         usages.documents = documentsUsage.documents;
 
+        if (usages.hasOwnProperty('documents')) {
+          let totalDocumentsUsage = 0;
+          $.each(usages.documents, (i, document) => {
+            if (document.type === "ALL") {
+              totalDocumentsUsage += parseInt(document.totalDocumentCount);
+            }
+          });
+          $("#totalDocuments").text(totalDocumentsUsage);
+        }
+
+        //#endregion
+
+        //#region External Contacts
+
         let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
         usages.externalContacts = externalContactsUsage.externalContacts;
+
+        if (usages.hasOwnProperty('externalContacts')) {
+          let totalExternalContactsUsage = parseInt(usages.externalContacts);
+          $("#totalExternalContacts").text(totalExternalContactsUsage);
+        }
+
+        //#endregion
+
+        //#region GDPR
+
+        let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
+        usages.gdprRequests = gdprUsage.requests;
+
+        if (usages.hasOwnProperty('gdprRequests')) {
+          let totalGDPRRequests = parseInt(usages.gdprRequests);
+          $("#totalGDPRRequests").text(totalGDPRRequests);
+        }
+
+        //#endregion
 
         //TODO CONTINUE HERE
 
@@ -863,7 +1073,7 @@
             console.log("getDocuments completed");
           });
       }
-      
+
       async function getExternalContacts(clientId, clientSecret, environment) {
         $("#spinner-text").text("Getting External Contacts...");
         return await $.ajax({
@@ -897,6 +1107,39 @@
           });
       }
 
+      async function getGDPRRequests(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting GDPR Requests...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/gdpr`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getGDPRRequests completed");
+          });
+      }
+
       //TODO CONTINUE HERE
 
       //#endregion
@@ -926,187 +1169,6 @@
 
           var data = await getData(clientId, clientSecret, environment, startDate, endDate);
           console.log("Data:", data);
-
-          //#region Media Usage
-
-          let totalMediaUsage = sum(data.media);
-          $("#totalMediaUsage").text(totalMediaUsage);
-          $("#totalMediaUsage_calls").text(data.media.calls);
-          $("#totalMediaUsage_chats").text(data.media.chats);
-          $("#totalMediaUsage_emails").text(data.media.emails);
-          $("#totalMediaUsage_callbacks").text(data.media.callbacks);
-          $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
-          $("#totalMediaUsage_screenshares").text(data.media.screenshares);
-          $("#totalMediaUsage_messages").text(data.media.messages);
-
-          // Set colors
-          $("#calls").addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats").addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails").addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
-          $("#callbacks").addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
-          $("#cobrowses").addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
-          $("#screenshares").addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
-          $("#messages").addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
-
-          //#endregion
-
-          //#region Recordings Usage
-
-          let totalRecordingsUsage = sum(data.recordings);
-          let percRecordings = Math.round(totalRecordingsUsage * 100 / (data.media.calls + data.media.chats + data.media.emails + data.media.messages));
-          $("#percRecordings").text(percRecordings + '%');
-          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-          $("#totalRecordingsUsage_calls").text(data.recordings.calls);
-          $("#totalRecordingsUsage_chats").text(data.recordings.chats);
-          $("#totalRecordingsUsage_emails").text(data.recordings.emails);
-          $("#totalRecordingsUsage_messages").text(data.recordings.messages);
-
-          // Set colors
-          $("#calls_recordings").addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
-
-          //#endregion
-
-          //#region Users Usage
-
-          let totalUsersUsage = sum(data.users);
-          $("#totalUsersUsage_active").text(data.users.active);
-
-          //#endregion
-
-          //#region AI Usage
-
-          let totalArtificialIntelligenceUsage = sum(data.bots) + sum(data.tts);
-          $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
-          $("#totalBotsUsage").text(sum(data.bots));
-          $("#totalTTSUsage").text(sum(data.tts));
-
-          // Set colors
-          $("#bots_usage").addClass(sum(data.bots) === 0 ? "text-danger" : "text-success");
-          $("#tts_usage").addClass(sum(data.tts) === 0 ? "text-danger" : "text-success");
-
-          //#endregion
-
-          //#region Integrations
-
-          let integrationsUsage = data.integrations;
-
-          // Build array for pie chart
-          let labelsArray = [], dataArray = [];
-          for (var integration in integrationsUsage) {
-            if (integrationsUsage.hasOwnProperty(integration)) {
-              labelsArray.push(integration);
-              dataArray.push(parseInt(integrationsUsage[integration]));
-            }
-          }
-          const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
-          const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
-
-          // Set new default font family and font color to mimic Bootstrap's default styling
-          Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-          Chart.defaults.global.defaultFontColor = '#858796';
-
-          // Pie Chart
-          var ctx = document.getElementById("myPieChart");
-          var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: labelsArray,
-              datasets: [{
-                data: dataArray,
-                backgroundColor: backgroudColors,
-                hoverBackgroundColor: hoverBackgroudColors,
-                hoverBorderColor: "rgba(234, 0, 0, 1)",
-              }],
-            },
-            options: {
-              maintainAspectRatio: false,
-              tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-              },
-              legend: {
-                display: false
-              },
-              cutoutPercentage: 80,
-            },
-          });
-
-          //#endregion
-
-          //#region Licenses
-
-          let licensesUsage = data.licenses;
-
-          $("#licensesBody").empty();
-          for (var license in licensesUsage) {
-            if (licensesUsage.hasOwnProperty(license)) {
-              let row = $("<tr/>", {}).appendTo("#licensesBody");
-              $("<td/>").text(license).appendTo(row);
-              $("<td/>").text(licensesUsage[license]).appendTo(row);
-            }
-          }
-
-          //#endregion
-
-          //#region Locations
-
-          let locationsUsage = data.locations;
-
-          var interval = 1 * 1000; // 1 second
-
-          $.each(locationsUsage, (i, location) => {
-            setTimeout(async (i) => {
-              if (location.hasOwnProperty('address')) {
-                let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
-              addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-              } else {
-                console.log(`location ${JSON.stringify(location)} has no address set`);
-              }
-            }, interval * i, i);
-          });
-
-          //#endregion
-
-          //#region Dialer Campaigns Usage
-
-          if (data.hasOwnProperty('dialerCampaigns') && data.dialerCampaigns.length > 0) {
-            let totalDialerCampaignsUsage = sum(data.dialerCampaigns);
-            $("#totalDialerCampaigns").text(data.dialerCampaigns.length);
-          }
-
-          //#endregion
-
-          //#region Documents
-
-          if (data.hasOwnProperty('documents')) {
-            let totalDocumentsUsage = 0;
-            $.each(data.documents, (i, document) => {
-              if (document.type === "ALL") {
-                totalDocumentsUsage += parseInt(document.totalDocumentCount);
-              }
-            });
-            $("#totalDocuments").text(totalDocumentsUsage);
-          }
-
-          //#endregion
-          
-          //#region External Contacts
-
-          if (data.hasOwnProperty('externalContacts')) {
-            let totalExternalContactsUsage = parseInt(data.externalContacts);
-            $("#totalExternalContacts").text(totalExternalContactsUsage);
-          }
-
-          //#endregion
 
         } catch (error) {
           alert(error.message);
