@@ -269,6 +269,29 @@
                 </div>
               </div>
             </div>
+
+            <!-- Telephony -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Telephony</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalTelephony">0%</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-phone fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                  <div class="row ml-0">
+                    <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span id="totalStationsUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="Edges" id="phones"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSUsage" class="ml-1">0</span></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- Content Row -->
@@ -333,6 +356,29 @@
                         </tr>
                       </thead>
                       <tbody id="licensesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stations -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Stations</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="stationsBody">
                       </tbody>
                     </table>
                   </div>
@@ -692,6 +738,32 @@
 
         //#endregion
 
+        //#region Stations
+
+        let stationsUsage = await getStations(clientId, clientSecret, environment);
+        usages.stations = stationsUsage.stations;
+
+        $("#stationsBody").empty();
+        $("#totalStationsUsage").text(sum(usages.stations));
+        for (var station in usages.stations) {
+          if (usages.stations.hasOwnProperty(station)) {
+            let row = $("<tr/>", {}).appendTo("#stationsBody");
+            $("<td/>").text(station).appendTo(row);
+            $("<td/>").text(usages.stations[station]).appendTo(row);
+          }
+        }
+
+        //#endregion
+
+        //#region Edges
+
+        let edgesUsage = await getEdges(clientId, clientSecret, environment);
+        usages.edges = edgesUsage.edges;
+
+        $("#totalEdgesUsage").text(sum(usages.edges));
+
+        //#endregion
+
         //#region Scripts
 
         let scriptsUsage = await getScripts(clientId, clientSecret, environment);
@@ -1020,6 +1092,72 @@
           })
           .always(() => {
             console.log("getLicense completed");
+          });
+      }
+
+      async function getStations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting License Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/stations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getStations completed");
+          });
+      }
+
+      async function getEdges(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Edges...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/edges`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getEdges completed");
           });
       }
 
