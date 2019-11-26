@@ -286,14 +286,13 @@
                   <div class="row ml-0">
                     <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span id="totalStationsUsage" class="ml-1">0</span></small>
                     <small data-toggle="tooltip" title="Edges" id="phones"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
                   </div>
                 </div>
               </div>
             </div>
 
           </div>
-
           <!-- Content Row -->
 
           <div class="row">
@@ -641,7 +640,7 @@
         $("#fadeMe").hide();
       }
 
-      //#region Get Data 
+      //#region Get Data
 
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
         var usages = {};
@@ -761,6 +760,15 @@
         usages.edges = edgesUsage.edges;
 
         $("#totalEdgesUsage").text(sum(usages.edges));
+
+        //#endregion
+
+        //#region Edges
+
+        let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
+        usages.smsPhoneNumbers = smsPhoneNumbersUsage.smsPhoneNumbers;
+
+        $("#totalSMSPhoneNumbersUsage").text(usages.smsPhoneNumbers.length || 0);
 
         //#endregion
 
@@ -1158,6 +1166,39 @@
           })
           .always(() => {
             console.log("getEdges completed");
+          });
+      }
+
+      async function getSMSPhoneNumbers(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting SMS Phone Numbers...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/smsPhoneNumbers`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getSMSPhoneNumbers completed");
           });
       }
 
