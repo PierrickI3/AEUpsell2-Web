@@ -11,6 +11,7 @@
 
   <title>AE Upsell 2</title>
 
+  <!--#region Stylesheets -->
   <!-- Custom fonts-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -27,8 +28,16 @@
   <!-- Progress bars with percentage -->
   <link rel="stylesheet" href="css/circle.css">
 
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- Bootstrap Date Picker -->
+  <link rel="stylesheet" href="vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css">
+
   <!-- Custom styles -->
   <link rel="stylesheet" href="css/main.css">
+
+  <!--#endregion -->
 
 </head>
 
@@ -82,12 +91,12 @@
                       <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
                     </div>
                     <div class="form-group">
-                      <label for="startDate" class="col-form-label">Start Date:</label>
-                      <input type="text" class="form-control" id="startDate" placeholder="e.g. 2019-11-20T00:00:00.000Z" value="2019-11-20T00:00:00.000Z">
+                      <label for="startDatePicker" class="col-form-label">Start Date:</label>
+                      <input type="text" class="form-control" id="startDatePicker" value="2019-11-21T00:00:00.000Z">
                     </div>
                     <div class="form-group">
-                      <label for="endDate" class="col-form-label">End Date:</label>
-                      <input type="text" class="form-control" id="endDate" placeholder="e.g. 2019-11-23T00:00:00.000Z" value="2019-11-23T00:00:00.000Z">
+                      <label for="endDatePicker" class="col-form-label">End Date:</label>
+                      <input type="text" class="form-control" id="endDatePicker" value="2019-11-22T00:00:00.000Z">
                     </div>
                   </form>
                 </div>
@@ -102,13 +111,13 @@
           <!-- Content Row -->
           <div class="row">
 
-            <!-- Medias -->
+            <!-- Conversations -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Channels</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Conversations (Usage)</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMediaUsage">0</div>
                       <div class="row ml-0">
                         <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span id="totalMediaUsage_calls" class="ml-1">0</span></small>
@@ -119,6 +128,9 @@
                         <small data-toggle="tooltip" title="Videos" id="videos"><i class="ml-2 fas fa-video"></i><span id="totalMediaUsage_videos" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Screen Shares" id="screenshares"><i class="ml-2 fas fa-desktop"></i><span id="totalMediaUsage_screenshares" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Messages" id="messages"><i class="ml-2 far fa-sticky-note"></i><span id="totalMediaUsage_messages" class="ml-1">0</span></small>
+                      </div>
+                      <div class="row ml-0 mt-1">
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -141,7 +153,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Recordings</div>
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Recordings (Usage)</div>
                       <div class="row no-gutters align-items-center">
                         <div class="col-auto">
                           <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="percRecordings">0%</div>
@@ -158,6 +170,9 @@
                         <small data-toggle="tooltip" title="Recorded Emails" id="emails_recordings"><i class="ml-2 far fa-envelope"></i><span id="totalRecordingsUsage_emails" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Recorded Messages" id="messages_recordings"><i class="ml-2 far fa-sticky-note"></i><span id="totalRecordingsUsage_messages" class="ml-1">0</span></small>
                       </div>
+                      <div class="row ml-0 mt-1">
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-file-audio fa-2x text-gray-300"></i>
@@ -173,35 +188,19 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center Configuration</div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Active Users" id="calls"><i class="fas fa-user"></i><span id="totalUsersUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Active Users" id="activeUsers"><i class="fas fa-user"></i><span id="totalUsersUsage" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Skills" id="skills"><i class="fas fa-chalkboard-teacher ml-2"></i><span id="totalSkills" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Scripts" id="scripts"><i class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Dialer Campaigns" id="dialerCampaigns"><i class="fas fa-phone-volume ml-2"></i><span id="totalDialerCampaigns" class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-users fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Dialer Campaigns -->
-            <div class="col-xl-2 col-md-3 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Dialer Campaigns</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDialerCampaigns">0</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-phone-volume fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -273,8 +272,8 @@
                     </div>
                   </div>
                   <div class="row ml-0">
-                    <small data-toggle="tooltip" title="Bots" id="bots_usage"><i class="fas fa-robot"></i><span id="totalBotsUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small>
+                    <!-- <small data-toggle="tooltip" title="Bots" id="bots_usage"><i class="fas fa-robot"></i><span id="totalBotsUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small> -->
                   </div>
                 </div>
               </div>
@@ -295,8 +294,8 @@
                   </div>
                   <div class="row ml-0">
                     <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span id="totalStationsUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" title="Edges" id="phones"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="edges" title="Edges"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="smsPhoneNumbers" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
                   </div>
                 </div>
               </div>
@@ -305,6 +304,7 @@
           </div>
           <!-- Content Row -->
 
+          <!-- Content Row -->
           <div class="row">
 
             <!-- Area Chart -->
@@ -333,17 +333,24 @@
               </div>
             </div> -->
 
-            <!-- Pie Chart -->
+            <!-- Integrations -->
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Integrations</h6>
                 </div>
-                <!-- Card Body -->
                 <div class="card-body">
-                  <div class="chart-pie pt-0 pb-1">
-                    <canvas id="myPieChart"></canvas>
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="integrationsBody">
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -353,9 +360,12 @@
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses (Usage)</h6>
                 </div>
                 <div class="card-body">
+                  <div class="row ml-0 mt-1 mb-1">
+                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                  </div>
                   <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                       <thead>
@@ -542,7 +552,7 @@
             </div>
 
           </div>
-          <!-- /.container-fluid -->
+          <!-- Content Row -->
 
         </div>
         <!-- End of Main Content -->
@@ -573,7 +583,7 @@
     <!-- Bootstrap core JavaScript-->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
@@ -584,6 +594,12 @@
     <!-- Chart Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
+    <!-- moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Date Picker -->
+    <script src="vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+
     <!-- #endregion -->
 
     <script>
@@ -591,33 +607,67 @@
       var locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7'; // Geocodng (locationiq) token
       var urlBasePath = 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
 
+      //#region Date Pickers
+
+      $("#startDatePicker").datepicker({
+        format: "yyyy-mm-ddT00:00:00.000Z",
+        endDate: "+0d",       // No future dates
+        autoclose: true,      // Close after selecting date
+        weekStart: 1          // weeks start on Mondays
+      });
+
+      $("#endDatePicker").datepicker({
+        format: "yyyy-mm-ddT00:00:00.000Z",
+        endDate: "+0d",       // No future dates
+        autoclose: true,      // Close after selecting date
+        weekStart: 1          // weeks start on Mondays
+      });
+
+      //#endregion
+
       //#region Configuration Modal
 
       $('#configModal').on('show.bs.modal', function (event) {
-        $("#configModal #clientId").trigger('focus'); //TODO Not working
+        //$("#configModal #clientId").trigger('focus'); //TODO Not working and causing an issue with DatePicker
       });
 
       $("#getData").on("click", async (e) => {
         e.preventDefault();
+
         try {
           console.log('Getting data...');
 
           let clientId = $("#configModal #clientId").val();
           let clientSecret = $("#configModal #clientSecret").val();
           let environment = $("#configModal #environment").val();
-          let startDate = $("#configModal #startDate").val();
-          let endDate = $("#configModal #endDate").val();
+          let startDate = $("#configModal #startDatePicker").val();
+          let endDate = $("#configModal #endDatePicker").val();
 
           if (!clientId || !clientSecret || !environment || !startDate || !endDate) {
             alert('Invalid or missing parameters');
             return;
           }
 
+          // Start/End dates validation
+          if (new Date(startDate) >= new Date(endDate)) {
+            alert('Make sure the start date is before the end date');
+            return;
+          }
+
+          // Close the modal
           $('#configModal').modal('toggle')
+
+          // Update date fields
+          var d = new Date(startDate);
+          var startDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
+          $(".startDate").text(startDateString);
+          var d = new Date(endDate);
+          var endDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
+          $(".endDate").text(endDateString);
+
           showSpinner();
 
-          var data = await getData(clientId, clientSecret, environment, startDate, endDate);
-          console.log("Data:", data);
+          await getData(clientId, clientSecret, environment, startDate, endDate);
 
         } catch (error) {
           console.error(error);
@@ -697,83 +747,167 @@
 
       //#region Get Data
 
+      Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+      }
+
+      function getDates(startDate, stopDate) {
+        var dateArray = [];
+        var currentDate = startDate;
+        while (currentDate < stopDate) {
+          var dateRange = {};
+          dateRange.startDate = new Date(currentDate).toISOString();
+          currentDate = currentDate.addDays(7);
+          if (currentDate > stopDate) {
+            currentDate = stopDate;
+          }
+          dateRange.endDate = new Date(currentDate).toISOString();
+          dateArray.push(dateRange);
+        }
+        return dateArray;
+      }
+
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
-        var usages = {};
 
         $("#spinner-text").text("Loading... Please Wait...");
 
-        //#region Media & Recordings Usage
+        // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
+        var dateRanges = getDates(new Date(startDate), new Date(endDate));
+        $.each(dateRanges, async (i, dateRange) => {
 
-        try {
-          let mediaUsage = await getMedia(clientId, clientSecret, environment, startDate, endDate);
-          usages.media = mediaUsage.media;
-          usages.recordings = mediaUsage.recordings;
+          console.log("Current date range start:", dateRange.startDate);
+          console.log("Current date range end:", dateRange.endDate);
 
-          let totalMediaUsage = sum(usages.media);
-          $("#totalMediaUsage").text(totalMediaUsage);
-          $("#totalMediaUsage_calls").text(usages.media.calls);
-          $("#totalMediaUsage_chats").text(usages.media.chats);
-          $("#totalMediaUsage_emails").text(usages.media.emails);
-          $("#totalMediaUsage_callbacks").text(usages.media.callbacks);
-          $("#totalMediaUsage_cobrowses").text(usages.media.cobrowses);
-          $("#totalMediaUsage_videos").text(usages.media.videos);
-          $("#totalMediaUsage_screenshares").text(usages.media.screenshares);
-          $("#totalMediaUsage_messages").text(usages.media.messages);
+          //#region Conversations
 
-          // Set colors
-          $("#calls").addClass(parseInt(usages.media.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats").addClass(parseInt(usages.media.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails").addClass(parseInt(usages.media.emails) === 0 ? "text-danger" : "text-success");
-          $("#callbacks").addClass(parseInt(usages.media.callbacks) === 0 ? "text-danger" : "text-success");
-          $("#cobrowses").addClass(parseInt(usages.media.cobrowses) === 0 ? "text-danger" : "text-success");
-          $("#videos").addClass(parseInt(usages.media.videos) === 0 ? "text-danger" : "text-success");
-          $("#screenshares").addClass(parseInt(usages.media.screenshares) === 0 ? "text-danger" : "text-success");
-          $("#messages").addClass(parseInt(usages.media.messages) === 0 ? "text-danger" : "text-success");
+          try {
+            let conversationsUsage = await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
 
-          // Set usage percentage
-          let mediaUsagePercentValue = 0;
-          $.each(Object.entries(usages.media), (i, media) => {
-            if (parseInt(media[1]) > 0) {
-              mediaUsagePercentValue += 1 / Object.entries(usages.media).length;
+            if (!conversationsUsage.media.hasOwnProperty("calls")) conversationsUsage.media.calls = 0;
+            if (!conversationsUsage.media.hasOwnProperty("chats")) conversationsUsage.media.chats = 0;
+            if (!conversationsUsage.media.hasOwnProperty("emails")) conversationsUsage.media.emails = 0;
+            if (!conversationsUsage.media.hasOwnProperty("callbacks")) conversationsUsage.media.callbacks = 0;
+            if (!conversationsUsage.media.hasOwnProperty("cobrowses")) conversationsUsage.media.cobrowses = 0;
+            if (!conversationsUsage.media.hasOwnProperty("videos")) conversationsUsage.media.videos = 0;
+            if (!conversationsUsage.media.hasOwnProperty("screenshares")) conversationsUsage.media.screenshares = 0;
+            if (!conversationsUsage.media.hasOwnProperty("messages")) conversationsUsage.media.messages = 0;
+
+            conversationsUsage.media.calls = parseInt(conversationsUsage.media.calls) + (conversationsUsage.media.hasOwnProperty("calls") ? conversationsUsage.media.calls : 0);
+            conversationsUsage.media.chats = parseInt(conversationsUsage.media.chats) + (conversationsUsage.media.hasOwnProperty("chats") ? conversationsUsage.media.chats : 0);
+            conversationsUsage.media.emails = parseInt(conversationsUsage.media.emails) + (conversationsUsage.media.hasOwnProperty("emails") ? conversationsUsage.media.emails : 0);
+            conversationsUsage.media.callbacks = parseInt(conversationsUsage.media.callbacks) + (conversationsUsage.media.hasOwnProperty("callbacks") ? conversationsUsage.media.callbacks : 0);
+            conversationsUsage.media.cobrowses = parseInt(conversationsUsage.media.cobrowses) + (conversationsUsage.media.hasOwnProperty("cobrowses") ? conversationsUsage.media.cobrowses : 0);
+            conversationsUsage.media.videos = parseInt(conversationsUsage.media.videos) + (conversationsUsage.media.hasOwnProperty("videos") ? conversationsUsage.media.videos : 0);
+            conversationsUsage.media.screenshares = parseInt(conversationsUsage.media.screenshares) + (conversationsUsage.media.hasOwnProperty("screenshares") ? conversationsUsage.media.screenshares : 0);
+            conversationsUsage.media.messages = parseInt(conversationsUsage.media.messages) + (conversationsUsage.media.hasOwnProperty("messages") ? conversationsUsage.media.messages : 0);
+
+            let totalMediaUsage = sum(conversationsUsage.media);
+            $("#totalMediaUsage").text(totalMediaUsage);
+            $("#totalMediaUsage_calls").text(conversationsUsage.media.calls);
+            $("#totalMediaUsage_chats").text(conversationsUsage.media.chats);
+            $("#totalMediaUsage_emails").text(conversationsUsage.media.emails);
+            $("#totalMediaUsage_callbacks").text(conversationsUsage.media.callbacks);
+            $("#totalMediaUsage_cobrowses").text(conversationsUsage.media.cobrowses);
+            $("#totalMediaUsage_videos").text(conversationsUsage.media.videos);
+            $("#totalMediaUsage_screenshares").text(conversationsUsage.media.screenshares);
+            $("#totalMediaUsage_messages").text(conversationsUsage.media.messages);
+
+            // Set colors
+            $("#calls").addClass(parseInt(conversationsUsage.media.calls) === 0 ? "text-danger" : "text-success");
+            $("#chats").addClass(parseInt(conversationsUsage.media.chats) === 0 ? "text-danger" : "text-success");
+            $("#emails").addClass(parseInt(conversationsUsage.media.emails) === 0 ? "text-danger" : "text-success");
+            $("#callbacks").addClass(parseInt(conversationsUsage.media.callbacks) === 0 ? "text-danger" : "text-success");
+            $("#cobrowses").addClass(parseInt(conversationsUsage.media.cobrowses) === 0 ? "text-danger" : "text-success");
+            $("#videos").addClass(parseInt(conversationsUsage.media.videos) === 0 ? "text-danger" : "text-success");
+            $("#screenshares").addClass(parseInt(conversationsUsage.media.screenshares) === 0 ? "text-danger" : "text-success");
+            $("#messages").addClass(parseInt(conversationsUsage.media.messages) === 0 ? "text-danger" : "text-success");
+
+            // Set usage percentage
+            let mediaUsagePercentValue = 0;
+            $.each(Object.entries(conversationsUsage.media), (i, media) => {
+              if (parseInt(media[1]) > 0) {
+                mediaUsagePercentValue += 1 / Object.entries(conversationsUsage.media).length;
+              }
+            });
+            mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
+
+            $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
+            $("#mediaUsagePercentValue").removeClass("p0").addClass("p" + mediaUsagePercentValue);
+
+            //#region Recordings
+
+            try {
+              if (!conversationsUsage.hasOwnProperty("recordings")) conversationsUsage.recordings = {
+                calls: 0,
+                chats: 0,
+                emails: 0,
+                messages: 0
+              }
+
+              conversationsUsage.recordings.calls = parseInt(conversationsUsage.recordings.calls) + (conversationsUsage.recordings.hasOwnProperty("calls") ? conversationsUsage.recordings.calls : 0);
+              conversationsUsage.recordings.chats = parseInt(conversationsUsage.recordings.chats) + (conversationsUsage.recordings.hasOwnProperty("chats") ? conversationsUsage.recordings.chats : 0);
+              conversationsUsage.recordings.emails = parseInt(conversationsUsage.recordings.emails) + (conversationsUsage.recordings.hasOwnProperty("emails") ? conversationsUsage.recordings.emails : 0);
+              conversationsUsage.recordings.messages = parseInt(conversationsUsage.recordings.messages) + (conversationsUsage.recordings.hasOwnProperty("messages") ? conversationsUsage.recordings.messages : 0);
+
+              let totalRecordingsUsage = sum(conversationsUsage.recordings);
+              let percRecordings = Math.round(totalRecordingsUsage * 100 / (conversationsUsage.media.calls + conversationsUsage.media.chats + conversationsUsage.media.emails + conversationsUsage.media.messages));
+              $("#percRecordings").text(percRecordings + '%');
+              $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+              $("#totalRecordingsUsage_calls").text(conversationsUsage.recordings.calls);
+              $("#totalRecordingsUsage_chats").text(conversationsUsage.recordings.chats);
+              $("#totalRecordingsUsage_emails").text(conversationsUsage.recordings.emails);
+              $("#totalRecordingsUsage_messages").text(conversationsUsage.recordings.messages);
+
+              // Set colors
+              $("#calls_recordings").addClass(parseInt(conversationsUsage.recordings.calls) === 0 ? "text-danger" : "text-success");
+              $("#chats_recordings").addClass(parseInt(conversationsUsage.recordings.chats) === 0 ? "text-danger" : "text-success");
+              $("#emails_recordings").addClass(parseInt(conversationsUsage.recordings.emails) === 0 ? "text-danger" : "text-success");
+              $("#messages_recordings").addClass(parseInt(conversationsUsage.recordings.messages) === 0 ? "text-danger" : "text-success");
+            } catch (error) {
+              console.error('Error while processing recordings usage:', error);
+              $("#percRecordings").append(" (Error)");
             }
-          });
-          mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
 
-          $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-          $("#mediaUsagePercentValue").removeClass("p0").addClass("p" + mediaUsagePercentValue);
-        } catch (error) {
-          console.error('Error while processing media usage:', error);
-        }
+            //#endregion
+
+          } catch (error) {
+            console.error('Error while processing media usage:', error);
+            $("#totalMediaUsage").append(" (Error)");
+          }
+
+          //#endregion
+
+          //#region Licenses
+
+          try {
+            let licenseUsage = await getLicense(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
+            $("#licensesBody").empty();
+            for (var license in licenseUsage.licenses) {
+              if (licenseUsage.licenses.hasOwnProperty(license)) {
+                let row = $("<tr/>", {}).appendTo("#licensesBody");
+                $("<td/>").text(license).appendTo(row);
+                $("<td/>").text(licenseUsage.licenses[license]).appendTo(row);
+              }
+            }
+          } catch (error) {
+            console.error('Error while processing licenses:', error);
+          }
+
+          //#endregion
+
+        });
+
+        //#region Users
 
         try {
-          let totalRecordingsUsage = sum(usages.recordings);
-          let percRecordings = Math.round(totalRecordingsUsage * 100 / (usages.media.calls + usages.media.chats + usages.media.emails + usages.media.messages));
-          $("#percRecordings").text(percRecordings + '%');
-          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-          $("#totalRecordingsUsage_calls").text(usages.recordings.calls);
-          $("#totalRecordingsUsage_chats").text(usages.recordings.chats);
-          $("#totalRecordingsUsage_emails").text(usages.recordings.emails);
-          $("#totalRecordingsUsage_messages").text(usages.recordings.messages);
+          let users = await getUsers(clientId, clientSecret, environment);
+          $("#totalUsersUsage").text(users.users);
 
           // Set colors
-          $("#calls_recordings").addClass(parseInt(usages.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").addClass(parseInt(usages.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").addClass(parseInt(usages.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").addClass(parseInt(usages.recordings.messages) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing recordings usage:', error);
-        }
+          $("#activeUsers").addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
 
-        //#endregion
-
-        //#region Users Usage
-
-        try {
-          let usersUsage = await getUsers(clientId, clientSecret, environment);
-          usages.users = usersUsage.users;
-
-          let totalUsersUsage = sum(usages.users);
-          $("#totalUsersUsage").text(usages.users);
         } catch (error) {
           console.error('Error while processing users:', error);
         }
@@ -784,10 +918,10 @@
 
         try {
           let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
-          usages.evaluationForms = evaluationFormsUsage.evaluationForms;
+          $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
 
-          let totalEvaluationFormsUsage = sum(usages.evaluationForms);
-          $("#totalEvaluationForms").text(parseInt(usages.evaluationForms) || 0);
+          // Set colors
+          $("#evaluationForms").addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing evaluation forms:', error);
         }
@@ -798,10 +932,10 @@
 
         try {
           let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
-          usages.responseLibraries = responseLibrariesUsage.responseLibraries;
+          $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
 
-          let totalResponseLibrariesUsage = sum(usages.responseLibraries);
-          $("#totalResponseLibraries").text(parseInt(usages.responseLibraries) || 0);
+          // Set colors
+          $("#responseLibraries").addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing response libraries:', error);
         }
@@ -813,6 +947,9 @@
         try {
           let skillsUsage = await getSkills(clientId, clientSecret, environment);
           $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
+
+          // Set colors
+          $("#skills").addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing skills:', error);
         }
@@ -824,6 +961,9 @@
         try {
           let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
           $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
+
+          // Set colors
+          $("#wrapUpCodes").addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing skills:', error);
         }
@@ -834,15 +974,20 @@
 
         try {
           let stationsUsage = await getStations(clientId, clientSecret, environment);
-          usages.stations = stationsUsage.stations;
 
+
+          // Stations icon in Telephony
+          $("#totalStationsUsage").text(sum(stationsUsage.stations));
+          // Set colors
+          $("#stations").addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
+
+          // Station types table
           $("#stationsBody").empty();
-          $("#totalStationsUsage").text(sum(usages.stations));
-          for (var station in usages.stations) {
-            if (usages.stations.hasOwnProperty(station)) {
+          for (var station in stationsUsage.stations) {
+            if (stationsUsage.stations.hasOwnProperty(station)) {
               let row = $("<tr/>", {}).appendTo("#stationsBody");
               $("<td/>").text(station).appendTo(row);
-              $("<td/>").text(usages.stations[station]).appendTo(row);
+              $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
             }
           }
         } catch (error) {
@@ -855,12 +1000,14 @@
 
         try {
           let edgesUsage = await getEdges(clientId, clientSecret, environment);
-          usages.edges = edgesUsage.edges;
+          $("#totalEdgesUsage").text(sum(edgesUsage.edges));
+
+          // Set colors
+          $("#edges").addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing edges:', error);
         }
 
-        $("#totalEdgesUsage").text(sum(usages.edges));
 
         //#endregion
 
@@ -868,9 +1015,10 @@
 
         try {
           let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
-          usages.smsPhoneNumbers = smsPhoneNumbersUsage.smsPhoneNumbers;
+          $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
 
-          $("#totalSMSPhoneNumbersUsage").text(usages.smsPhoneNumbers.length || 0);
+          // Set colors
+          $("#smsPhoneNumbers").addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing sms phone numbers:', error);
         }
@@ -882,6 +1030,9 @@
         try {
           let scriptsUsage = await getScripts(clientId, clientSecret, environment);
           $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
+
+          // Set colors
+          $("#scripts").addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing scripts:', error);
         }
@@ -893,31 +1044,31 @@
         // Flows
         try {
           let flowsUsage = await getFlows(clientId, clientSecret, environment);
-          usages.flows = flowsUsage.flows;
+          $("#totalFlowsUsage").text(flowsUsage.flows);
 
-          let totalFlowsUsage = usages.flows;
-          $("#totalFlowsUsage").text(totalFlowsUsage);
+          // Set colors
+          $("#totalFlowsUsage").addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing flows:', error);
         }
 
-        // AI
-        try {
-          let aiUsage = await getAI(clientId, clientSecret, environment);
-          usages.bots = aiUsage.bots;
-          usages.tts = aiUsage.tts;
+        // AI (integrations should be enough for now)
+        // try {
+        //   let aiUsage = await getAI(clientId, clientSecret, environment);
+        //   usages.bots = aiUsage.bots;
+        //   usages.tts = aiUsage.tts;
 
-          let totalArtificialIntelligenceUsage = sum(usages.bots) + sum(usages.tts);
-          $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
-          $("#totalBotsUsage").text(sum(usages.bots));
-          $("#totalTTSUsage").text(sum(usages.tts));
+        //   let totalArtificialIntelligenceUsage = sum(usages.bots) + sum(usages.tts);
+        //   $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
+        //   $("#totalBotsUsage").text(sum(usages.bots));
+        //   $("#totalTTSUsage").text(sum(usages.tts));
 
-          // Set colors
-          $("#bots_usage").addClass(sum(usages.bots) === 0 ? "text-danger" : "text-success");
-          $("#tts_usage").addClass(sum(usages.tts) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing AI:', error);
-        }
+        //   // Set colors
+        //   $("#bots_usage").addClass(sum(usages.bots) === 0 ? "text-danger" : "text-success");
+        //   $("#tts_usage").addClass(sum(usages.tts) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing AI:', error);
+        // }
 
         //#endregion
 
@@ -925,95 +1076,27 @@
 
         try {
           let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
-          usages.integrations = integrationsUsage.integrations;
-
-          let integrations = usages.integrations;
-
-          // Build array for pie chart
-          let labelsArray = [], dataArray = [];
-          for (var integration in integrations) {
-            if (integrations.hasOwnProperty(integration)) {
-              labelsArray.push(integration);
-              dataArray.push(parseInt(integrations[integration]));
+          $("#integrationsBody").empty();
+          for (var integration in integrationsUsage.integrations) {
+            if (integrationsUsage.integrations.hasOwnProperty(integration)) {
+              let row = $("<tr/>", {}).appendTo("#integrationsBody");
+              $("<td/>").text(integration).appendTo(row);
+              $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
             }
           }
-          const backgroudColors = ['#00429d', '#1448a0', '#204fa3', '#2955a6', '#315ca9', '#3862ac', '#3f69af', '#466fb2', '#4c76b5', '#527db7', '#5884ba', '#5e8abd', '#6491c0', '#6a98c2', '#709fc5', '#76a6c8', '#7cadca', '#83b4cd', '#89bbcf', '#90c2d2', '#97c9d4', '#9fd0d6', '#a7d6d8', '#afddda', '#b8e4dc', '#c2eade', '#ccf1e0', '#d9f7e1', '#e8fce1', '#ffffe0'];
-          const hoverBackgroudColors = ['#00318c', '#03379f', '#1f3e92', '#184495', '#204b98', '#27519b', '#2e589e', '#355ea1', '#3b65a4', '#416ca6', '#4773a9', '#4d79ac', '#5380bf', '#5987b1', '#6f8eb4', '#6595b7', '#6b9cb9', '#72a3bc', '#78aabe', '#8fb1c1', '#86b8c3', '#8ecfc5', '#96c5c7', '#9eccc9', '#a7d3cb', '#b1d9cd', '#bbe0cf', '#c8e6d0', '#d7ebd0', '#eeeecf'];
-
-          // Set new default font family and font color to mimic Bootstrap's default styling
-          Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-          Chart.defaults.global.defaultFontColor = '#858796';
-
-          // Pie Chart
-          var ctx = document.getElementById("myPieChart");
-          var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: labelsArray,
-              datasets: [{
-                data: dataArray,
-                backgroundColor: backgroudColors,
-                hoverBackgroundColor: hoverBackgroudColors,
-                hoverBorderColor: "rgba(234, 0, 0, 1)",
-              }],
-            },
-            options: {
-              maintainAspectRatio: false,
-              tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-              },
-              legend: {
-                display: false
-              },
-              cutoutPercentage: 80,
-            },
-          });
         } catch (error) {
           console.error('Error while processing integrations:', error);
         }
-
-        //#endregion
-
-        //#region Licenses
-
-        try {
-          let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
-          usages.licenses = licenseUsage.licenses;
-
-          let licensesUsage = usages.licenses;
-
-          $("#licensesBody").empty();
-          for (var license in licensesUsage) {
-            if (licensesUsage.hasOwnProperty(license)) {
-              let row = $("<tr/>", {}).appendTo("#licensesBody");
-              $("<td/>").text(license).appendTo(row);
-              $("<td/>").text(licensesUsage[license]).appendTo(row);
-            }
-          }
-        } catch (error) {
-          console.error('Error while processing licenses:', error);
-        }
-
         //#endregion
 
         //#region Locations
 
         try {
-          let locationsUsage = await getLocations(clientId, clientSecret, environment);
-          usages.locations = locationsUsage.locations;
-
-          let locations = usages.locations;
-
           var interval = 1 * 1000; // 1 second
 
-          $.each(locations, (i, location) => {
+          let locationsUsage = await getLocations(clientId, clientSecret, environment);
+
+          $.each(locationsUsage.locations, (i, location) => {
             setTimeout(async (i) => {
               if (location.hasOwnProperty('address')) {
                 let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
@@ -1029,15 +1112,18 @@
 
         //#endregion
 
-        //#region Dialer Campaigns Usage
+        //#region Dialer Campaigns
 
         try {
           let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
-          usages.dialerCampaigns = dialerCampaignsUsage.dialerCampaigns;
 
-          if (usages.hasOwnProperty('dialerCampaigns') && usages.dialerCampaigns.length > 0) {
-            let totalDialerCampaignsUsage = sum(usages.dialerCampaigns);
-            $("#totalDialerCampaigns").text(usages.dialerCampaigns.length);
+          if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns') && dialerCampaignsUsage.dialerCampaigns.length > 0) {
+            $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns.length);
+
+            // Set colors
+            $("#totalDialerCampaigns").addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#totalDialerCampaigns").addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing dialer campaigns:', error);
@@ -1049,16 +1135,17 @@
 
         try {
           let documentsUsage = await getDocuments(clientId, clientSecret, environment);
-          usages.documents = documentsUsage.documents;
-
-          if (usages.hasOwnProperty('documents')) {
+          if (documentsUsage.hasOwnProperty('documents')) {
             let totalDocumentsUsage = 0;
-            $.each(usages.documents, (i, document) => {
+            $.each(documentsUsage.documents, (i, document) => {
               if (document.type === "ALL") {
                 totalDocumentsUsage += parseInt(document.totalDocumentCount);
               }
             });
             $("#totalDocuments").text(totalDocumentsUsage);
+
+            // Set colors
+            $("#totalDocuments").addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
           }
         } catch (error) {
           console.error('Error while processing documents:', error);
@@ -1070,11 +1157,13 @@
 
         try {
           let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
-          usages.externalContacts = externalContactsUsage.externalContacts;
+          if (externalContactsUsage.hasOwnProperty('externalContacts')) {
+            $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
 
-          if (usages.hasOwnProperty('externalContacts')) {
-            let totalExternalContactsUsage = parseInt(usages.externalContacts);
-            $("#totalExternalContacts").text(totalExternalContactsUsage);
+            // Set colors
+            $("#totalExternalContacts").addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#totalExternalContacts").addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing external contacts:', error);
@@ -1086,11 +1175,13 @@
 
         try {
           let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
-          usages.gdprRequests = gdprUsage.gdprRequests;
+          if (gdprUsage.hasOwnProperty('gdprRequests')) {
+            $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
 
-          if (usages.hasOwnProperty('gdprRequests')) {
-            let totalGDPRRequests = parseInt(usages.gdprRequests) || 0;
-            $("#totalGDPRRequests").text(totalGDPRRequests);
+            // Set colors
+            $("#totalGDPRRequests").addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#totalGDPRRequests").addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing gdpr:', error);
@@ -1102,13 +1193,9 @@
 
         try {
           let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
-          usages.routingLanguages = routingLanguagesUsage.routingLanguages;
-
           $("#routingLanguagesBody").empty();
-          $.each(usages.routingLanguages, (i, routingLanguage) => {
+          $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
             let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
-            console.log('Routing Language:', routingLanguage);
-            console.log('Name:', routingLanguage.name);
             $("<td/>").text(routingLanguage.name).appendTo(row);
           });
         } catch (error) {
@@ -1117,9 +1204,6 @@
 
         //#endregion
 
-        //TODO CONTINUE HERE
-
-        return usages;
       }
 
       async function getMedia(clientId, clientSecret, environment, startDate, endDate) {
@@ -1141,7 +1225,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1174,7 +1258,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log("users:", jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1207,7 +1291,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1223,38 +1307,39 @@
           });
       }
 
-      async function getAI(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting AI Usage...");
-        return await $.ajax({
-          method: 'GET',
-          url: `${urlBasePath}/ai`,
-          contentType: 'application/json',
-          dataType: 'json',
-          data: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            environment: environment
-          }
-        })
-          .done((data, textStatus, jqXHR) => {
-            try {
-              switch (jqXHR.status) {
-                case 200:
-                  console.log(jqXHR);
-                  return jqXHR.responseJSON;
-                default:
-                  showMessage("Unexpected error: " + textStatus, true);
-                  throw new Error(textStatus);
-              }
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          })
-          .always(() => {
-            console.log("getAI completed");
-          });
-      }
+      // Integrations should be enough
+      // async function getAI(clientId, clientSecret, environment) {
+      //   $("#spinner-text").text("Getting AI Usage...");
+      //   return await $.ajax({
+      //     method: 'GET',
+      //     url: `${urlBasePath}/ai`,
+      //     contentType: 'application/json',
+      //     dataType: 'json',
+      //     data: {
+      //       clientId: clientId,
+      //       clientSecret: clientSecret,
+      //       environment: environment
+      //     }
+      //   })
+      //     .done((data, textStatus, jqXHR) => {
+      //       try {
+      //         switch (jqXHR.status) {
+      //           case 200:
+      //             console.log(jqXHR.responseJSON);
+      //             return jqXHR.responseJSON;
+      //           default:
+      //             showMessage("Unexpected error: " + textStatus, true);
+      //             throw new Error(textStatus);
+      //         }
+      //       } catch (error) {
+      //         console.error(error);
+      //         throw error;
+      //       }
+      //     })
+      //     .always(() => {
+      //       console.log("getAI completed");
+      //     });
+      // }
 
       async function getLicense(clientId, clientSecret, environment, startDate, endDate) {
         $("#spinner-text").text("Getting License Usage...");
@@ -1275,7 +1360,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1308,7 +1393,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1341,7 +1426,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1374,7 +1459,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1407,7 +1492,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1440,7 +1525,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1473,7 +1558,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1506,7 +1591,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1539,7 +1624,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1572,7 +1657,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1605,7 +1690,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1638,7 +1723,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1671,7 +1756,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1704,7 +1789,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1737,7 +1822,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
@@ -1770,7 +1855,7 @@
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR);
+                  console.log(jqXHR.responseJSON);
                   return jqXHR.responseJSON;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
