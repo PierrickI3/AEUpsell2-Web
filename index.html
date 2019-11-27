@@ -134,7 +134,7 @@
                       </div>
                     </div>
                     <div class="col-auto">
-                      <div id="mediaUsagePercentValue" class="c100 p0 small">
+                      <div id="mediaUsagePercentValue">
                         <span id="mediaUsagePercentText">0%</span>
                         <div class="slice">
                           <div class="bar"></div>
@@ -815,14 +815,30 @@
             $("#totalMediaUsage_messages").text(conversationsUsage.media.messages);
 
             // Set colors
-            $("#calls").addClass(parseInt(conversationsUsage.media.calls) === 0 ? "text-danger" : "text-success");
-            $("#chats").addClass(parseInt(conversationsUsage.media.chats) === 0 ? "text-danger" : "text-success");
-            $("#emails").addClass(parseInt(conversationsUsage.media.emails) === 0 ? "text-danger" : "text-success");
-            $("#callbacks").addClass(parseInt(conversationsUsage.media.callbacks) === 0 ? "text-danger" : "text-success");
-            $("#cobrowses").addClass(parseInt(conversationsUsage.media.cobrowses) === 0 ? "text-danger" : "text-success");
-            $("#videos").addClass(parseInt(conversationsUsage.media.videos) === 0 ? "text-danger" : "text-success");
-            $("#screenshares").addClass(parseInt(conversationsUsage.media.screenshares) === 0 ? "text-danger" : "text-success");
-            $("#messages").addClass(parseInt(conversationsUsage.media.messages) === 0 ? "text-danger" : "text-success");
+            $("#calls").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.calls) === 0 ? "text-danger" : "text-success");
+            $("#chats").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.chats) === 0 ? "text-danger" : "text-success");
+            $("#emails").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.emails) === 0 ? "text-danger" : "text-success");
+            $("#callbacks").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.callbacks) === 0 ? "text-danger" : "text-success");
+            $("#cobrowses").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.cobrowses) === 0 ? "text-danger" : "text-success");
+            $("#videos").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.videos) === 0 ? "text-danger" : "text-success");
+            $("#screenshares").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.screenshares) === 0 ? "text-danger" : "text-success");
+            $("#messages").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(conversationsUsage.media.messages) === 0 ? "text-danger" : "text-success");
 
             // Set usage percentage
             let mediaUsagePercentValue = 0;
@@ -834,7 +850,7 @@
             mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
 
             $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-            $("#mediaUsagePercentValue").removeClass("p0").addClass("p" + mediaUsagePercentValue);
+            $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
 
             //#region Recordings
 
@@ -861,10 +877,10 @@
               $("#totalRecordingsUsage_messages").text(conversationsUsage.recordings.messages);
 
               // Set colors
-              $("#calls_recordings").addClass(parseInt(conversationsUsage.recordings.calls) === 0 ? "text-danger" : "text-success");
-              $("#chats_recordings").addClass(parseInt(conversationsUsage.recordings.chats) === 0 ? "text-danger" : "text-success");
-              $("#emails_recordings").addClass(parseInt(conversationsUsage.recordings.emails) === 0 ? "text-danger" : "text-success");
-              $("#messages_recordings").addClass(parseInt(conversationsUsage.recordings.messages) === 0 ? "text-danger" : "text-success");
+              $("#calls_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.calls) === 0 ? "text-danger" : "text-success");
+              $("#chats_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.chats) === 0 ? "text-danger" : "text-success");
+              $("#emails_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.emails) === 0 ? "text-danger" : "text-success");
+              $("#messages_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.messages) === 0 ? "text-danger" : "text-success");
             } catch (error) {
               console.error('Error while processing recordings usage:', error);
               $("#percRecordings").append(" (Error)");
@@ -906,7 +922,9 @@
           $("#totalUsersUsage").text(users.users);
 
           // Set colors
-          $("#activeUsers").addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
+          $("#activeUsers").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
 
         } catch (error) {
           console.error('Error while processing users:', error);
@@ -921,7 +939,9 @@
           $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
 
           // Set colors
-          $("#evaluationForms").addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
+          $("#evaluationForms").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing evaluation forms:', error);
         }
@@ -935,7 +955,9 @@
           $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
 
           // Set colors
-          $("#responseLibraries").addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
+          $("#responseLibraries").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing response libraries:', error);
         }
@@ -949,7 +971,9 @@
           $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
 
           // Set colors
-          $("#skills").addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
+          $("#skills").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing skills:', error);
         }
@@ -963,7 +987,9 @@
           $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
 
           // Set colors
-          $("#wrapUpCodes").addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
+          $("#wrapUpCodes").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing skills:', error);
         }
@@ -979,7 +1005,9 @@
           // Stations icon in Telephony
           $("#totalStationsUsage").text(sum(stationsUsage.stations));
           // Set colors
-          $("#stations").addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
+          $("#stations").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
 
           // Station types table
           $("#stationsBody").empty();
@@ -1003,7 +1031,9 @@
           $("#totalEdgesUsage").text(sum(edgesUsage.edges));
 
           // Set colors
-          $("#edges").addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
+          $("#edges").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing edges:', error);
         }
@@ -1018,7 +1048,9 @@
           $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
 
           // Set colors
-          $("#smsPhoneNumbers").addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
+          $("#smsPhoneNumbers").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing sms phone numbers:', error);
         }
@@ -1032,7 +1064,9 @@
           $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
 
           // Set colors
-          $("#scripts").addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
+          $("#scripts").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing scripts:', error);
         }
@@ -1047,7 +1081,9 @@
           $("#totalFlowsUsage").text(flowsUsage.flows);
 
           // Set colors
-          $("#totalFlowsUsage").addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
+          $("#totalFlowsUsage").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing flows:', error);
         }
@@ -1121,9 +1157,13 @@
             $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns.length);
 
             // Set colors
-            $("#totalDialerCampaigns").addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
+            $("#dialerCampaigns").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
           } else {
-            $("#totalDialerCampaigns").addClass("text-danger");
+            $("#dialerCampaigns").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing dialer campaigns:', error);
@@ -1145,7 +1185,9 @@
             $("#totalDocuments").text(totalDocumentsUsage);
 
             // Set colors
-            $("#totalDocuments").addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
+            $("#totalDocuments").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
           }
         } catch (error) {
           console.error('Error while processing documents:', error);
@@ -1161,9 +1203,13 @@
             $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
 
             // Set colors
-            $("#totalExternalContacts").addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
+            $("#totalExternalContacts").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
           } else {
-            $("#totalExternalContacts").addClass("text-danger");
+            $("#totalExternalContacts").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing external contacts:', error);
@@ -1179,9 +1225,13 @@
             $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
 
             // Set colors
-            $("#totalGDPRRequests").addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
+            $("#totalGDPRRequests").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
           } else {
-            $("#totalGDPRRequests").addClass("text-danger");
+            $("#totalGDPRRequests").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
           }
         } catch (error) {
           console.error('Error while processing gdpr:', error);
