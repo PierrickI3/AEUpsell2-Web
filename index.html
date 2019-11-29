@@ -604,8 +604,33 @@
 
     <script>
 
-      var locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7'; // Geocodng (locationiq) token
-      var urlBasePath = 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
+      const devMode = false;
+
+      const locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7'; // Geocoding (locationiq) token
+      const urlBasePath = devMode ? 'http://localhost:3000' : 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
+      const webSocketUrl = devMode ? 'ws://localhost:3001' : 'wss://anr7mnvwrg.execute-api.eu-central-1.amazonaws.com/dev';
+
+      //#region Websocket
+
+      const websocket = new WebSocket(webSocketUrl);
+      websocket.onmessage = ({ data }) => {
+        var data = JSON.parse(data);
+        console.log('Received data:', data);
+        if (data.hasOwnProperty('media')) {
+          processMediaMessage(data);
+        }
+        if (data.hasOwnProperty('recordings')) {
+          processRecordingsMessage(data);
+        }
+      };
+      websocket.onerror = error => {
+        console.error('onerror:', error);
+      };
+      websocket.onopen = () => {
+        console.log('Websocket opened!');
+      };
+
+      //#endregion
 
       //#region Date Pickers
 
@@ -672,8 +697,6 @@
         } catch (error) {
           console.error(error);
           alert(error.message);
-        } finally {
-          hideSpinner();
         }
 
       });
@@ -734,11 +757,13 @@
       //#region Spinner
 
       function showSpinner() {
+        console.log('Showing spinner...');
         $("#fadeMe").addClass("fadeMe");
         $("#fadeMe").show();
       }
 
       function hideSpinner() {
+        console.log('Hiding spinner...');
         $("#fadeMe").removeClass("fadeMe");
         $("#fadeMe").hide();
       }
@@ -769,9 +794,110 @@
         return dateArray;
       }
 
+      async function processMediaMessage(data) {
+        if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
+        if (!data.media.hasOwnProperty("chats")) data.media.chats = 0;
+        if (!data.media.hasOwnProperty("emails")) data.media.emails = 0;
+        if (!data.media.hasOwnProperty("callbacks")) data.media.callbacks = 0;
+        if (!data.media.hasOwnProperty("cobrowses")) data.media.cobrowses = 0;
+        if (!data.media.hasOwnProperty("videos")) data.media.videos = 0;
+        if (!data.media.hasOwnProperty("screenshares")) data.media.screenshares = 0;
+        if (!data.media.hasOwnProperty("messages")) data.media.messages = 0;
+
+        data.media.calls = parseInt($("#totalMediaUsage_calls").text()) + (data.media.hasOwnProperty("calls") ? data.media.calls : 0);
+        data.media.chats = parseInt($("#totalMediaUsage_chats").text()) + (data.media.hasOwnProperty("chats") ? data.media.chats : 0);
+        data.media.emails = parseInt($("#totalMediaUsage_emails").text()) + (data.media.hasOwnProperty("emails") ? data.media.emails : 0);
+        data.media.callbacks = parseInt($("#totalMediaUsage_callbacks").text()) + (data.media.hasOwnProperty("callbacks") ? data.media.callbacks : 0);
+        data.media.cobrowses = parseInt($("#totalMediaUsage_cobrowses").text()) + (data.media.hasOwnProperty("cobrowses") ? data.media.cobrowses : 0);
+        data.media.videos = parseInt($("#totalMediaUsage_videos").text()) + (data.media.hasOwnProperty("videos") ? data.media.videos : 0);
+        data.media.screenshares = parseInt($("#totalMediaUsage_screenshares").text()) + (data.media.hasOwnProperty("screenshares") ? data.media.screenshares : 0);
+        data.media.messages = parseInt($("#totalMediaUsage_messages").text()) + (data.media.hasOwnProperty("messages") ? data.media.messages : 0);
+
+        $("#totalMediaUsage").text(sum(data.media));
+        $("#totalMediaUsage_calls").text(data.media.calls);
+        $("#totalMediaUsage_chats").text(data.media.chats);
+        $("#totalMediaUsage_emails").text(data.media.emails);
+        $("#totalMediaUsage_callbacks").text(data.media.callbacks);
+        $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
+        $("#totalMediaUsage_videos").text(data.media.videos);
+        $("#totalMediaUsage_screenshares").text(data.media.screenshares);
+        $("#totalMediaUsage_messages").text(data.media.messages);
+
+        // Set colors
+        $("#calls").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
+        $("#chats").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
+        $("#emails").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
+        $("#callbacks").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
+        $("#cobrowses").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
+        $("#videos").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.videos) === 0 ? "text-danger" : "text-success");
+        $("#screenshares").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
+        $("#messages").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
+
+        // Set usage percentage
+        let mediaUsagePercentValue = 0;
+        $.each(Object.entries(data.media), (i, media) => {
+          if (parseInt(media[1]) > 0) {
+            mediaUsagePercentValue += 1 / Object.entries(data.media).length;
+          }
+        });
+        mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
+
+        $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
+        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
+
+      }
+
+      async function processRecordingsMessage(data) {
+        try {
+          if (!data.recordings.hasOwnProperty("calls")) data.recordings.calls = 0;
+          if (!data.recordings.hasOwnProperty("chats")) data.recordings.chats = 0;
+          if (!data.recordings.hasOwnProperty("emails")) data.recordings.emails = 0;
+          if (!data.recordings.hasOwnProperty("messages")) data.recordings.messages = 0;
+
+          $("#totalRecordingsUsage_calls").text(parseInt($("#totalRecordingsUsage_calls").text()) + data.recordings.calls);
+          $("#totalRecordingsUsage_chats").text(parseInt($("#totalRecordingsUsage_chats").text()) + data.recordings.chats);
+          $("#totalRecordingsUsage_emails").text(parseInt($("#totalRecordingsUsage_emails").text()) + data.recordings.emails);
+          $("#totalRecordingsUsage_messages").text(parseInt($("#totalRecordingsUsage_messages").text()) + data.recordings.messages);
+
+          // Percentage
+          let totalRecordingsUsage = parseInt($("#totalRecordingsUsage_calls").text()) + parseInt($("#totalRecordingsUsage_chats").text()) + parseInt($("#totalRecordingsUsage_emails").text()) + parseInt($("#totalRecordingsUsage_messages").text());
+          let totalMediaUsage = parseInt($("#totalMediaUsage_calls").text()) + parseInt($("#totalMediaUsage_chats").text()) + parseInt($("#totalMediaUsage_emails").text()) + parseInt($("#totalMediaUsage_messages").text());
+          let percRecordings = Math.round((sum(data.recordings) + totalRecordingsUsage) * 100 / totalMediaUsage);
+          $("#percRecordings").text(percRecordings + '%');
+          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+
+          // Set colors
+          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing recordings usage:', error);
+          $("#percRecordings").append(" (Error)");
+        }
+      }
+
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
 
         $("#spinner-text").text("Loading... Please Wait...");
+
+        resetValues();
 
         // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
         var dateRanges = getDates(new Date(startDate), new Date(endDate));
@@ -782,116 +908,7 @@
 
           //#region Conversations
 
-          try {
-            let conversationsUsage = await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
-
-            if (!conversationsUsage.media.hasOwnProperty("calls")) conversationsUsage.media.calls = 0;
-            if (!conversationsUsage.media.hasOwnProperty("chats")) conversationsUsage.media.chats = 0;
-            if (!conversationsUsage.media.hasOwnProperty("emails")) conversationsUsage.media.emails = 0;
-            if (!conversationsUsage.media.hasOwnProperty("callbacks")) conversationsUsage.media.callbacks = 0;
-            if (!conversationsUsage.media.hasOwnProperty("cobrowses")) conversationsUsage.media.cobrowses = 0;
-            if (!conversationsUsage.media.hasOwnProperty("videos")) conversationsUsage.media.videos = 0;
-            if (!conversationsUsage.media.hasOwnProperty("screenshares")) conversationsUsage.media.screenshares = 0;
-            if (!conversationsUsage.media.hasOwnProperty("messages")) conversationsUsage.media.messages = 0;
-
-            conversationsUsage.media.calls = parseInt(conversationsUsage.media.calls) + (conversationsUsage.media.hasOwnProperty("calls") ? conversationsUsage.media.calls : 0);
-            conversationsUsage.media.chats = parseInt(conversationsUsage.media.chats) + (conversationsUsage.media.hasOwnProperty("chats") ? conversationsUsage.media.chats : 0);
-            conversationsUsage.media.emails = parseInt(conversationsUsage.media.emails) + (conversationsUsage.media.hasOwnProperty("emails") ? conversationsUsage.media.emails : 0);
-            conversationsUsage.media.callbacks = parseInt(conversationsUsage.media.callbacks) + (conversationsUsage.media.hasOwnProperty("callbacks") ? conversationsUsage.media.callbacks : 0);
-            conversationsUsage.media.cobrowses = parseInt(conversationsUsage.media.cobrowses) + (conversationsUsage.media.hasOwnProperty("cobrowses") ? conversationsUsage.media.cobrowses : 0);
-            conversationsUsage.media.videos = parseInt(conversationsUsage.media.videos) + (conversationsUsage.media.hasOwnProperty("videos") ? conversationsUsage.media.videos : 0);
-            conversationsUsage.media.screenshares = parseInt(conversationsUsage.media.screenshares) + (conversationsUsage.media.hasOwnProperty("screenshares") ? conversationsUsage.media.screenshares : 0);
-            conversationsUsage.media.messages = parseInt(conversationsUsage.media.messages) + (conversationsUsage.media.hasOwnProperty("messages") ? conversationsUsage.media.messages : 0);
-
-            let totalMediaUsage = sum(conversationsUsage.media);
-            $("#totalMediaUsage").text(totalMediaUsage);
-            $("#totalMediaUsage_calls").text(conversationsUsage.media.calls);
-            $("#totalMediaUsage_chats").text(conversationsUsage.media.chats);
-            $("#totalMediaUsage_emails").text(conversationsUsage.media.emails);
-            $("#totalMediaUsage_callbacks").text(conversationsUsage.media.callbacks);
-            $("#totalMediaUsage_cobrowses").text(conversationsUsage.media.cobrowses);
-            $("#totalMediaUsage_videos").text(conversationsUsage.media.videos);
-            $("#totalMediaUsage_screenshares").text(conversationsUsage.media.screenshares);
-            $("#totalMediaUsage_messages").text(conversationsUsage.media.messages);
-
-            // Set colors
-            $("#calls").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.calls) === 0 ? "text-danger" : "text-success");
-            $("#chats").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.chats) === 0 ? "text-danger" : "text-success");
-            $("#emails").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.emails) === 0 ? "text-danger" : "text-success");
-            $("#callbacks").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.callbacks) === 0 ? "text-danger" : "text-success");
-            $("#cobrowses").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.cobrowses) === 0 ? "text-danger" : "text-success");
-            $("#videos").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.videos) === 0 ? "text-danger" : "text-success");
-            $("#screenshares").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.screenshares) === 0 ? "text-danger" : "text-success");
-            $("#messages").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(conversationsUsage.media.messages) === 0 ? "text-danger" : "text-success");
-
-            // Set usage percentage
-            let mediaUsagePercentValue = 0;
-            $.each(Object.entries(conversationsUsage.media), (i, media) => {
-              if (parseInt(media[1]) > 0) {
-                mediaUsagePercentValue += 1 / Object.entries(conversationsUsage.media).length;
-              }
-            });
-            mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
-
-            $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-            $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
-
-            //#region Recordings
-
-            try {
-              if (!conversationsUsage.hasOwnProperty("recordings")) conversationsUsage.recordings = {
-                calls: 0,
-                chats: 0,
-                emails: 0,
-                messages: 0
-              }
-
-              conversationsUsage.recordings.calls = parseInt(conversationsUsage.recordings.calls) + (conversationsUsage.recordings.hasOwnProperty("calls") ? conversationsUsage.recordings.calls : 0);
-              conversationsUsage.recordings.chats = parseInt(conversationsUsage.recordings.chats) + (conversationsUsage.recordings.hasOwnProperty("chats") ? conversationsUsage.recordings.chats : 0);
-              conversationsUsage.recordings.emails = parseInt(conversationsUsage.recordings.emails) + (conversationsUsage.recordings.hasOwnProperty("emails") ? conversationsUsage.recordings.emails : 0);
-              conversationsUsage.recordings.messages = parseInt(conversationsUsage.recordings.messages) + (conversationsUsage.recordings.hasOwnProperty("messages") ? conversationsUsage.recordings.messages : 0);
-
-              let totalRecordingsUsage = sum(conversationsUsage.recordings);
-              let percRecordings = Math.round(totalRecordingsUsage * 100 / (conversationsUsage.media.calls + conversationsUsage.media.chats + conversationsUsage.media.emails + conversationsUsage.media.messages));
-              $("#percRecordings").text(percRecordings + '%');
-              $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-              $("#totalRecordingsUsage_calls").text(conversationsUsage.recordings.calls);
-              $("#totalRecordingsUsage_chats").text(conversationsUsage.recordings.chats);
-              $("#totalRecordingsUsage_emails").text(conversationsUsage.recordings.emails);
-              $("#totalRecordingsUsage_messages").text(conversationsUsage.recordings.messages);
-
-              // Set colors
-              $("#calls_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.calls) === 0 ? "text-danger" : "text-success");
-              $("#chats_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.chats) === 0 ? "text-danger" : "text-success");
-              $("#emails_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.emails) === 0 ? "text-danger" : "text-success");
-              $("#messages_recordings").removeClass().addClass(parseInt(conversationsUsage.recordings.messages) === 0 ? "text-danger" : "text-success");
-            } catch (error) {
-              console.error('Error while processing recordings usage:', error);
-              $("#percRecordings").append(" (Error)");
-            }
-
-            //#endregion
-
-          } catch (error) {
-            console.error('Error while processing media usage:', error);
-            $("#totalMediaUsage").append(" (Error)");
-          }
+          await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
 
           //#endregion
 
@@ -913,347 +930,329 @@
 
           //#endregion
 
-        });
+          //#region Users
 
-        //#region Users
-
-        try {
-          let users = await getUsers(clientId, clientSecret, environment);
-          $("#totalUsersUsage").text(users.users);
-
-          // Set colors
-          $("#activeUsers").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
-
-        } catch (error) {
-          console.error('Error while processing users:', error);
-        }
-
-        //#endregion
-
-        //#region Evaluation Forms
-
-        try {
-          let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
-          $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
-
-          // Set colors
-          $("#evaluationForms").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing evaluation forms:', error);
-        }
-
-        //#endregion
-
-        //#region Response Libraries
-
-        try {
-          let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
-          $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
-
-          // Set colors
-          $("#responseLibraries").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing response libraries:', error);
-        }
-
-        //#endregion
-
-        //#region Skills
-
-        try {
-          let skillsUsage = await getSkills(clientId, clientSecret, environment);
-          $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
-
-          // Set colors
-          $("#skills").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing skills:', error);
-        }
-
-        //#endregion
-
-        //#region Wrap Up Codes
-
-        try {
-          let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
-          $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
-
-          // Set colors
-          $("#wrapUpCodes").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing skills:', error);
-        }
-
-        //#endregion
-
-        //#region Stations
-
-        try {
-          let stationsUsage = await getStations(clientId, clientSecret, environment);
-
-
-          // Stations icon in Telephony
-          $("#totalStationsUsage").text(sum(stationsUsage.stations));
-          // Set colors
-          $("#stations").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
-
-          // Station types table
-          $("#stationsBody").empty();
-          for (var station in stationsUsage.stations) {
-            if (stationsUsage.stations.hasOwnProperty(station)) {
-              let row = $("<tr/>", {}).appendTo("#stationsBody");
-              $("<td/>").text(station).appendTo(row);
-              $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
-            }
-          }
-        } catch (error) {
-          console.error('Error while processing stations:', error);
-        }
-
-        //#endregion
-
-        //#region Edges
-
-        try {
-          let edgesUsage = await getEdges(clientId, clientSecret, environment);
-          $("#totalEdgesUsage").text(sum(edgesUsage.edges));
-
-          // Set colors
-          $("#edges").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing edges:', error);
-        }
-
-
-        //#endregion
-
-        //#region SMS Phone Numbers
-
-        try {
-          let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
-          $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
-
-          // Set colors
-          $("#smsPhoneNumbers").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing sms phone numbers:', error);
-        }
-
-        //#endregion
-
-        //#region Scripts
-
-        try {
-          let scriptsUsage = await getScripts(clientId, clientSecret, environment);
-          $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
-
-          // Set colors
-          $("#scripts").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing scripts:', error);
-        }
-
-        //#endregion
-
-        //#region Flows & AI
-
-        // Flows
-        try {
-          let flowsUsage = await getFlows(clientId, clientSecret, environment);
-          $("#totalFlowsUsage").text(flowsUsage.flows);
-
-          // Set colors
-          $("#totalFlowsUsage").removeClass(function (index, className) {
-            return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing flows:', error);
-        }
-
-        // AI (integrations should be enough for now)
-        // try {
-        //   let aiUsage = await getAI(clientId, clientSecret, environment);
-        //   usages.bots = aiUsage.bots;
-        //   usages.tts = aiUsage.tts;
-
-        //   let totalArtificialIntelligenceUsage = sum(usages.bots) + sum(usages.tts);
-        //   $("#totalArtificialIntelligenceUsage").text(totalArtificialIntelligenceUsage);
-        //   $("#totalBotsUsage").text(sum(usages.bots));
-        //   $("#totalTTSUsage").text(sum(usages.tts));
-
-        //   // Set colors
-        //   $("#bots_usage").addClass(sum(usages.bots) === 0 ? "text-danger" : "text-success");
-        //   $("#tts_usage").addClass(sum(usages.tts) === 0 ? "text-danger" : "text-success");
-        // } catch (error) {
-        //   console.error('Error while processing AI:', error);
-        // }
-
-        //#endregion
-
-        //#region Integrations
-
-        try {
-          let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
-          $("#integrationsBody").empty();
-          for (var integration in integrationsUsage.integrations) {
-            if (integrationsUsage.integrations.hasOwnProperty(integration)) {
-              let row = $("<tr/>", {}).appendTo("#integrationsBody");
-              $("<td/>").text(integration).appendTo(row);
-              $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
-            }
-          }
-        } catch (error) {
-          console.error('Error while processing integrations:', error);
-        }
-        //#endregion
-
-        //#region Locations
-
-        try {
-          var interval = 1 * 1000; // 1 second
-
-          let locationsUsage = await getLocations(clientId, clientSecret, environment);
-
-          $.each(locationsUsage.locations, (i, location) => {
-            setTimeout(async (i) => {
-              if (location.hasOwnProperty('address')) {
-                let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
-                addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-              } else {
-                console.log(`location ${JSON.stringify(location)} has no address set`);
-              }
-            }, interval * i, i);
-          });
-        } catch (error) {
-          console.error('Error while processing locations:', error);
-        }
-
-        //#endregion
-
-        //#region Dialer Campaigns
-
-        try {
-          let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
-
-          if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns') && dialerCampaignsUsage.dialerCampaigns.length > 0) {
-            $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns.length);
+          try {
+            let users = await getUsers(clientId, clientSecret, environment);
+            $("#totalUsersUsage").text(users.users);
 
             // Set colors
-            $("#dialerCampaigns").removeClass(function (index, className) {
+            $("#activeUsers").removeClass(function (index, className) {
               return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
-          } else {
-            $("#dialerCampaigns").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass("text-danger");
+            }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
+
+          } catch (error) {
+            console.error('Error while processing users:', error);
           }
-        } catch (error) {
-          console.error('Error while processing dialer campaigns:', error);
-        }
 
-        //#endregion
+          //#endregion
 
-        //#region Documents
+          //#region Evaluation Forms
 
-        try {
-          let documentsUsage = await getDocuments(clientId, clientSecret, environment);
-          if (documentsUsage.hasOwnProperty('documents')) {
-            let totalDocumentsUsage = 0;
-            $.each(documentsUsage.documents, (i, document) => {
-              if (document.type === "ALL") {
-                totalDocumentsUsage += parseInt(document.totalDocumentCount);
+          try {
+            let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
+            $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
+
+            // Set colors
+            $("#evaluationForms").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing evaluation forms:', error);
+          }
+
+          //#endregion
+
+          //#region Response Libraries
+
+          try {
+            let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
+            $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
+
+            // Set colors
+            $("#responseLibraries").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing response libraries:', error);
+          }
+
+          //#endregion
+
+          //#region Skills
+
+          try {
+            let skillsUsage = await getSkills(clientId, clientSecret, environment);
+            $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
+
+            // Set colors
+            $("#skills").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing skills:', error);
+          }
+
+          //#endregion
+
+          //#region Wrap Up Codes
+
+          try {
+            let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
+            $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
+
+            // Set colors
+            $("#wrapUpCodes").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing skills:', error);
+          }
+
+          //#endregion
+
+          //#region Stations
+
+          try {
+            let stationsUsage = await getStations(clientId, clientSecret, environment);
+
+
+            // Stations icon in Telephony
+            $("#totalStationsUsage").text(sum(stationsUsage.stations));
+            // Set colors
+            $("#stations").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
+
+            // Station types table
+            $("#stationsBody").empty();
+            for (var station in stationsUsage.stations) {
+              if (stationsUsage.stations.hasOwnProperty(station)) {
+                let row = $("<tr/>", {}).appendTo("#stationsBody");
+                $("<td/>").text(station).appendTo(row);
+                $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
               }
+            }
+          } catch (error) {
+            console.error('Error while processing stations:', error);
+          }
+
+          //#endregion
+
+          //#region Edges
+
+          try {
+            let edgesUsage = await getEdges(clientId, clientSecret, environment);
+            $("#totalEdgesUsage").text(sum(edgesUsage.edges));
+
+            // Set colors
+            $("#edges").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing edges:', error);
+          }
+
+          //#endregion
+
+          //#region SMS Phone Numbers
+
+          try {
+            let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
+            $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
+
+            // Set colors
+            $("#smsPhoneNumbers").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing sms phone numbers:', error);
+          }
+
+          //#endregion
+
+          //#region Scripts
+
+          try {
+            let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+            $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
+
+            // Set colors
+            $("#scripts").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing scripts:', error);
+          }
+
+          //#endregion
+
+          //#region Flows
+
+          // Flows
+          try {
+            let flowsUsage = await getFlows(clientId, clientSecret, environment);
+            $("#totalFlowsUsage").text(flowsUsage.flows);
+
+            // Set colors
+            $("#totalFlowsUsage").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing flows:', error);
+          }
+
+          //#endregion
+
+          //#region Integrations
+
+          try {
+            let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
+            $("#integrationsBody").empty();
+            for (var integration in integrationsUsage.integrations) {
+              if (integrationsUsage.integrations.hasOwnProperty(integration)) {
+                let row = $("<tr/>", {}).appendTo("#integrationsBody");
+                $("<td/>").text(integration).appendTo(row);
+                $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
+              }
+            }
+          } catch (error) {
+            console.error('Error while processing integrations:', error);
+          }
+          //#endregion
+
+          //#region Locations
+
+          try {
+            var interval = 1 * 1000; // 1 second
+
+            let locationsUsage = await getLocations(clientId, clientSecret, environment);
+
+            $.each(locationsUsage.locations, (i, location) => {
+              setTimeout(async (i) => {
+                if (location.hasOwnProperty('address')) {
+                  let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+                  addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+                } else {
+                  console.log(`No address set for location ${location.name}`);
+                }
+              }, interval * i, i);
             });
-            $("#totalDocuments").text(totalDocumentsUsage);
-
-            // Set colors
-            $("#totalDocuments").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
+          } catch (error) {
+            console.error('Error while processing locations:', error);
           }
-        } catch (error) {
-          console.error('Error while processing documents:', error);
-        }
 
-        //#endregion
+          //#endregion
 
-        //#region External Contacts
+          //#region Dialer Campaigns
 
-        try {
-          let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
-          if (externalContactsUsage.hasOwnProperty('externalContacts')) {
-            $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
+          try {
+            let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
 
-            // Set colors
-            $("#totalExternalContacts").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
-          } else {
-            $("#totalExternalContacts").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass("text-danger");
+            if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns') && dialerCampaignsUsage.dialerCampaigns.length > 0) {
+              $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns.length);
+
+              // Set colors
+              $("#dialerCampaigns").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
+            } else {
+              $("#dialerCampaigns").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass("text-danger");
+            }
+          } catch (error) {
+            console.error('Error while processing dialer campaigns:', error);
           }
-        } catch (error) {
-          console.error('Error while processing external contacts:', error);
-        }
 
-        //#endregion
+          //#endregion
 
-        //#region GDPR
+          //#region Documents
 
-        try {
-          let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
-          if (gdprUsage.hasOwnProperty('gdprRequests')) {
-            $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
+          try {
+            let documentsUsage = await getDocuments(clientId, clientSecret, environment);
+            if (documentsUsage.hasOwnProperty('documents')) {
+              let totalDocumentsUsage = 0;
+              $.each(documentsUsage.documents, (i, document) => {
+                if (document.type === "ALL") {
+                  totalDocumentsUsage += parseInt(document.totalDocumentCount);
+                }
+              });
+              $("#totalDocuments").text(totalDocumentsUsage);
 
-            // Set colors
-            $("#totalGDPRRequests").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
-          } else {
-            $("#totalGDPRRequests").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass("text-danger");
+              // Set colors
+              $("#totalDocuments").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
+            }
+          } catch (error) {
+            console.error('Error while processing documents:', error);
           }
-        } catch (error) {
-          console.error('Error while processing gdpr:', error);
-        }
 
-        //#endregion
+          //#endregion
 
-        //#region Routing Languages
+          //#region External Contacts
 
-        try {
-          let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
-          $("#routingLanguagesBody").empty();
-          $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
-            let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
-            $("<td/>").text(routingLanguage.name).appendTo(row);
-          });
-        } catch (error) {
-          console.error('Error while processing routing languages:', error);
-        }
+          try {
+            let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
+            if (externalContactsUsage.hasOwnProperty('externalContacts')) {
+              $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
 
-        //#endregion
+              // Set colors
+              $("#totalExternalContacts").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
+            } else {
+              $("#totalExternalContacts").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass("text-danger");
+            }
+          } catch (error) {
+            console.error('Error while processing external contacts:', error);
+          }
 
+          //#endregion
+
+          //#region GDPR
+
+          try {
+            let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
+            if (gdprUsage.hasOwnProperty('gdprRequests')) {
+              $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
+
+              // Set colors
+              $("#totalGDPRRequests").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
+            } else {
+              $("#totalGDPRRequests").removeClass(function (index, className) {
+                return (className.match(/\btext-\S+/g) || []).join(' ');
+              }).addClass("text-danger");
+            }
+          } catch (error) {
+            console.error('Error while processing gdpr:', error);
+          }
+
+          //#endregion
+
+          //#region Routing Languages
+
+          try {
+            let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
+            $("#routingLanguagesBody").empty();
+            $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
+              let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
+              $("<td/>").text(routingLanguage.name).appendTo(row);
+            });
+          } catch (error) {
+            console.error('Error while processing routing languages:', error);
+          }
+
+          //#endregion
+
+          hideSpinner();
+
+        });
       }
 
       async function getMedia(clientId, clientSecret, environment, startDate, endDate) {
@@ -1262,7 +1261,8 @@
           method: 'GET',
           url: `${urlBasePath}/media`,
           contentType: 'application/json',
-          dataType: 'json',
+          dataType: 'text',
+          cache: false,
           data: {
             clientId: clientId,
             clientSecret: clientSecret,
@@ -1272,11 +1272,13 @@
           }
         })
           .done((data, textStatus, jqXHR) => {
+            console.log('Got it');
             try {
               switch (jqXHR.status) {
                 case 200:
-                  console.log(jqXHR.responseJSON);
-                  return jqXHR.responseJSON;
+                  //console.log(jqXHR.responseJSON);
+                  //return jqXHR.responseJSON;
+                  break;
                 default:
                   showMessage("Unexpected error: " + textStatus, true);
                   throw new Error(textStatus);
@@ -1285,6 +1287,11 @@
               console.error(error);
               throw error;
             }
+          })
+          .fail((jqXHR, textStatus, errorThrown) => {
+            console.error(jqXHR);
+            console.error(textStatus);
+            console.error(errorThrown);
           })
           .always(() => {
             console.log("getMedia completed");
@@ -1356,40 +1363,6 @@
             console.log("getFlows completed");
           });
       }
-
-      // Integrations should be enough
-      // async function getAI(clientId, clientSecret, environment) {
-      //   $("#spinner-text").text("Getting AI Usage...");
-      //   return await $.ajax({
-      //     method: 'GET',
-      //     url: `${urlBasePath}/ai`,
-      //     contentType: 'application/json',
-      //     dataType: 'json',
-      //     data: {
-      //       clientId: clientId,
-      //       clientSecret: clientSecret,
-      //       environment: environment
-      //     }
-      //   })
-      //     .done((data, textStatus, jqXHR) => {
-      //       try {
-      //         switch (jqXHR.status) {
-      //           case 200:
-      //             console.log(jqXHR.responseJSON);
-      //             return jqXHR.responseJSON;
-      //           default:
-      //             showMessage("Unexpected error: " + textStatus, true);
-      //             throw new Error(textStatus);
-      //         }
-      //       } catch (error) {
-      //         console.error(error);
-      //         throw error;
-      //       }
-      //     })
-      //     .always(() => {
-      //       console.log("getAI completed");
-      //     });
-      // }
 
       async function getLicense(clientId, clientSecret, environment, startDate, endDate) {
         $("#spinner-text").text("Getting License Usage...");
@@ -1923,6 +1896,14 @@
 
       //#endregion
 
+      //#region Print
+
+      $("#generateReport").on("click", () => {
+        window.print();
+      });
+
+      //#endregion
+
       function sum(obj) {
         var sum = 0;
         for (var el in obj) {
@@ -1933,13 +1914,28 @@
         return sum;
       }
 
-      //#region Print
+      function resetValues() {
+        $("#totalMediaUsage").text(0);
+        $("#totalMediaUsage_calls").text(0);
+        $("#totalMediaUsage_chats").text(0);
+        $("#totalMediaUsage_emails").text(0);
+        $("#totalMediaUsage_callbacks").text(0);
+        $("#totalMediaUsage_cobrowses").text(0);
+        $("#totalMediaUsage_videos").text(0);
+        $("#totalMediaUsage_screenshares").text(0);
+        $("#totalMediaUsage_messages").text(0);
 
-      $("#generateReport").on("click", () => {
-        window.print();
-      });
-
-      //#endregion
+        $("#percRecordings").text('0%');
+        $("#recordings_progressbar").prop('style', 'width:0%');
+        $("#totalRecordingsUsage_calls").text(0);
+        $("#totalRecordingsUsage_chats").text(0);
+        $("#totalRecordingsUsage_emails").text(0);
+        $("#totalRecordingsUsage_messages").text(0);
+        $("#calls_recordings").removeClass();
+        $("#chats_recordings").removeClass();
+        $("#emails_recordings").removeClass();
+        $("#messages_recordings").removeClass();
+      }
 
     </script>
 </body>
