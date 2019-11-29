@@ -80,11 +80,11 @@
                   <form>
                     <div class="form-group">
                       <label for="clientId" class="col-form-label">OAuth Client Id:</label>
-                      <input type="text" class="form-control" id="clientId" value="79eb3eb8-fbb8-4b50-ba45-9df2297f2425">
+                      <input type="text" class="form-control" id="clientId" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
                     </div>
                     <div class="form-group">
                       <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
-                      <input type="password" class="form-control" id="clientSecret" value="pwauKqLeTf7PdJf5d-ONDtLZtOuJtvw6rVe4D2i9Z3E">
+                      <input type="password" class="form-control" id="clientSecret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
                     </div>
                     <div class="form-group">
                       <label for="environment" class="col-form-label">PureCloud Environment:</label>
@@ -108,11 +108,16 @@
             </div>
           </div>
 
-          <!-- Content Row -->
+          <!-- Historical Data -->
+          <div class="mb-4">
+            <hr>
+            <h4 class="text-center mb-0 text-gray-800">Historical Data</h4>
+          </div>
+
           <div class="row">
 
             <!-- Conversations -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -181,6 +186,46 @@
                 </div>
               </div>
             </div>
+
+          </div>
+
+          <div class="row">
+            <!-- Licenses -->
+            <div class="col-xl-3 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses (Usage)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row ml-0 mt-1 mb-1">
+                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="licensesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- /Historical Data -->
+
+          <!-- Current Data -->
+          <div class="mb-4">
+            <hr>
+            <h4 class="text-center mb-0 text-gray-800">Current Data</h4>
+          </div>
+
+          <div class="row">
 
             <!-- Contact Center -->
             <div class="col-xl-3 col-md-3 mb-4">
@@ -273,7 +318,7 @@
                   </div>
                   <div class="row ml-0">
                     <!-- <small data-toggle="tooltip" title="Bots" id="bots_usage"><i class="fas fa-robot"></i><span id="totalBotsUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small> -->
+                                <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small> -->
                   </div>
                 </div>
               </div>
@@ -300,12 +345,6 @@
                 </div>
               </div>
             </div>
-
-          </div>
-          <!-- Content Row -->
-
-          <!-- Content Row -->
-          <div class="row">
 
             <!-- Area Chart -->
             <!-- <div class="col-xl-8 col-lg-7">
@@ -349,32 +388,6 @@
                         </tr>
                       </thead>
                       <tbody id="integrationsBody">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Licenses -->
-            <div class="col-xl-4 col-lg-5">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses (Usage)</h6>
-                </div>
-                <div class="card-body">
-                  <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Count</th>
-                        </tr>
-                      </thead>
-                      <tbody id="licensesBody">
                       </tbody>
                     </table>
                   </div>
@@ -443,116 +456,8 @@
               </div>
             </div>
 
-            <!-- Content Row -->
-            <div class="row">
-
-              <!-- Content Column -->
-              <div class="col-lg-6 mb-4">
-
-                <!-- Project Card Example -->
-                <!-- <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
-                </div>
-                <div class="card-body">
-                  <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
-                  <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div> -->
-
-                <!-- Color System -->
-                <!-- <div class="row">
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-primary text-white shadow">
-                    <div class="card-body">
-                      Primary
-                      <div class="text-white-50 small">#4e73df</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-success text-white shadow">
-                    <div class="card-body">
-                      Success
-                      <div class="text-white-50 small">#1cc88a</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-info text-white shadow">
-                    <div class="card-body">
-                      Info
-                      <div class="text-white-50 small">#36b9cc</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      Warning
-                      <div class="text-white-50 small">#f6c23e</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-danger text-white shadow">
-                    <div class="card-body">
-                      Danger
-                      <div class="text-white-50 small">#e74a3b</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-secondary text-white shadow">
-                    <div class="card-body">
-                      Secondary
-                      <div class="text-white-50 small">#858796</div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-
-              </div>
-
-              <div class="col-lg-6 mb-4">
-
-                <!-- Illustrations -->
-                <!-- <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                </div>
-                <div class="card-body">
-                  <div class="text-center">
-                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_posting_photo.svg" alt="">
-                  </div>
-                  <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a constantly updated collection of beautiful svg images that you can use completely free and without attribution!</p>
-                  <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on unDraw &rarr;</a>
-                </div>
-              </div> -->
-
-              </div>
-            </div>
-
           </div>
-          <!-- Content Row -->
+          <!-- /Current Data -->
 
         </div>
         <!-- End of Main Content -->
@@ -930,329 +835,329 @@
 
           //#endregion
 
-          //#region Users
-
-          try {
-            let users = await getUsers(clientId, clientSecret, environment);
-            $("#totalUsersUsage").text(users.users);
-
-            // Set colors
-            $("#activeUsers").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
-
-          } catch (error) {
-            console.error('Error while processing users:', error);
-          }
-
-          //#endregion
-
-          //#region Evaluation Forms
-
-          try {
-            let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
-            $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
-
-            // Set colors
-            $("#evaluationForms").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing evaluation forms:', error);
-          }
-
-          //#endregion
-
-          //#region Response Libraries
-
-          try {
-            let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
-            $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
-
-            // Set colors
-            $("#responseLibraries").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing response libraries:', error);
-          }
-
-          //#endregion
-
-          //#region Skills
-
-          try {
-            let skillsUsage = await getSkills(clientId, clientSecret, environment);
-            $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
-
-            // Set colors
-            $("#skills").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing skills:', error);
-          }
-
-          //#endregion
-
-          //#region Wrap Up Codes
-
-          try {
-            let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
-            $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
-
-            // Set colors
-            $("#wrapUpCodes").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing skills:', error);
-          }
-
-          //#endregion
-
-          //#region Stations
-
-          try {
-            let stationsUsage = await getStations(clientId, clientSecret, environment);
-
-
-            // Stations icon in Telephony
-            $("#totalStationsUsage").text(sum(stationsUsage.stations));
-            // Set colors
-            $("#stations").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
-
-            // Station types table
-            $("#stationsBody").empty();
-            for (var station in stationsUsage.stations) {
-              if (stationsUsage.stations.hasOwnProperty(station)) {
-                let row = $("<tr/>", {}).appendTo("#stationsBody");
-                $("<td/>").text(station).appendTo(row);
-                $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
-              }
-            }
-          } catch (error) {
-            console.error('Error while processing stations:', error);
-          }
-
-          //#endregion
-
-          //#region Edges
-
-          try {
-            let edgesUsage = await getEdges(clientId, clientSecret, environment);
-            $("#totalEdgesUsage").text(sum(edgesUsage.edges));
-
-            // Set colors
-            $("#edges").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing edges:', error);
-          }
-
-          //#endregion
-
-          //#region SMS Phone Numbers
-
-          try {
-            let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
-            $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
-
-            // Set colors
-            $("#smsPhoneNumbers").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing sms phone numbers:', error);
-          }
-
-          //#endregion
-
-          //#region Scripts
-
-          try {
-            let scriptsUsage = await getScripts(clientId, clientSecret, environment);
-            $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
-
-            // Set colors
-            $("#scripts").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing scripts:', error);
-          }
-
-          //#endregion
-
-          //#region Flows
-
-          // Flows
-          try {
-            let flowsUsage = await getFlows(clientId, clientSecret, environment);
-            $("#totalFlowsUsage").text(flowsUsage.flows);
-
-            // Set colors
-            $("#totalFlowsUsage").removeClass(function (index, className) {
-              return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
-          } catch (error) {
-            console.error('Error while processing flows:', error);
-          }
-
-          //#endregion
-
-          //#region Integrations
-
-          try {
-            let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
-            $("#integrationsBody").empty();
-            for (var integration in integrationsUsage.integrations) {
-              if (integrationsUsage.integrations.hasOwnProperty(integration)) {
-                let row = $("<tr/>", {}).appendTo("#integrationsBody");
-                $("<td/>").text(integration).appendTo(row);
-                $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
-              }
-            }
-          } catch (error) {
-            console.error('Error while processing integrations:', error);
-          }
-          //#endregion
-
-          //#region Locations
-
-          try {
-            var interval = 1 * 1000; // 1 second
-
-            let locationsUsage = await getLocations(clientId, clientSecret, environment);
-
-            $.each(locationsUsage.locations, (i, location) => {
-              setTimeout(async (i) => {
-                if (location.hasOwnProperty('address')) {
-                  let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
-                  addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-                } else {
-                  console.log(`No address set for location ${location.name}`);
-                }
-              }, interval * i, i);
-            });
-          } catch (error) {
-            console.error('Error while processing locations:', error);
-          }
-
-          //#endregion
-
-          //#region Dialer Campaigns
-
-          try {
-            let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
-
-            if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns') && dialerCampaignsUsage.dialerCampaigns.length > 0) {
-              $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns.length);
-
-              // Set colors
-              $("#dialerCampaigns").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
-            } else {
-              $("#dialerCampaigns").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass("text-danger");
-            }
-          } catch (error) {
-            console.error('Error while processing dialer campaigns:', error);
-          }
-
-          //#endregion
-
-          //#region Documents
-
-          try {
-            let documentsUsage = await getDocuments(clientId, clientSecret, environment);
-            if (documentsUsage.hasOwnProperty('documents')) {
-              let totalDocumentsUsage = 0;
-              $.each(documentsUsage.documents, (i, document) => {
-                if (document.type === "ALL") {
-                  totalDocumentsUsage += parseInt(document.totalDocumentCount);
-                }
-              });
-              $("#totalDocuments").text(totalDocumentsUsage);
-
-              // Set colors
-              $("#totalDocuments").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
-            }
-          } catch (error) {
-            console.error('Error while processing documents:', error);
-          }
-
-          //#endregion
-
-          //#region External Contacts
-
-          try {
-            let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
-            if (externalContactsUsage.hasOwnProperty('externalContacts')) {
-              $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
-
-              // Set colors
-              $("#totalExternalContacts").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
-            } else {
-              $("#totalExternalContacts").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass("text-danger");
-            }
-          } catch (error) {
-            console.error('Error while processing external contacts:', error);
-          }
-
-          //#endregion
-
-          //#region GDPR
-
-          try {
-            let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
-            if (gdprUsage.hasOwnProperty('gdprRequests')) {
-              $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
-
-              // Set colors
-              $("#totalGDPRRequests").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
-            } else {
-              $("#totalGDPRRequests").removeClass(function (index, className) {
-                return (className.match(/\btext-\S+/g) || []).join(' ');
-              }).addClass("text-danger");
-            }
-          } catch (error) {
-            console.error('Error while processing gdpr:', error);
-          }
-
-          //#endregion
-
-          //#region Routing Languages
-
-          try {
-            let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
-            $("#routingLanguagesBody").empty();
-            $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
-              let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
-              $("<td/>").text(routingLanguage.name).appendTo(row);
-            });
-          } catch (error) {
-            console.error('Error while processing routing languages:', error);
-          }
-
-          //#endregion
-
-          hideSpinner();
-
         });
+
+        //#region Users
+
+        try {
+          let users = await getUsers(clientId, clientSecret, environment);
+          $("#totalUsersUsage").text(users.users);
+
+          // Set colors
+          $("#activeUsers").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
+
+        } catch (error) {
+          console.error('Error while processing users:', error);
+        }
+
+        //#endregion
+
+        //#region Evaluation Forms
+
+        try {
+          let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
+          $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
+
+          // Set colors
+          $("#evaluationForms").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing evaluation forms:', error);
+        }
+
+        //#endregion
+
+        //#region Response Libraries
+
+        try {
+          let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
+          $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
+
+          // Set colors
+          $("#responseLibraries").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing response libraries:', error);
+        }
+
+        //#endregion
+
+        //#region Skills
+
+        try {
+          let skillsUsage = await getSkills(clientId, clientSecret, environment);
+          $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
+
+          // Set colors
+          $("#skills").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing skills:', error);
+        }
+
+        //#endregion
+
+        //#region Wrap Up Codes
+
+        try {
+          let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
+          $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
+
+          // Set colors
+          $("#wrapUpCodes").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing skills:', error);
+        }
+
+        //#endregion
+
+        //#region Stations
+
+        try {
+          let stationsUsage = await getStations(clientId, clientSecret, environment);
+
+
+          // Stations icon in Telephony
+          $("#totalStationsUsage").text(sum(stationsUsage.stations));
+          // Set colors
+          $("#stations").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
+
+          // Station types table
+          $("#stationsBody").empty();
+          for (var station in stationsUsage.stations) {
+            if (stationsUsage.stations.hasOwnProperty(station)) {
+              let row = $("<tr/>", {}).appendTo("#stationsBody");
+              $("<td/>").text(station).appendTo(row);
+              $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing stations:', error);
+        }
+
+        //#endregion
+
+        //#region Edges
+
+        try {
+          let edgesUsage = await getEdges(clientId, clientSecret, environment);
+          $("#totalEdgesUsage").text(sum(edgesUsage.edges));
+
+          // Set colors
+          $("#edges").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing edges:', error);
+        }
+
+        //#endregion
+
+        //#region SMS Phone Numbers
+
+        try {
+          let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
+          $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
+
+          // Set colors
+          $("#smsPhoneNumbers").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing sms phone numbers:', error);
+        }
+
+        //#endregion
+
+        //#region Scripts
+
+        try {
+          let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+          $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
+
+          // Set colors
+          $("#scripts").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing scripts:', error);
+        }
+
+        //#endregion
+
+        //#region Flows
+
+        // Flows
+        try {
+          let flowsUsage = await getFlows(clientId, clientSecret, environment);
+          $("#totalFlowsUsage").text(flowsUsage.flows);
+
+          // Set colors
+          $("#totalFlowsUsage").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing flows:', error);
+        }
+
+        //#endregion
+
+        //#region Integrations
+
+        try {
+          let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
+          $("#integrationsBody").empty();
+          for (var integration in integrationsUsage.integrations) {
+            if (integrationsUsage.integrations.hasOwnProperty(integration)) {
+              let row = $("<tr/>", {}).appendTo("#integrationsBody");
+              $("<td/>").text(integration).appendTo(row);
+              $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing integrations:', error);
+        }
+        //#endregion
+
+        //#region Locations
+
+        try {
+          var interval = 1 * 1000; // 1 second
+
+          let locationsUsage = await getLocations(clientId, clientSecret, environment);
+
+          $.each(locationsUsage.locations, (i, location) => {
+            setTimeout(async (i) => {
+              if (location.hasOwnProperty('address')) {
+                let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+                addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+              } else {
+                console.log(`No address set for location ${location.name}`);
+              }
+            }, interval * i, i);
+          });
+        } catch (error) {
+          console.error('Error while processing locations:', error);
+        }
+
+        //#endregion
+
+        //#region Dialer Campaigns
+
+        try {
+          let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
+
+          if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns')) {
+            $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns);
+
+            // Set colors
+            $("#dialerCampaigns").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#dialerCampaigns").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
+          }
+        } catch (error) {
+          console.error('Error while processing dialer campaigns:', error);
+        }
+
+        //#endregion
+
+        //#region Documents
+
+        try {
+          let documentsUsage = await getDocuments(clientId, clientSecret, environment);
+          if (documentsUsage.hasOwnProperty('documents')) {
+            let totalDocumentsUsage = 0;
+            $.each(documentsUsage.documents, (i, document) => {
+              if (document.type === "ALL") {
+                totalDocumentsUsage += parseInt(document.totalDocumentCount);
+              }
+            });
+            $("#totalDocuments").text(totalDocumentsUsage);
+
+            // Set colors
+            $("#totalDocuments").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
+          }
+        } catch (error) {
+          console.error('Error while processing documents:', error);
+        }
+
+        //#endregion
+
+        //#region External Contacts
+
+        try {
+          let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
+          if (externalContactsUsage.hasOwnProperty('externalContacts')) {
+            $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
+
+            // Set colors
+            $("#totalExternalContacts").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#totalExternalContacts").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
+          }
+        } catch (error) {
+          console.error('Error while processing external contacts:', error);
+        }
+
+        //#endregion
+
+        //#region GDPR
+
+        try {
+          let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
+          if (gdprUsage.hasOwnProperty('gdprRequests')) {
+            $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
+
+            // Set colors
+            $("#totalGDPRRequests").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#totalGDPRRequests").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
+          }
+        } catch (error) {
+          console.error('Error while processing gdpr:', error);
+        }
+
+        //#endregion
+
+        //#region Routing Languages
+
+        try {
+          let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
+          $("#routingLanguagesBody").empty();
+          $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
+            let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
+            $("<td/>").text(routingLanguage.name).appendTo(row);
+          });
+        } catch (error) {
+          console.error('Error while processing routing languages:', error);
+        }
+
+        //#endregion
+
+        hideSpinner();
       }
 
       async function getMedia(clientId, clientSecret, environment, startDate, endDate) {
@@ -1272,7 +1177,6 @@
           }
         })
           .done((data, textStatus, jqXHR) => {
-            console.log('Got it');
             try {
               switch (jqXHR.status) {
                 case 200:
@@ -1499,7 +1403,7 @@
       }
 
       async function getIntegrations(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Integrations Usage...");
+        $("#spinner-text").text("Getting Integrations...");
         return await $.ajax({
           method: 'GET',
           url: `${urlBasePath}/integrations`,
