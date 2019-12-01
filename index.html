@@ -47,6 +47,7 @@
     <div class="spinner"></div>
     <div class="spinner-text" id="spinner-text"></div>
   </div>
+
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -61,7 +62,7 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
+            <h1 id="title" class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
             <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
             <button href="#" id="generateReport" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
           </div>
@@ -119,7 +120,12 @@
             <!-- Conversations -->
             <div class="col-xl-4 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body" id="conversationsCard">
+                  <div id="overlay-div" style="display: none;">
+                    <div class="w-100 d-flex justify-content-center align-items-center">
+                      <div class="spinner-div"></div>
+                    </div>
+                  </div>
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Conversations (Usage)</div>
@@ -155,7 +161,12 @@
             <!-- Recordings -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body" id="recordingsCard">
+                  <div id="overlay-div" style="display: none;">
+                    <div class="w-100 d-flex justify-content-center align-items-center">
+                      <div class="spinner-div"></div>
+                    </div>
+                  </div>
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Recordings (Usage)</div>
@@ -190,6 +201,7 @@
           </div>
 
           <div class="row">
+
             <!-- Licenses -->
             <div class="col-xl-3 col-lg-5">
               <div class="card shadow mb-4">
@@ -215,6 +227,7 @@
                 </div>
               </div>
             </div>
+
           </div>
 
           <!-- /Historical Data -->
@@ -226,6 +239,29 @@
           </div>
 
           <div class="row">
+
+            <!-- Organization Features -->
+            <div class="col-xl-3 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Feature</th>
+                          <th>Enabled?</th>
+                        </tr>
+                      </thead>
+                      <tbody id="organizationFeaturesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Contact Center -->
             <div class="col-xl-3 col-md-3 mb-4">
@@ -319,6 +355,23 @@
                   <div class="row ml-0">
                     <!-- <small data-toggle="tooltip" title="Bots" id="bots_usage"><i class="fas fa-robot"></i><span id="totalBotsUsage" class="ml-1">0</span></small>
                                 <small data-toggle="tooltip" title="TTS" id="tts_usage"><i class="ml-2 fas fa-phone-volume"></i><span id="totalTTSUsage" class="ml-1">0</span></small> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Divisions -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Divisions</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDivisionsUsage">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-divide fa-2x text-gray-300"></i>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -653,9 +706,19 @@
         $("#fadeMe").show();
       }
 
-      function hideSpinner() {
+      function showCardSpinner(cardName) {
+        console.log('Show card spinner for:', cardName);
+        $("#" + cardName + " #overlay-div").show();
+      }
+
+      function hideSpinner(div) {
         $("#fadeMe").removeClass("fadeMe");
         $("#fadeMe").hide();
+      }
+
+      function hideCardSpinner(cardName) {
+        console.log('Hide card spinner for:', cardName);
+        $("#" + cardName + " #overlay-div").hide();
       }
 
       //#endregion
@@ -785,6 +848,8 @@
 
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
 
+        showCardSpinner("conversationsCard");
+        showCardSpinner("recordingsCard");
         $("#spinner-text").text("Loading... Please Wait...");
 
         resetValues();
@@ -795,10 +860,22 @@
           var data = JSON.parse(data);
           console.log('Received data:', data);
           if (data.hasOwnProperty('media')) {
-            processMediaMessage(data);
+            // This isn't working properly yet
+            if (data.media.hasOwnProperty('status') && data.media.status === "FINISHED") {
+              console.log('No more media data...');
+              hideCardSpinner("conversationsCard");
+            } else {
+              processMediaMessage(data);
+            }
           }
           if (data.hasOwnProperty('recordings')) {
-            processRecordingsMessage(data);
+            // This isn't working properly yet
+            if (data.recordings.hasOwnProperty('status') && data.recordings.status === "FINISHED") {
+              console.log('No more recordings data...');
+              hideCardSpinner("recordingsCard");
+            } else {
+              processRecordingsMessage(data);
+            }
           }
         };
         websocket.onerror = error => {
@@ -810,35 +887,48 @@
           // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
           var dateRanges = getDates(new Date(startDate), new Date(endDate));
           $.each(dateRanges, async (i, dateRange) => {
-
             console.log(`Current date range: ${dateRange.startDate} to ${dateRange.endDate}`);
-
-            //#region Conversations
-
-            await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
-
-            //#endregion
-
-            //#region Licenses
-
-            try {
-              let licenseUsage = await getLicense(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate);
-              $("#licensesBody").empty();
-              for (var license in licenseUsage.licenses) {
-                if (licenseUsage.licenses.hasOwnProperty(license)) {
-                  let row = $("<tr/>", {}).appendTo("#licensesBody");
-                  $("<td/>").text(license).appendTo(row);
-                  $("<td/>").text(licenseUsage.licenses[license]).appendTo(row);
-                }
-              }
-            } catch (error) {
-              console.error('Error while processing licenses:', error);
-            }
-
-            //#endregion
-
+            await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
           });
         };
+
+        //#region Organization
+
+        try {
+          let organizationUsage = await getOrganization(clientId, clientSecret, environment);
+          $("#title").text("AE Upsell2 - " + organizationUsage.organization.name);
+          $("#organizationFeaturesBody").empty();
+          for (var feature in organizationUsage.organization.features) {
+            if (organizationUsage.organization.features.hasOwnProperty(feature)) {
+              let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
+              $("<td/>").text(feature).appendTo(row);
+              $("<td/>").text(organizationUsage.organization.features[feature]).appendTo(row);
+              row.addClass(organizationUsage.organization.features[feature] ? "text-success" : "text-danger");
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing organization features:', error);
+        }
+
+        //#endregion
+
+        //#region Licenses
+
+        try {
+          let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
+          $("#licensesBody").empty();
+          for (var license in licenseUsage.licenses) {
+            if (licenseUsage.licenses.hasOwnProperty(license)) {
+              let row = $("<tr/>", {}).appendTo("#licensesBody");
+              $("<td/>").text(license).appendTo(row);
+              $("<td/>").text(licenseUsage.licenses[license]).appendTo(row);
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing licenses:', error);
+        }
+
+        //#endregion
 
         //#region Users
 
@@ -1160,10 +1250,27 @@
 
         //#endregion
 
+        //#region Flows
+
+        // Divisions
+        try {
+          let divisionsUsage = await getDivisions(clientId, clientSecret, environment);
+          $("#totalDivisionsUsage").text(divisionsUsage.divisions);
+
+          // Set colors
+          $("#totalDivisionsUsage").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(divisionsUsage.divisions) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing divisions:', error);
+        }
+
+        //#endregion
+
         hideSpinner();
       }
 
-      async function getMedia(clientId, clientSecret, environment, startDate, endDate) {
+      async function getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate) {
         $("#spinner-text").text("Getting Media Usage...");
         return await $.ajax({
           method: 'GET',
@@ -1176,7 +1283,8 @@
             clientSecret: clientSecret,
             environment: environment,
             startDate: startDate,
-            endDate: endDate
+            endDate: endDate,
+            originalEndDate: originalEndDate
           }
         })
           .done((data, textStatus, jqXHR) => {
@@ -1798,6 +1906,72 @@
           })
           .always(() => {
             console.log("getScripts completed");
+          });
+      }
+
+      async function getDivisions(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Divisions...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/divisions`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDivisions completed");
+          });
+      }
+
+      async function getOrganization(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Organization...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/organization`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getOrganization completed");
           });
       }
 
