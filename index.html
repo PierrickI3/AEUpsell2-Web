@@ -264,7 +264,7 @@
             </div>
 
             <!-- Contact Center -->
-            <div class="col-xl-3 col-md-3 mb-4">
+            <div class="col-xl-4 col-md-3 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -278,6 +278,7 @@
                         <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Scripts" id="scripts"><i class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
                         <small data-toggle="tooltip" title="Dialer Campaigns" id="dialerCampaigns"><i class="fas fa-phone-volume ml-2"></i><span id="totalDialerCampaigns" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Contact Lists" id="contactLists"><i class="fas fa-address-book ml-2"></i><span id="totalContactLists" class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -1190,6 +1191,29 @@
 
         //#endregion
 
+        //#region Dialer Campaigns
+
+        try {
+          let contactListsUsage = await getContactLists(clientId, clientSecret, environment);
+
+          if (contactListsUsage.hasOwnProperty('contactLists')) {
+            $("#totalContactLists").text(contactListsUsage.contactLists);
+
+            // Set colors
+            $("#contactLists").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass(contactListsUsage.contactLists === 0 ? "text-danger" : "text-success");
+          } else {
+            $("#contactLists").removeClass(function (index, className) {
+              return (className.match(/\btext-\S+/g) || []).join(' ');
+            }).addClass("text-danger");
+          }
+        } catch (error) {
+          console.error('Error while processing contact lists:', error);
+        }
+
+        //#endregion
+
         //#region Documents
 
         try {
@@ -1650,6 +1674,39 @@
           })
           .always(() => {
             console.log("getDialerCampaigns completed");
+          });
+      }
+
+      async function getContactLists(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Contact Lists...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/contactLists`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getContactLists completed");
           });
       }
 
