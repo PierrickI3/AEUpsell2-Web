@@ -493,6 +493,29 @@
               </div>
             </div>
 
+            <!-- Identity Providers -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Identity Providers</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="identityProvidersBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Locations -->
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
@@ -1250,6 +1273,23 @@
 
         //#endregion
 
+        //#region Identity Providers
+
+        try {
+          let identityProvidersUsage = await getIdentityProviders(clientId, clientSecret, environment);
+          $("#identityProvidersBody").empty();
+          Object.keys(identityProvidersUsage.identityProviders).forEach((identityProvider) => {
+            console.log('Identity Provider:', identityProvider);
+            let row = $("<tr/>", {}).appendTo("#identityProvidersBody");
+            $("<td/>").text(identityProvider).appendTo(row);
+            $("<td/>").text(identityProvidersUsage.identityProviders[identityProvider]).appendTo(row);
+          });
+        } catch (error) {
+          console.error('Error while processing identity providers:', error);
+        }
+
+        //#endregion
+
         //#region Flows
 
         //#region Divisions
@@ -1742,6 +1782,39 @@
           })
           .always(() => {
             console.log("getRoutingLanguages completed");
+          });
+      }
+
+      async function getIdentityProviders(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Identity Providers...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/identityProviders`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getIdentityProviders completed");
           });
       }
 
