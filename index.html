@@ -202,11 +202,11 @@
 
           <div class="row">
 
-            <!-- Licenses -->
+            <!-- Billable Usage -->
             <div class="col-xl-3 col-lg-5">
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses (Usage)</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Billable Usage</h6>
                 </div>
                 <div class="card-body">
                   <div class="row ml-0 mt-1 mb-1">
@@ -220,7 +220,7 @@
                           <th>Count</th>
                         </tr>
                       </thead>
-                      <tbody id="licensesBody">
+                      <tbody id="billableUsageBody">
                       </tbody>
                     </table>
                   </div>
@@ -936,20 +936,20 @@
 
         //#endregion
 
-        //#region Licenses
+        //#region Billable Usage
 
         try {
-          let licenseUsage = await getLicense(clientId, clientSecret, environment, startDate, endDate);
-          $("#licensesBody").empty();
-          for (var license in licenseUsage.licenses) {
-            if (licenseUsage.licenses.hasOwnProperty(license)) {
-              let row = $("<tr/>", {}).appendTo("#licensesBody");
-              $("<td/>").text(license).appendTo(row);
-              $("<td/>").text(licenseUsage.licenses[license]).appendTo(row);
+          let billableUsageArray = await getBillableUsage(clientId, clientSecret, environment, startDate, endDate);
+          $("#billableUsageBody").empty();
+          for (var billableUsage in billableUsageArray.billableUsage) {
+            if (billableUsageArray.billableUsage.hasOwnProperty(billableUsage)) {
+              let row = $("<tr/>", {}).appendTo("#billableUsageBody");
+              $("<td/>").text(billableUsage).appendTo(row);
+              $("<td/>").text(billableUsageArray.billableUsage[billableUsage]).appendTo(row);
             }
           }
         } catch (error) {
-          console.error('Error while processing licenses:', error);
+          console.error('Error while processing billable usage:', error);
         }
 
         //#endregion
@@ -1444,11 +1444,11 @@
           });
       }
 
-      async function getLicense(clientId, clientSecret, environment, startDate, endDate) {
-        $("#spinner-text").text("Getting License Usage...");
+      async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate) {
+        $("#spinner-text").text("Getting Billable Usage...");
         return await $.ajax({
           method: 'GET',
-          url: `${urlBasePath}/licenses`,
+          url: `${urlBasePath}/billableUsage`,
           contentType: 'application/json',
           dataType: 'json',
           data: {
@@ -1475,7 +1475,7 @@
             }
           })
           .always(() => {
-            console.log("getLicense completed");
+            console.log("getBillableUsage completed");
           });
       }
 
