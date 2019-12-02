@@ -289,6 +289,26 @@
               </div>
             </div>
 
+            <!-- Workforce Management -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Workforce Management</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Management Units" id="managementUnits"><i class="fas fa-tasks"></i><span id="totalManagementUnitsUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scheduling Runs" id="schedulingRuns"><i class="fas fa-calendar-alt ml-2"></i><span id="totalSchedulingRunsUsage" class="ml-1">0</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="far fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Documents -->
             <div class="col-xl-2 col-md-3 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
@@ -1332,6 +1352,28 @@
 
         //#endregion
 
+        //#region Users
+
+        try {
+          let workforceManagementData = await getWorkforceManagementUsage(clientId, clientSecret, environment);
+          $("#totalManagementUnitsUsage").text(workforceManagementData.wfm.managementUnits);
+          $("#totalSchedulingRunsUsage").text(workforceManagementData.wfm.schedulingRuns);
+
+          // Set colors
+          $("#managementUnits").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(workforceManagementData.managementUnits) === 0 ? "text-danger" : "text-success");
+
+          $("#schedulingRuns").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(workforceManagementData.schedulingRuns) === 0 ? "text-danger" : "text-success");
+
+        } catch (error) {
+          console.error('Error while processing workforce management data:', error);
+        }
+
+        //#endregion
+
         hideSpinner();
       }
 
@@ -2103,6 +2145,39 @@
           })
           .always(() => {
             console.log("getOrganization completed");
+          });
+      }
+
+      async function getWorkforceManagementUsage(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Workforce Management Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/workforceManagement`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getWorkorceManagementUsage completed");
           });
       }
 
