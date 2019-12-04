@@ -102,7 +102,7 @@
                   </form>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
                   <button type="button" class="btn btn-primary" id="getData">Go!</button>
                 </div>
               </div>
@@ -128,7 +128,7 @@
                   </div>
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Conversations (Usage)</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Routing</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMediaUsage">0</div>
                       <div class="row ml-0">
                         <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span id="totalMediaUsage_calls" class="ml-1">0</span></small>
@@ -235,33 +235,10 @@
           <!-- Current Data -->
           <div class="mb-4">
             <hr>
-            <h4 class="text-center mb-0 text-gray-800">Current Data</h4>
+            <h4 class="text-center mb-0 text-gray-800">Current Configuration</h4>
           </div>
 
           <div class="row">
-
-            <!-- Organization Features -->
-            <div class="col-xl-3 col-lg-5">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Feature</th>
-                          <th>Enabled?</th>
-                        </tr>
-                      </thead>
-                      <tbody id="organizationFeaturesBody">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <!-- Contact Center -->
             <div class="col-xl-4 col-md-3 mb-4">
@@ -360,6 +337,10 @@
               </div>
             </div>
 
+          </div>
+
+          <div class="row">
+
             <!-- Flows -->
             <div class="col-xl-2 col-md-4 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
@@ -446,6 +427,10 @@
               </div>
             </div> -->
 
+          </div>
+
+          <div class="row">
+
             <!-- Integrations -->
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
@@ -462,6 +447,29 @@
                         </tr>
                       </thead>
                       <tbody id="integrationsBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Organization Features -->
+            <div class="col-xl-3 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Feature</th>
+                          <th>Enabled?</th>
+                        </tr>
+                      </thead>
+                      <tbody id="organizationFeaturesBody">
                       </tbody>
                     </table>
                   </div>
@@ -536,6 +544,10 @@
                 </div>
               </div>
             </div>
+
+          </div>
+
+          <div class="row">
 
             <!-- Locations -->
             <div class="col-xl-4 col-lg-5">
