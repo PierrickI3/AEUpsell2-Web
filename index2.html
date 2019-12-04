@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>AE Upsell 2</title>
+
+  <!--#region Stylesheets -->
+  <!-- Custom fonts-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Open Layers -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Progress bars with percentage -->
+  <link rel="stylesheet" href="css/circle.css">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+  <!-- Bootstrap Date Picker -->
+  <link rel="stylesheet" href="vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <!--#endregion -->
+
+</head>
+
+<body id="page-top">
+
+  <div id="fadeMe" style="display:none">
+    <div class="spinner"></div>
+    <div class="spinner-text" id="spinner-text"></div>
+  </div>
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Begin Page Content -->
+        <div id="printContent" class="container-fluid mt-4">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 id="title" class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
+            <button href="#" id="generateReport" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
+          </div>
+
+          <!-- Configuration Modal -->
+          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="configModalLabel">Configuration</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="form-group">
+                      <label for="clientId" class="col-form-label">OAuth Client Id:</label>
+                      <input type="text" class="form-control" id="clientId" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
+                    </div>
+                    <div class="form-group">
+                      <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
+                      <input type="password" class="form-control" id="clientSecret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
+                    </div>
+                    <div class="form-group">
+                      <label for="environment" class="col-form-label">PureCloud Environment:</label>
+                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
+                    </div>
+                    <div class="form-group">
+                      <label for="startDatePicker" class="col-form-label">Start Date:</label>
+                      <input type="text" class="form-control" id="startDatePicker" value="2019-11-21T00:00:00.000Z">
+                    </div>
+                    <div class="form-group">
+                      <label for="endDatePicker" class="col-form-label">End Date:</label>
+                      <input type="text" class="form-control" id="endDatePicker" value="2019-11-22T00:00:00.000Z">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-success" id="testConnection">Test Connection</button>
+                  <button type="button" class="btn btn-primary" id="getData">Go!</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            What they are paying for and NOT using
+          </div>
+          <div>
+            What they could use if they upgraded
+          </div>
+
+          <div class="row">
+
+            <!-- Licenses (Billable Usage) -->
+            <div class="col-xl-3 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
+                  <div class="row ml-0 mt-1 mb-1">
+                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="billableUsageBody">
+                      </tbody>
+                    </table>
+                    <small id="licensingLevel" class="text-muted"></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Licenses Guide -->
+            <div class="col-xl-9 col-lg-7">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses Guide</h6>
+                  <div class="row ml-0 mt-1 mb-1">
+                    <small class="date-range-start text-gray-500">Taken from <a href="https://www.genesys.com/platform/purecloud/purecloud-pricing" target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
+                  </div>
+                </div>
+                <div class="card-body" id="licensesGuideBody">
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Historical Data -->
+          <div class="mb-4">
+            <hr>
+            <h4 class="text-center mb-0 text-gray-800">Historical Data</h4>
+          </div>
+
+          <div class="row">
+
+            <!-- Flows -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Flows</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalFlowsUsage">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-stream fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conversations -->
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body" id="conversationsCard">
+                  <div id="overlay-div" style="display: none;">
+                    <div class="w-100 d-flex justify-content-center align-items-center">
+                      <div class="spinner-div"></div>
+                    </div>
+                  </div>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Routing</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMediaUsage">0</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span id="totalMediaUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Callbacks" id="callbacks"><i class="ml-2 fas fa-undo"></i><span id="totalMediaUsage_callbacks" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Co-Browse Sessions" id="cobrowses"><i class="ml-2 fas fa-globe"></i><span id="totalMediaUsage_cobrowses" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Videos" id="videos"><i class="ml-2 fas fa-video"></i><span id="totalMediaUsage_videos" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Screen Shares" id="screenshares"><i class="ml-2 fas fa-desktop"></i><span id="totalMediaUsage_screenshares" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Messages" id="messages"><i class="ml-2 far fa-sticky-note"></i><span id="totalMediaUsage_messages" class="ml-1">0</span></small>
+                      </div>
+                      <div class="row ml-0 mt-1">
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <div id="mediaUsagePercentValue">
+                        <span id="mediaUsagePercentText">0%</span>
+                        <div class="slice">
+                          <div class="bar"></div>
+                          <div class="fill"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recordings -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body" id="recordingsCard">
+                  <div id="overlay-div" style="display: none;">
+                    <div class="w-100 d-flex justify-content-center align-items-center">
+                      <div class="spinner-div"></div>
+                    </div>
+                  </div>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Recordings (Usage)</div>
+                      <div class="row no-gutters align-items-center">
+                        <div class="col-auto">
+                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="percRecordings">0%</div>
+                        </div>
+                        <div class="col">
+                          <div class="progress progress-sm mr-2">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="recordings_progressbar"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Recorded Calls" id="calls_recordings"><i class="fas fa-phone"></i><span id="totalRecordingsUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Chats" id="chats_recordings"><i class="ml-2 fas fa-comments"></i><span id="totalRecordingsUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Emails" id="emails_recordings"><i class="ml-2 far fa-envelope"></i><span id="totalRecordingsUsage_emails" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Messages" id="messages_recordings"><i class="ml-2 far fa-sticky-note"></i><span id="totalRecordingsUsage_messages" class="ml-1">0</span></small>
+                      </div>
+                      <div class="row ml-0 mt-1">
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-file-audio fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- /Historical Data -->
+
+          <!-- Current Data -->
+          <div class="mb-4">
+            <hr>
+            <h4 class="text-center mb-0 text-gray-800">Current Configuration</h4>
+          </div>
+
+          <div class="row">
+
+            <!-- Contact Center -->
+            <div class="col-xl-4 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center Configuration</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Active Users" id="activeUsers"><i class="fas fa-user"></i><span id="totalUsersUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Skills" id="skills"><i class="fas fa-chalkboard-teacher ml-2"></i><span id="totalSkills" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scripts" id="scripts"><i class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Dialer Campaigns" id="dialerCampaigns"><i class="fas fa-phone-volume ml-2"></i><span id="totalDialerCampaigns" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Contact Lists" id="contactLists"><i class="fas fa-address-book ml-2"></i><span id="totalContactLists" class="ml-1">0</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workforce Management -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Workforce Management</div>
+                      <div class="row ml-0">
+                        <small data-toggle="tooltip" title="Management Units" id="managementUnits"><i class="fas fa-tasks"></i><span id="totalManagementUnitsUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scheduling Runs" id="schedulingRuns"><i class="fas fa-calendar-alt ml-2"></i><span id="totalSchedulingRunsUsage" class="ml-1">0</span></small>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="far fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Documents</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDocuments">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="far fa-file fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- External Contacts -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">External Contacts</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalExternalContacts">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GDPR Requests -->
+            <div class="col-xl-2 col-md-3 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">GDPR Requests</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalGDPRRequests">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-address-card fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <!-- Divisions -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Divisions</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalDivisionsUsage">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-divide fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Telephony -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Telephony</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalTelephony">0%</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-phone fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                  <div class="row ml-0">
+                    <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span id="totalStationsUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="edges" title="Edges"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="smsPhoneNumbers" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Area Chart -->
+            <!-- <div class="col-xl-8 col-lg-7">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Dropdown Header:</div>
+                      <a class="dropdown-item" href="#">Action</a>
+                      <a class="dropdown-item" href="#">Another action</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+          </div>
+
+          <div class="row">
+
+            <!-- Integrations -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Integrations</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="integrationsBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Organization Features -->
+            <div class="col-xl-3 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Feature</th>
+                          <th>Enabled?</th>
+                        </tr>
+                      </thead>
+                      <tbody id="organizationFeaturesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stations -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Stations</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="stationsBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Routing Languages -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Routing Languages</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Language</th>
+                        </tr>
+                      </thead>
+                      <tbody id="routingLanguagesBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Identity Providers -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Identity Providers</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Count</th>
+                        </tr>
+                      </thead>
+                      <tbody id="identityProvidersBody">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <!-- Locations -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Locations</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-0 pb-1">
+                    <div id="map" class="map"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /Current Data -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Genesys 2020</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+
+      </div>
+      <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- #region Imports -->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- Open Layers -->
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+
+    <!-- Chart Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+    <!-- moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Date Picker -->
+    <script src="vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+
+    <!-- #endregion -->
+
+    <script>
+
+      const devMode = false;
+
+      const locationIqToken = 'pk.22d11668ff9343048c0e186130d2f8a7'; // Geocoding (locationiq) token
+      const urlBasePath = devMode ? 'http://localhost:3000' : 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
+      const webSocketUrl = devMode ? 'ws://localhost:3001' : 'wss://anr7mnvwrg.execute-api.eu-central-1.amazonaws.com/dev';
+
+      var usages = {};
+
+      var isUsingPC1 = false, isUsingPC2 = false, isUsingPC3 = false, isUsingCollaborate = false, isUsingCommunicate = false;
+
+      var licenses = {
+        categories: [
+          {
+            name: "Graphical Scripting",
+            id: "graphical-scripting",
+            items: [
+              {
+                name: "Ability to Customize Script",
+                id: "ability-to-customize-script",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Default Script - Basic Contact Info",
+                id: "default-script-basic-contact-info",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Import/Export Scripts",
+                id: "import-export-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Inbound Call Support",
+                id: "inbound-call-support-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Outbound Call Support",
+                id: "outbound-call-support-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              }
+            ]
+          },
+          {
+            name: "Integrations",
+            id: "integrations",
+            items: [
+              {
+                name: "Access Control",
+                id: "access-control",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "divisions"
+              }
+            ]
+          }
+        ]
+      };
+
+      //#region Date Pickers
+
+      $("#startDatePicker").datepicker({
+        format: "yyyy-mm-ddT00:00:00.000Z",
+        endDate: "+0d",       // No future dates
+        autoclose: true,      // Close after selecting date
+        weekStart: 1          // weeks start on Mondays
+      });
+
+      $("#endDatePicker").datepicker({
+        format: "yyyy-mm-ddT00:00:00.000Z",
+        endDate: "+0d",       // No future dates
+        autoclose: true,      // Close after selecting date
+        weekStart: 1          // weeks start on Mondays
+      });
+
+      //#endregion
+
+      //#region Configuration Modal
+
+      $('#configModal').on('show.bs.modal', function (event) {
+        //$("#configModal #clientId").trigger('focus'); //TODO Not working and causing an issue with DatePicker
+      });
+
+      $("#getData").on("click", async (e) => {
+        e.preventDefault();
+
+        try {
+          console.log('Getting data...');
+
+          let clientId = $("#configModal #clientId").val();
+          let clientSecret = $("#configModal #clientSecret").val();
+          let environment = $("#configModal #environment").val();
+          let startDate = $("#configModal #startDatePicker").val();
+          let endDate = $("#configModal #endDatePicker").val();
+
+          if (!clientId || !clientSecret || !environment || !startDate || !endDate) {
+            alert('Invalid or missing parameters');
+            return;
+          }
+
+          // Start/End dates validation
+          if (new Date(startDate) >= new Date(endDate)) {
+            alert('Make sure the start date is before the end date');
+            return;
+          }
+
+          // Close the modal
+          $('#configModal').modal('toggle')
+
+          // Update date fields
+          var d = new Date(startDate);
+          var startDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
+          $(".startDate").text(startDateString);
+          var d = new Date(endDate);
+          var endDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
+          $(".endDate").text(endDateString);
+
+          await getData(clientId, clientSecret, environment, startDate, endDate);
+
+        } catch (error) {
+          console.error(error);
+          alert(error.message);
+        }
+
+      });
+
+      //#endregion
+
+      //#region Map
+
+      var vectorSources = [];
+
+      var map = new ol.Map({
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        view: new ol.View({
+          center: ol.proj.fromLonLat([0, 40]),
+          zoom: 0 // Worldwide view
+        })
+      });
+
+      function addMapMarker(lon, lat) {
+        var marker = new ol.Feature({
+          geometry: new ol.geom.Point(
+            ol.proj.fromLonLat([lon, lat])
+          )
+        });
+
+        var vectorSource = new ol.source.Vector({
+          features: [marker]
+        });
+        vectorSources.push(vectorSource);
+
+        var markerVectorLayer = new ol.layer.Vector({
+          source: vectorSource,
+        });
+        map.addLayer(markerVectorLayer);
+      }
+
+      function removeAllMarkers() {
+        vectorSources.forEach((vectorSource) => {
+          vectorSource.clear();
+        });
+      }
+
+      async function getLonLat(address) {
+
+        var lonLat = {};
+        await $.ajax({
+          method: 'GET',
+          dataType: 'json',
+          url: `https://eu1.locationiq.com/v1/search.php?key=${locationIqToken}&q=${address}&format=json`
+        }).done((data, textStatus, jqXHR) => {
+          if (!data || data.length === 0) { return undefined };
+          lonLat.lon = data[0].lon;
+          lonLat.lat = data[0].lat;
+        }).always(() => {
+          console.log("getLonLat completed");
+        });
+        return lonLat;
+      }
+
+      //#endregion
+
+      //#region Spinner
+
+      function showSpinner() {
+        $("#fadeMe").addClass("fadeMe");
+        $("#fadeMe").show();
+      }
+
+      function showCardSpinner(cardName) {
+        console.log('Show card spinner for:', cardName);
+        $("#" + cardName + " #overlay-div").show();
+      }
+
+      function hideSpinner(div) {
+        $("#fadeMe").removeClass("fadeMe");
+        $("#fadeMe").hide();
+      }
+
+      function hideCardSpinner(cardName) {
+        console.log('Hide card spinner for:', cardName);
+        $("#" + cardName + " #overlay-div").hide();
+      }
+
+      //#endregion
+
+      //#region Get Data
+
+      Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+      }
+
+      function getDates(startDate, stopDate) {
+        var dateArray = [];
+        var currentDate = startDate;
+        while (currentDate < stopDate) {
+          var dateRange = {};
+          dateRange.startDate = new Date(currentDate).toISOString();
+          currentDate = currentDate.addDays(7);
+          if (currentDate > stopDate) {
+            currentDate = stopDate;
+          }
+          dateRange.endDate = new Date(currentDate).toISOString();
+          dateArray.push(dateRange);
+        }
+        return dateArray;
+      }
+
+      async function processMediaMessage(data) {
+        if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
+        if (!data.media.hasOwnProperty("chats")) data.media.chats = 0;
+        if (!data.media.hasOwnProperty("emails")) data.media.emails = 0;
+        if (!data.media.hasOwnProperty("callbacks")) data.media.callbacks = 0;
+        if (!data.media.hasOwnProperty("cobrowses")) data.media.cobrowses = 0;
+        if (!data.media.hasOwnProperty("videos")) data.media.videos = 0;
+        if (!data.media.hasOwnProperty("screenshares")) data.media.screenshares = 0;
+        if (!data.media.hasOwnProperty("messages")) data.media.messages = 0;
+
+        data.media.calls = parseInt($("#totalMediaUsage_calls").text()) + (data.media.hasOwnProperty("calls") ? data.media.calls : 0);
+        data.media.chats = parseInt($("#totalMediaUsage_chats").text()) + (data.media.hasOwnProperty("chats") ? data.media.chats : 0);
+        data.media.emails = parseInt($("#totalMediaUsage_emails").text()) + (data.media.hasOwnProperty("emails") ? data.media.emails : 0);
+        data.media.callbacks = parseInt($("#totalMediaUsage_callbacks").text()) + (data.media.hasOwnProperty("callbacks") ? data.media.callbacks : 0);
+        data.media.cobrowses = parseInt($("#totalMediaUsage_cobrowses").text()) + (data.media.hasOwnProperty("cobrowses") ? data.media.cobrowses : 0);
+        data.media.videos = parseInt($("#totalMediaUsage_videos").text()) + (data.media.hasOwnProperty("videos") ? data.media.videos : 0);
+        data.media.screenshares = parseInt($("#totalMediaUsage_screenshares").text()) + (data.media.hasOwnProperty("screenshares") ? data.media.screenshares : 0);
+        data.media.messages = parseInt($("#totalMediaUsage_messages").text()) + (data.media.hasOwnProperty("messages") ? data.media.messages : 0);
+
+        $("#totalMediaUsage").text(sum(data.media));
+        $("#totalMediaUsage_calls").text(data.media.calls);
+        $("#totalMediaUsage_chats").text(data.media.chats);
+        $("#totalMediaUsage_emails").text(data.media.emails);
+        $("#totalMediaUsage_callbacks").text(data.media.callbacks);
+        $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
+        $("#totalMediaUsage_videos").text(data.media.videos);
+        $("#totalMediaUsage_screenshares").text(data.media.screenshares);
+        $("#totalMediaUsage_messages").text(data.media.messages);
+
+        // Set colors
+        $("#calls").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
+        $("#chats").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
+        $("#emails").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
+        $("#callbacks").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
+        $("#cobrowses").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
+        $("#videos").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.videos) === 0 ? "text-danger" : "text-success");
+        $("#screenshares").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
+        $("#messages").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
+
+        // Set usage percentage
+        let mediaUsagePercentValue = 0;
+        $.each(Object.entries(data.media), (i, media) => {
+          if (parseInt(media[1]) > 0) {
+            mediaUsagePercentValue += 1 / Object.entries(data.media).length;
+          }
+        });
+        mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
+
+        $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
+        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
+
+      }
+
+      async function processRecordingsMessage(data) {
+        try {
+          if (!data.recordings.hasOwnProperty("calls")) data.recordings.calls = 0;
+          if (!data.recordings.hasOwnProperty("chats")) data.recordings.chats = 0;
+          if (!data.recordings.hasOwnProperty("emails")) data.recordings.emails = 0;
+          if (!data.recordings.hasOwnProperty("messages")) data.recordings.messages = 0;
+
+          $("#totalRecordingsUsage_calls").text(parseInt($("#totalRecordingsUsage_calls").text()) + data.recordings.calls);
+          $("#totalRecordingsUsage_chats").text(parseInt($("#totalRecordingsUsage_chats").text()) + data.recordings.chats);
+          $("#totalRecordingsUsage_emails").text(parseInt($("#totalRecordingsUsage_emails").text()) + data.recordings.emails);
+          $("#totalRecordingsUsage_messages").text(parseInt($("#totalRecordingsUsage_messages").text()) + data.recordings.messages);
+
+          // Percentage
+          let totalRecordingsUsage = parseInt($("#totalRecordingsUsage_calls").text()) + parseInt($("#totalRecordingsUsage_chats").text()) + parseInt($("#totalRecordingsUsage_emails").text()) + parseInt($("#totalRecordingsUsage_messages").text());
+          let totalMediaUsage = parseInt($("#totalMediaUsage_calls").text()) + parseInt($("#totalMediaUsage_chats").text()) + parseInt($("#totalMediaUsage_emails").text()) + parseInt($("#totalMediaUsage_messages").text());
+          let percRecordings = Math.round((sum(data.recordings) + totalRecordingsUsage) * 100 / totalMediaUsage);
+          $("#percRecordings").text(percRecordings + '%');
+          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+
+          // Set colors
+          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing recordings usage:', error);
+          $("#percRecordings").append(" (Error)");
+        }
+      }
+
+      function setLicensingLevel(license) {
+        switch (license) {
+          case 'PureCloud 3 User Usage':
+            isUsingPC3 = true;
+            break;
+
+          default:
+            break;
+        }
+        $("#licensingLevel").text(`PureCloud1: ${isUsingPC1}, PureCloud2: ${isUsingPC2}, PureCloud3: ${isUsingPC3}, Collaborate: ${isUsingCollaborate}, Communicate: ${isUsingCommunicate}`);
+      }
+
+      async function getData(clientId, clientSecret, environment, startDate, endDate) {
+
+        showSpinner();
+        //showCardSpinner("conversationsCard");
+        //showCardSpinner("recordingsCard");
+        $("#spinner-text").text("Loading... Please Wait...");
+
+        resetValues();
+
+        // Open web socket and process messages
+        const websocket = new WebSocket(webSocketUrl);
+        websocket.onmessage = ({ data }) => {
+          var data = JSON.parse(data);
+          console.log('Received data:', data);
+          if (data.hasOwnProperty('media')) {
+            // This isn't working properly yet
+            if (data.media.hasOwnProperty('status') && data.media.status === "FINISHED") {
+              console.log('No more media data...');
+              hideCardSpinner("conversationsCard");
+            } else {
+              processMediaMessage(data);
+            }
+          }
+          if (data.hasOwnProperty('recordings')) {
+            // This isn't working properly yet
+            if (data.recordings.hasOwnProperty('status') && data.recordings.status === "FINISHED") {
+              console.log('No more recordings data...');
+              hideCardSpinner("recordingsCard");
+            } else {
+              processRecordingsMessage(data);
+            }
+          }
+        };
+        websocket.onerror = error => {
+          console.error('onerror:', error);
+        };
+        websocket.onopen = () => {
+          console.log('Websocket opened!');
+
+          // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
+          var dateRanges = getDates(new Date(startDate), new Date(endDate));
+          $.each(dateRanges, async (i, dateRange) => {
+            console.log(`Current date range: ${dateRange.startDate} to ${dateRange.endDate}`);
+            await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
+          });
+        };
+
+        //#region Organization
+
+        try {
+          let organizationUsage = await getOrganization(clientId, clientSecret, environment);
+          usages.organization = organizationUsage.organization;
+
+          $("#title").text("AE Upsell2 - " + organizationUsage.organization.name);
+          $("#organizationFeaturesBody").empty();
+          for (var feature in organizationUsage.organization.features) {
+            if (organizationUsage.organization.features.hasOwnProperty(feature)) {
+              let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
+              $("<td/>").text(feature).appendTo(row);
+              $("<td/>").text(organizationUsage.organization.features[feature]).appendTo(row);
+              row.addClass(organizationUsage.organization.features[feature] ? "text-success" : "text-danger");
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing organization features:', error);
+        }
+
+        //#endregion
+
+        //#region Billable Usage
+
+        try {
+          let billableUsageArray = await getBillableUsage(clientId, clientSecret, environment, startDate, endDate);
+          usages.licenses = billableUsageArray.billableUsage;
+
+          $("#billableUsageBody").empty();
+          for (var billableUsage in billableUsageArray.billableUsage) {
+            if (billableUsageArray.billableUsage.hasOwnProperty(billableUsage)) {
+              let row = $("<tr/>", {}).appendTo("#billableUsageBody");
+              $("<td/>").text(billableUsage).appendTo(row);
+              $("<td/>").text(billableUsageArray.billableUsage[billableUsage]).appendTo(row);
+              setLicensingLevel(billableUsage);
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing billable usage:', error);
+        }
+
+        //#endregion
+
+        //#region Flows
+
+        try {
+          let flowsUsage = await getFlows(clientId, clientSecret, environment);
+          usages.flows = flowsUsage.flows;
+          $("#totalFlowsUsage").text(flowsUsage.flows.length);
+
+          // Set colors
+          $("#totalFlowsUsage").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(flowsUsage.flows.length === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing flows:', error);
+        }
+
+        //#endregion
+
+        populateLicenses(clientId, clientSecret, environment);
+
+        //#region Not used right now
+
+        // //#region Users
+
+        // try {
+        //   let users = await getUsers(clientId, clientSecret, environment);
+        //   $("#totalUsersUsage").text(users.users);
+
+        //   // Set colors
+        //   $("#activeUsers").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(users.users) === 0 ? "text-danger" : "text-success");
+
+        // } catch (error) {
+        //   console.error('Error while processing users:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Evaluation Forms
+
+        // try {
+        //   let evaluationFormsUsage = await getEvaluationForms(clientId, clientSecret, environment);
+        //   $("#totalEvaluationForms").text(parseInt(evaluationFormsUsage.evaluationForms) || 0);
+
+        //   // Set colors
+        //   $("#evaluationForms").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(evaluationFormsUsage.evaluationForms) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing evaluation forms:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Response Libraries
+
+        // try {
+        //   let responseLibrariesUsage = await getResponseLibraries(clientId, clientSecret, environment);
+        //   $("#totalResponseLibraries").text(parseInt(responseLibrariesUsage.responseLibraries) || 0);
+
+        //   // Set colors
+        //   $("#responseLibraries").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(responseLibrariesUsage.responseLibraries) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing response libraries:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Skills
+
+        // try {
+        //   let skillsUsage = await getSkills(clientId, clientSecret, environment);
+        //   $("#totalSkills").text(parseInt(skillsUsage.skills) || 0);
+
+        //   // Set colors
+        //   $("#skills").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(skillsUsage.skills) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing skills:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Wrap Up Codes
+
+        // try {
+        //   let wrapUpCodesUsage = await getWrapUpCodes(clientId, clientSecret, environment);
+        //   $("#totalWrapUpCodes").text(parseInt(wrapUpCodesUsage.wrapUpCodes) || 0);
+
+        //   // Set colors
+        //   $("#wrapUpCodes").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(wrapUpCodesUsage.wrapUpCodes) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing skills:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Stations
+
+        // try {
+        //   let stationsUsage = await getStations(clientId, clientSecret, environment);
+
+
+        //   // Stations icon in Telephony
+        //   $("#totalStationsUsage").text(sum(stationsUsage.stations));
+        //   // Set colors
+        //   $("#stations").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(sum(stationsUsage.stations) === 0 ? "text-danger" : "text-success");
+
+        //   // Station types table
+        //   $("#stationsBody").empty();
+        //   for (var station in stationsUsage.stations) {
+        //     if (stationsUsage.stations.hasOwnProperty(station)) {
+        //       let row = $("<tr/>", {}).appendTo("#stationsBody");
+        //       $("<td/>").text(station).appendTo(row);
+        //       $("<td/>").text(stationsUsage.stations[station]).appendTo(row);
+        //     }
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing stations:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Edges
+
+        // try {
+        //   let edgesUsage = await getEdges(clientId, clientSecret, environment);
+        //   $("#totalEdgesUsage").text(sum(edgesUsage.edges));
+
+        //   // Set colors
+        //   $("#edges").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(sum(edgesUsage.edges) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing edges:', error);
+        // }
+
+        // //#endregion
+
+        // //#region SMS Phone Numbers
+
+        // try {
+        //   let smsPhoneNumbersUsage = await getSMSPhoneNumbers(clientId, clientSecret, environment);
+        //   $("#totalSMSPhoneNumbersUsage").text(smsPhoneNumbersUsage.smsPhoneNumbers || 0);
+
+        //   // Set colors
+        //   $("#smsPhoneNumbers").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing sms phone numbers:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Scripts
+
+        // try {
+        //   let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+        //   $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
+
+        //   // Set colors
+        //   $("#scripts").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing scripts:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Integrations
+
+        // try {
+        //   let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
+        //   $("#integrationsBody").empty();
+        //   for (var integration in integrationsUsage.integrations) {
+        //     if (integrationsUsage.integrations.hasOwnProperty(integration)) {
+        //       let row = $("<tr/>", {}).appendTo("#integrationsBody");
+        //       $("<td/>").text(integration).appendTo(row);
+        //       $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
+        //     }
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing integrations:', error);
+        // }
+        // //#endregion
+
+        // //#region Locations
+
+        // try {
+        //   var interval = 1 * 1000; // 1 second
+
+        //   let locationsUsage = await getLocations(clientId, clientSecret, environment);
+
+        //   $.each(locationsUsage.locations, (i, location) => {
+        //     setTimeout(async (i) => {
+        //       if (location.hasOwnProperty('address')) {
+        //         let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+        //         addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+        //       } else {
+        //         console.log(`No address set for location ${location.name}`);
+        //       }
+        //     }, interval * i, i);
+        //   });
+        // } catch (error) {
+        //   console.error('Error while processing locations:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Dialer Campaigns
+
+        // try {
+        //   let dialerCampaignsUsage = await getDialerCampaigns(clientId, clientSecret, environment);
+
+        //   if (dialerCampaignsUsage.hasOwnProperty('dialerCampaigns')) {
+        //     $("#totalDialerCampaigns").text(dialerCampaignsUsage.dialerCampaigns);
+
+        //     // Set colors
+        //     $("#dialerCampaigns").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass(dialerCampaignsUsage.dialerCampaigns.length === 0 ? "text-danger" : "text-success");
+        //   } else {
+        //     $("#dialerCampaigns").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass("text-danger");
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing dialer campaigns:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Dialer Campaigns
+
+        // try {
+        //   let contactListsUsage = await getContactLists(clientId, clientSecret, environment);
+
+        //   if (contactListsUsage.hasOwnProperty('contactLists')) {
+        //     $("#totalContactLists").text(contactListsUsage.contactLists);
+
+        //     // Set colors
+        //     $("#contactLists").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass(contactListsUsage.contactLists === 0 ? "text-danger" : "text-success");
+        //   } else {
+        //     $("#contactLists").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass("text-danger");
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing contact lists:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Documents
+
+        // try {
+        //   let documentsUsage = await getDocuments(clientId, clientSecret, environment);
+        //   if (documentsUsage.hasOwnProperty('documents')) {
+        //     let totalDocumentsUsage = 0;
+        //     $.each(documentsUsage.documents, (i, document) => {
+        //       if (document.type === "ALL") {
+        //         totalDocumentsUsage += parseInt(document.totalDocumentCount);
+        //       }
+        //     });
+        //     $("#totalDocuments").text(totalDocumentsUsage);
+
+        //     // Set colors
+        //     $("#totalDocuments").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass(totalDocumentsUsage === 0 ? "text-danger" : "text-success");
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing documents:', error);
+        // }
+
+        // //#endregion
+
+        // //#region External Contacts
+
+        // try {
+        //   let externalContactsUsage = await getExternalContacts(clientId, clientSecret, environment);
+        //   if (externalContactsUsage.hasOwnProperty('externalContacts')) {
+        //     $("#totalExternalContacts").text(parseInt(externalContactsUsage.externalContacts));
+
+        //     // Set colors
+        //     $("#totalExternalContacts").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass(parseInt(externalContactsUsage.externalContacts) === 0 ? "text-danger" : "text-success");
+        //   } else {
+        //     $("#totalExternalContacts").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass("text-danger");
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing external contacts:', error);
+        // }
+
+        // //#endregion
+
+        // //#region GDPR
+
+        // try {
+        //   let gdprUsage = await getGDPRRequests(clientId, clientSecret, environment);
+        //   if (gdprUsage.hasOwnProperty('gdprRequests')) {
+        //     $("#totalGDPRRequests").text(parseInt(gdprUsage.gdprRequests) || 0);
+
+        //     // Set colors
+        //     $("#totalGDPRRequests").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass(parseInt(gdprUsage.gdprRequests) === 0 ? "text-danger" : "text-success");
+        //   } else {
+        //     $("#totalGDPRRequests").removeClass(function (index, className) {
+        //       return (className.match(/\btext-\S+/g) || []).join(' ');
+        //     }).addClass("text-danger");
+        //   }
+        // } catch (error) {
+        //   console.error('Error while processing gdpr:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Routing Languages
+
+        // try {
+        //   let routingLanguagesUsage = await getRoutingLanguages(clientId, clientSecret, environment);
+        //   $("#routingLanguagesBody").empty();
+        //   $.each(routingLanguagesUsage.routingLanguages, (i, routingLanguage) => {
+        //     let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
+        //     $("<td/>").text(routingLanguage.name).appendTo(row);
+        //   });
+        // } catch (error) {
+        //   console.error('Error while processing routing languages:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Identity Providers
+
+        // try {
+        //   let identityProvidersUsage = await getIdentityProviders(clientId, clientSecret, environment);
+        //   $("#identityProvidersBody").empty();
+        //   Object.keys(identityProvidersUsage.identityProviders).forEach((identityProvider) => {
+        //     console.log('Identity Provider:', identityProvider);
+        //     let row = $("<tr/>", {}).appendTo("#identityProvidersBody");
+        //     $("<td/>").text(identityProvider).appendTo(row);
+        //     $("<td/>").text(identityProvidersUsage.identityProviders[identityProvider]).appendTo(row);
+        //   });
+        // } catch (error) {
+        //   console.error('Error while processing identity providers:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Flows
+
+        // //#region Divisions
+
+        // try {
+        //   let divisionsUsage = await getDivisions(clientId, clientSecret, environment);
+        //   $("#totalDivisionsUsage").text(divisionsUsage.divisions);
+
+        //   // Set colors
+        //   $("#totalDivisionsUsage").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(divisionsUsage.divisions) === 0 ? "text-danger" : "text-success");
+        // } catch (error) {
+        //   console.error('Error while processing divisions:', error);
+        // }
+
+        // //#endregion
+
+        // //#region Users
+
+        // try {
+        //   let workforceManagementData = await getWorkforceManagementUsage(clientId, clientSecret, environment);
+        //   $("#totalManagementUnitsUsage").text(workforceManagementData.wfm.managementUnits);
+        //   $("#totalSchedulingRunsUsage").text(workforceManagementData.wfm.schedulingRuns);
+
+        //   // Set colors
+        //   $("#managementUnits").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(workforceManagementData.managementUnits) === 0 ? "text-danger" : "text-success");
+
+        //   $("#schedulingRuns").removeClass(function (index, className) {
+        //     return (className.match(/\btext-\S+/g) || []).join(' ');
+        //   }).addClass(parseInt(workforceManagementData.schedulingRuns) === 0 ? "text-danger" : "text-success");
+
+        // } catch (error) {
+        //   console.error('Error while processing workforce management data:', error);
+        // }
+
+        // //#endregion
+
+        //#endregion
+
+        hideSpinner();
+      }
+
+      //#region Map Licenses
+
+      function populateLicenses(clientId, clientSecret, environment) {
+        $.each(licenses.categories, (i, category) => {
+          // Title
+          $("<h4/>", { class: "text-center mb-3 text-gray-800" }).text(category.name).appendTo("#licensesGuideBody");
+
+          // Table
+          let categoryTableDiv = $("<div/>", { id: "category-" + category.id, class: "table-responsive" }).appendTo("#licensesGuideBody");
+          let table = $("<table/>", { class: "table table-bordered table-hover", width: "100%", cellspacing: "0" }).appendTo(categoryTableDiv);
+          let thead = $("<thead/>").appendTo(table);
+          let theadRow = $("<tr/>").appendTo(thead);
+          $("<th/>", { class: "text-center" }).text("Name").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC1 ? "text-success" : "") }).text("PureCloud 1").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC2 ? "text-success" : "") }).text("PureCloud 2").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC3 ? "text-success" : "") }).text("PureCloud 3").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingCollaborate ? "text-success" : "") }).text("Collaborate").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingCommunicate ? "text-success" : "") }).text("Communicate").appendTo(theadRow);
+          $("<th/>", { class: "text-center" }).text("Current State").appendTo(theadRow);
+          let tbody = $("<tbody/>", { id: "tbody-" + category.id }).appendTo(table);
+
+          // Populate items
+          $.each(category.items, async (i, item) => {
+            let row = $("<tr/>", { id: item.id }).appendTo(tbody);
+            $("<td/>", { class: "text-center" }).text(item.name).appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud1 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud2 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud3 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.Collaborate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.Communicate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+
+            // Check if item is being used
+            switch (item.mappingItem) {
+              case "divisions":
+                let accessControlUsage = await getDivisions(clientId, clientSecret, environment);
+                console.log('Access Control Usage:', accessControlUsage);
+                $("<td/>", { class: "text-center" }).text(accessControlUsage.divisions + " divisions").appendTo(row);
+                if (accessControlUsage.divisions > 1) { // There is always one division called "Home" by default
+                  row.addClass('text-success');
+                }
+                else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
+                  row.addClass('text-danger');
+                }
+                break;
+              case "scripts":
+                let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+                console.log('Scripts Usage:', scriptsUsage);
+
+                //TODO Queues have "defaultScripts" with "CALL"/"CHAT"/"MESSAGE" and id (script id)
+                let allFlowsWithScripts = usages.flows.filter(f => {
+                  if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
+                });
+
+                if (item.id === 'inbound-call-support-scripts') {
+                  let allInboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'inboundcall');
+                  allInboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-failure');
+                  $("<td/>", { class: "text-center" }).text(allInboundFlowsWithScripts.length + " inbound flows with scripts").appendTo(row);
+                } else if (item.id === 'outbound-call-support-scripts') {
+                  let allOutboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'outboundcall');
+                  allOutboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-failure');
+                  $("<td/>", { class: "text-center" }).text(allOutboundFlowsWithScripts.length + " outbound flows with scripts").appendTo(row);
+
+                } else {
+                  $("<td/>", { class: "text-center" }).text(scriptsUsage.scripts.length + " scripts").appendTo(row);
+                  if (scriptsUsage.scripts.length > 0) {
+                    row.addClass('text-success');
+                  }
+                  else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
+                    row.addClass('text-danger');
+                  }
+                }
+                break;
+
+              default:
+                break;
+            }
+
+            // Customer has PC3 and feature is included in PC3? Flash row (text-danger)
+            // Customer has PC3 and feature is not included in PC3? Disable row (text-muted bg-light font-italic)
+
+
+            if (isUsingPC1 && item.PureCloud1) {
+              row.addClass('text-muted bg-light font-italic');
+            }
+          });
+        });
+      }
+
+      //#endregion
+
+      async function getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate) {
+        $("#spinner-text").text("Getting Media Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/media`,
+          contentType: 'application/json',
+          dataType: 'text',
+          cache: false,
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment,
+            startDate: startDate,
+            endDate: endDate,
+            originalEndDate: originalEndDate
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  //console.log(jqXHR.responseJSON);
+                  //return jqXHR.responseJSON;
+                  break;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .fail((jqXHR, textStatus, errorThrown) => {
+            console.error(jqXHR);
+            console.error(textStatus);
+            console.error(errorThrown);
+          })
+          .always(() => {
+            console.log("getMedia completed");
+          });
+      }
+
+      async function getUsers(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Users Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/users`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log("users:", jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getUsers completed");
+          });
+      }
+
+      async function getFlows(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Flows...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/flows`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getFlows completed");
+          });
+      }
+
+      async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate) {
+        $("#spinner-text").text("Getting Billable Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/billableUsage`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment,
+            startDate: startDate,
+            endDate: endDate
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getBillableUsage completed");
+          });
+      }
+
+      async function getStations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting License Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/stations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getStations completed");
+          });
+      }
+
+      async function getEdges(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Edges...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/edges`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getEdges completed");
+          });
+      }
+
+      async function getSMSPhoneNumbers(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting SMS Phone Numbers...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/smsPhoneNumbers`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getSMSPhoneNumbers completed");
+          });
+      }
+
+      async function getIntegrations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Integrations...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/integrations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getIntegrations completed");
+          });
+      }
+
+      async function getLocations(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Locations...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/locations`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getLocations completed");
+          });
+      }
+
+      async function getDialerCampaigns(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Dialer Campaigns...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/dialerCampaigns`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDialerCampaigns completed");
+          });
+      }
+
+      async function getContactLists(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Contact Lists...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/contactLists`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getContactLists completed");
+          });
+      }
+
+      async function getDocuments(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Documents...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/documents`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDocuments completed");
+          });
+      }
+
+      async function getExternalContacts(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting External Contacts...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/externalContacts`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getExternalContacts completed");
+          });
+      }
+
+      async function getGDPRRequests(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting GDPR Requests...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/gdpr`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getGDPRRequests completed");
+          });
+      }
+
+      async function getRoutingLanguages(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Routing Languages...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/routingLanguages`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getRoutingLanguages completed");
+          });
+      }
+
+      async function getIdentityProviders(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Identity Providers...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/identityProviders`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getIdentityProviders completed");
+          });
+      }
+
+      async function getEvaluationForms(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Evaluation Forms...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/evaluationForms`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getEvaluationForms completed");
+          });
+      }
+
+      async function getResponseLibraries(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Response Libraries...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/responseLibraries`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getResponseLibraries completed");
+          });
+      }
+
+      async function getSkills(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Skills...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/skills`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getSkills completed");
+          });
+      }
+
+      async function getWrapUpCodes(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Wrapup Codes...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/wrapUpCodes`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getWrapUpCodes completed");
+          });
+      }
+
+      async function getScripts(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Scripts...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/scripts`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getScripts completed");
+          });
+      }
+
+      async function getDivisions(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Divisions...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/divisions`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getDivisions completed");
+          });
+      }
+
+      async function getOrganization(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Organization...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/organization`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getOrganization completed");
+          });
+      }
+
+      async function getWorkforceManagementUsage(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Workforce Management Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/workforceManagement`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getWorkorceManagementUsage completed");
+          });
+      }
+
+      //#endregion
+
+      //#endregion
+
+      //#region Print
+
+      $("#generateReport").on("click", () => {
+        window.print();
+      });
+
+      //#endregion
+
+      function sum(obj) {
+        var sum = 0;
+        for (var el in obj) {
+          if (obj.hasOwnProperty(el)) {
+            sum += parseInt(obj[el]);
+          }
+        }
+        return sum;
+      }
+
+      function resetValues() {
+
+        isUsingPC1 = false;
+        isUsingPC2 = false;
+        isUsingPC3 = false;
+        isUsingCollaborate = false;
+        isUsingCommunicate = false;
+
+        usages = {};
+
+        $("#licensesGuideBody").empty();
+
+        // Clear conversations
+        $("#totalMediaUsage").text(0);
+        $("#totalMediaUsage_calls").text(0);
+        $("#totalMediaUsage_chats").text(0);
+        $("#totalMediaUsage_emails").text(0);
+        $("#totalMediaUsage_callbacks").text(0);
+        $("#totalMediaUsage_cobrowses").text(0);
+        $("#totalMediaUsage_videos").text(0);
+        $("#totalMediaUsage_screenshares").text(0);
+        $("#totalMediaUsage_messages").text(0);
+
+        // Clear recordings
+        $("#percRecordings").text('0%');
+        $("#recordings_progressbar").prop('style', 'width:0%');
+        $("#totalRecordingsUsage_calls").text(0);
+        $("#totalRecordingsUsage_chats").text(0);
+        $("#totalRecordingsUsage_emails").text(0);
+        $("#totalRecordingsUsage_messages").text(0);
+        $("#calls_recordings").removeClass();
+        $("#chats_recordings").removeClass();
+        $("#emails_recordings").removeClass();
+        $("#messages_recordings").removeClass();
+
+        // Clear map locations
+        removeAllMarkers();
+      }
+
+    </script>
+</body>
+
+</html>
