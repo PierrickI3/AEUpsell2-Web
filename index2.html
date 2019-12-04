@@ -119,31 +119,58 @@
 
           <div class="row">
 
-            <!-- Licenses (Billable Usage) -->
             <div class="col-xl-3 col-lg-5">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
-                  <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+
+              <!-- Licenses (Billable Usage) -->
+              <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
+                    <div class="row ml-0 mt-1 mb-1">
+                      <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                    </div>
                   </div>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Count</th>
-                        </tr>
-                      </thead>
-                      <tbody id="billableUsageBody">
-                      </tbody>
-                    </table>
-                    <small id="licensingLevel" class="text-muted"></small>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Count</th>
+                          </tr>
+                        </thead>
+                        <tbody id="billableUsageBody">
+                        </tbody>
+                      </table>
+                      <small id="licensingLevel" class="text-muted"></small>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Organization Features -->
+              <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Feature</th>
+                            <th>Enabled?</th>
+                          </tr>
+                        </thead>
+                        <tbody id="organizationFeaturesBody">
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <!-- Licenses Guide -->
@@ -181,6 +208,23 @@
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-stream fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Queues -->
+            <div class="col-xl-2 col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Queues</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalQueuesUsage">0</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-users-cog fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -473,29 +517,6 @@
               </div>
             </div>
 
-            <!-- Organization Features -->
-            <div class="col-xl-3 col-lg-5">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Organization Features</h6>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Feature</th>
-                          <th>Enabled?</th>
-                        </tr>
-                      </thead>
-                      <tbody id="organizationFeaturesBody">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <!-- Stations -->
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
@@ -696,6 +717,16 @@
               {
                 name: "Outbound Call Support",
                 id: "outbound-call-support-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "URL Screen Pop",
+                id: "url-screen-pop-scripts",
                 PureCloud1: true,
                 PureCloud2: true,
                 PureCloud3: true,
@@ -1119,6 +1150,40 @@
 
         //#endregion
 
+        //#region Scripts
+
+        try {
+          let scriptsUsage = await getScripts(clientId, clientSecret, environment);
+          usages.scripts = scriptsUsage.scripts;
+          $("#totalScripts").text(scriptsUsage.scripts.length || 0);
+
+          // Set colors
+          $("#scripts").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(parseInt(scriptsUsage.scripts.length) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing scripts:', error);
+        }
+
+        //#endregion
+
+        //#region Queues
+
+        try {
+          let queuesUsage = await getQueues(clientId, clientSecret, environment);
+          usages.queues = queuesUsage.queues;
+          $("#totalQueuesUsage").text(queuesUsage.queues.length);
+
+          // Set colors
+          $("#totalQueuesUsage").removeClass(function (index, className) {
+            return (className.match(/\btext-\S+/g) || []).join(' ');
+          }).addClass(queuesUsage.queues.length === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing queues:', error);
+        }
+
+        //#endregion
+
         populateLicenses(clientId, clientSecret, environment);
 
         //#region Not used right now
@@ -1260,22 +1325,6 @@
         //   }).addClass(smsPhoneNumbersUsage.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
         // } catch (error) {
         //   console.error('Error while processing sms phone numbers:', error);
-        // }
-
-        // //#endregion
-
-        // //#region Scripts
-
-        // try {
-        //   let scriptsUsage = await getScripts(clientId, clientSecret, environment);
-        //   $("#totalScripts").text(parseInt(scriptsUsage.scripts.published) || 0);
-
-        //   // Set colors
-        //   $("#scripts").removeClass(function (index, className) {
-        //     return (className.match(/\btext-\S+/g) || []).join(' ');
-        //   }).addClass(parseInt(scriptsUsage.scripts.published) === 0 ? "text-danger" : "text-success");
-        // } catch (error) {
-        //   console.error('Error while processing scripts:', error);
         // }
 
         // //#endregion
@@ -1556,32 +1605,49 @@
                 }
                 break;
               case "scripts":
-                let scriptsUsage = await getScripts(clientId, clientSecret, environment);
-                console.log('Scripts Usage:', scriptsUsage);
-
-                //TODO Queues have "defaultScripts" with "CALL"/"CHAT"/"MESSAGE" and id (script id)
                 let allFlowsWithScripts = usages.flows.filter(f => {
                   if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
                 });
 
-                if (item.id === 'inbound-call-support-scripts') {
-                  let allInboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'inboundcall');
-                  allInboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-failure');
-                  $("<td/>", { class: "text-center" }).text(allInboundFlowsWithScripts.length + " inbound flows with scripts").appendTo(row);
-                } else if (item.id === 'outbound-call-support-scripts') {
-                  let allOutboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'outboundcall');
-                  allOutboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-failure');
-                  $("<td/>", { class: "text-center" }).text(allOutboundFlowsWithScripts.length + " outbound flows with scripts").appendTo(row);
-
-                } else {
-                  $("<td/>", { class: "text-center" }).text(scriptsUsage.scripts.length + " scripts").appendTo(row);
-                  if (scriptsUsage.scripts.length > 0) {
-                    row.addClass('text-success');
-                  }
-                  else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
-                    row.addClass('text-danger');
-                  }
+                // Are there flows with associated scripts?
+                let commentsCol = undefined, queuesWithScripts = 0;
+                switch (item.id) {
+                  case 'inbound-call-support-scripts':
+                    let allInboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'inboundcall');
+                    allInboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(allInboundFlowsWithScripts.length + " inbound flows with scripts").appendTo(row);
+                    // Are there queues with default scripts?
+                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
+                    if (queuesWithScripts.length > 0) {
+                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queues with default scripts`);
+                    }
+                    break;
+                  case 'outbound-call-support-scripts':
+                    let allOutboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'outboundcall');
+                    allOutboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(allOutboundFlowsWithScripts.length + " outbound flows with scripts").appendTo(row);
+                    // Are there queues with default scripts?
+                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
+                    if (queuesWithScripts.length > 0) {
+                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queues with default scripts`);
+                    }
+                    break;
+                  case 'url-screen-pop-scripts':
+                    let scriptsWithUrlScreenPops = usages.scripts.filter(s => s.hasOwnProperty('customActions') && s.customActions.length > 0 && s.customActions.filter(ca => ca.action.block.filter(b => b.actionName === 'scripter.webPage')).length > 0);
+                    scriptsWithUrlScreenPops.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsWithUrlScreenPops.length + " scripts with URL Screen Pops").appendTo(row);
+                    break;
+                  default:
+                    commentsCol = $("<td/>", { class: "text-center" }).text(usages.scripts.length + " scripts").appendTo(row);
+                    if (usages.scripts.length > 0) {
+                      row.addClass('text-success');
+                    }
+                    else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
+                      row.addClass('text-danger');
+                    }
+                    break;
                 }
+
                 break;
 
               default:
@@ -1674,6 +1740,105 @@
           })
           .always(() => {
             console.log("getUsers completed");
+          });
+      }
+
+      async function getOrganization(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Organization...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/organization`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getOrganization completed");
+          });
+      }
+
+      async function getScripts(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Scripts...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/scripts`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getScripts completed");
+          });
+      }
+
+      async function getQueues(clientId, clientSecret, environment) {
+        $("#spinner-text").text("Getting Queues Usage...");
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/queues`,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: {
+            clientId: clientId,
+            clientSecret: clientSecret,
+            environment: environment
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log("queues:", jqXHR.responseJSON);
+                  return jqXHR.responseJSON;
+                default:
+                  showMessage("Unexpected error: " + textStatus, true);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .always(() => {
+            console.log("getQueues completed");
           });
       }
 
@@ -2273,39 +2438,6 @@
           });
       }
 
-      async function getScripts(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Scripts...");
-        return await $.ajax({
-          method: 'GET',
-          url: `${urlBasePath}/scripts`,
-          contentType: 'application/json',
-          dataType: 'json',
-          data: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            environment: environment
-          }
-        })
-          .done((data, textStatus, jqXHR) => {
-            try {
-              switch (jqXHR.status) {
-                case 200:
-                  console.log(jqXHR.responseJSON);
-                  return jqXHR.responseJSON;
-                default:
-                  showMessage("Unexpected error: " + textStatus, true);
-                  throw new Error(textStatus);
-              }
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          })
-          .always(() => {
-            console.log("getScripts completed");
-          });
-      }
-
       async function getDivisions(clientId, clientSecret, environment) {
         $("#spinner-text").text("Getting Divisions...");
         return await $.ajax({
@@ -2336,39 +2468,6 @@
           })
           .always(() => {
             console.log("getDivisions completed");
-          });
-      }
-
-      async function getOrganization(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Organization...");
-        return await $.ajax({
-          method: 'GET',
-          url: `${urlBasePath}/organization`,
-          contentType: 'application/json',
-          dataType: 'json',
-          data: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            environment: environment
-          }
-        })
-          .done((data, textStatus, jqXHR) => {
-            try {
-              switch (jqXHR.status) {
-                case 200:
-                  console.log(jqXHR.responseJSON);
-                  return jqXHR.responseJSON;
-                default:
-                  showMessage("Unexpected error: " + textStatus, true);
-                  throw new Error(textStatus);
-              }
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          })
-          .always(() => {
-            console.log("getOrganization completed");
           });
       }
 
