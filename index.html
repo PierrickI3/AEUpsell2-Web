@@ -1148,12 +1148,12 @@
         // Flows
         try {
           let flowsUsage = await getFlows(clientId, clientSecret, environment);
-          $("#totalFlowsUsage").text(flowsUsage.flows);
+          $("#totalFlowsUsage").text(flowsUsage.flows.length);
 
           // Set colors
           $("#totalFlowsUsage").removeClass(function (index, className) {
             return (className.match(/\btext-\S+/g) || []).join(' ');
-          }).addClass(parseInt(flowsUsage.flows) === 0 ? "text-danger" : "text-success");
+          }).addClass(parseInt(flowsUsage.flows.length) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing flows:', error);
         }
