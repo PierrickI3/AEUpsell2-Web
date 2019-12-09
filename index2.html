@@ -14,10 +14,13 @@
   <!--#region Stylesheets -->
   <!-- Custom fonts-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
 
   <!-- Open Layers -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
+    type="text/css">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
@@ -63,12 +66,15 @@
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 id="title" class="h3 mb-0 text-gray-800">AE Upsell 2</h1>
-            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
-            <button href="#" id="generateReport" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal"
+              data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
+            <button href="#" id="generateReport" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
           </div>
 
           <!-- Configuration Modal -->
-          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
+          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -81,15 +87,18 @@
                   <form>
                     <div class="form-group">
                       <label for="clientId" class="col-form-label">OAuth Client Id:</label>
-                      <input type="text" class="form-control" id="clientId" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
+                      <input type="text" class="form-control" id="clientId"
+                        value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
                     </div>
                     <div class="form-group">
                       <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
-                      <input type="password" class="form-control" id="clientSecret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
+                      <input type="password" class="form-control" id="clientSecret"
+                        value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
                     </div>
                     <div class="form-group">
                       <label for="environment" class="col-form-label">PureCloud Environment:</label>
-                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
+                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie"
+                        value="mypurecloud.ie">
                     </div>
                     <div class="form-group">
                       <label for="startDatePicker" class="col-form-label">Start Date:</label>
@@ -127,7 +136,8 @@
                   <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
                     <div class="row ml-0 mt-1 mb-1">
-                      <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                      <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span
+                          class="endDate">yyyy/mm/dd</span></small>
                     </div>
                   </div>
                   <div class="card-body">
@@ -179,7 +189,9 @@
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Licenses Guide</h6>
                   <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500">Taken from <a href="https://www.genesys.com/platform/purecloud/purecloud-pricing" target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
+                    <small class="date-range-start text-gray-500">Taken from <a
+                        href="https://www.genesys.com/platform/purecloud/purecloud-pricing"
+                        target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
                   </div>
                 </div>
                 <div class="card-body" id="licensesGuideBody">
@@ -245,17 +257,31 @@
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Routing</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalMediaUsage">0</div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span id="totalMediaUsage_calls" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span id="totalMediaUsage_chats" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Emails" id="emails"><i class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Callbacks" id="callbacks"><i class="ml-2 fas fa-undo"></i><span id="totalMediaUsage_callbacks" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Co-Browse Sessions" id="cobrowses"><i class="ml-2 fas fa-globe"></i><span id="totalMediaUsage_cobrowses" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Videos" id="videos"><i class="ml-2 fas fa-video"></i><span id="totalMediaUsage_videos" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Screen Shares" id="screenshares"><i class="ml-2 fas fa-desktop"></i><span id="totalMediaUsage_screenshares" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Messages" id="messages"><i class="ml-2 far fa-sticky-note"></i><span id="totalMediaUsage_messages" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Calls" id="calls"><i class="fas fa-phone"></i><span
+                            id="totalMediaUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Chats" id="chats"><i class="ml-2 fas fa-comments"></i><span
+                            id="totalMediaUsage_chats" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Emails" id="emails"><i
+                            class="ml-2 far fa-envelope"></i><span id="totalMediaUsage_emails"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Callbacks" id="callbacks"><i
+                            class="ml-2 fas fa-undo"></i><span id="totalMediaUsage_callbacks"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Co-Browse Sessions" id="cobrowses"><i
+                            class="ml-2 fas fa-globe"></i><span id="totalMediaUsage_cobrowses"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Videos" id="videos"><i class="ml-2 fas fa-video"></i><span
+                            id="totalMediaUsage_videos" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Screen Shares" id="screenshares"><i
+                            class="ml-2 fas fa-desktop"></i><span id="totalMediaUsage_screenshares"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Messages" id="messages"><i
+                            class="ml-2 far fa-sticky-note"></i><span id="totalMediaUsage_messages"
+                            class="ml-1">0</span></small>
                       </div>
                       <div class="row ml-0 mt-1">
-                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span
+                            class="endDate">yyyy/mm/dd</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -290,18 +316,27 @@
                         </div>
                         <div class="col">
                           <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="recordings_progressbar"></div>
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="50"
+                              aria-valuemin="0" aria-valuemax="100" id="recordings_progressbar"></div>
                           </div>
                         </div>
                       </div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Recorded Calls" id="calls_recordings"><i class="fas fa-phone"></i><span id="totalRecordingsUsage_calls" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Recorded Chats" id="chats_recordings"><i class="ml-2 fas fa-comments"></i><span id="totalRecordingsUsage_chats" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Recorded Emails" id="emails_recordings"><i class="ml-2 far fa-envelope"></i><span id="totalRecordingsUsage_emails" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Recorded Messages" id="messages_recordings"><i class="ml-2 far fa-sticky-note"></i><span id="totalRecordingsUsage_messages" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Calls" id="calls_recordings"><i
+                            class="fas fa-phone"></i><span id="totalRecordingsUsage_calls" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Chats" id="chats_recordings"><i
+                            class="ml-2 fas fa-comments"></i><span id="totalRecordingsUsage_chats"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Emails" id="emails_recordings"><i
+                            class="ml-2 far fa-envelope"></i><span id="totalRecordingsUsage_emails"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Recorded Messages" id="messages_recordings"><i
+                            class="ml-2 far fa-sticky-note"></i><span id="totalRecordingsUsage_messages"
+                            class="ml-1">0</span></small>
                       </div>
                       <div class="row ml-0 mt-1">
-                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                        <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span
+                            class="endDate">yyyy/mm/dd</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -330,16 +365,29 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center Configuration</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Contact Center
+                        Configuration</div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Active Users" id="activeUsers"><i class="fas fa-user"></i><span id="totalUsersUsage" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Skills" id="skills"><i class="fas fa-chalkboard-teacher ml-2"></i><span id="totalSkills" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Scripts" id="scripts"><i class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Dialer Campaigns" id="dialerCampaigns"><i class="fas fa-phone-volume ml-2"></i><span id="totalDialerCampaigns" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Contact Lists" id="contactLists"><i class="fas fa-address-book ml-2"></i><span id="totalContactLists" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Active Users" id="activeUsers"><i
+                            class="fas fa-user"></i><span id="totalUsersUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Evaluation Forms" id="evaluationForms"><i
+                            class="fas fa-list ml-2"></i><span id="totalEvaluationForms" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Response Libraries" id="responseLibraries"><i
+                            class="fas fa-book ml-2"></i><span id="totalResponseLibraries" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Skills" id="skills"><i
+                            class="fas fa-chalkboard-teacher ml-2"></i><span id="totalSkills"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Wrap Up Codes" id="wrapUpCodes"><i
+                            class="fas fa-calendar-check ml-2"></i><span id="totalWrapUpCodes"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scripts" id="scripts"><i
+                            class="fas fa-scroll ml-2"></i><span id="totalScripts" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Dialer Campaigns" id="dialerCampaigns"><i
+                            class="fas fa-phone-volume ml-2"></i><span id="totalDialerCampaigns"
+                            class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Contact Lists" id="contactLists"><i
+                            class="fas fa-address-book ml-2"></i><span id="totalContactLists"
+                            class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -358,8 +406,11 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Workforce Management</div>
                       <div class="row ml-0">
-                        <small data-toggle="tooltip" title="Management Units" id="managementUnits"><i class="fas fa-tasks"></i><span id="totalManagementUnitsUsage" class="ml-1">0</span></small>
-                        <small data-toggle="tooltip" title="Scheduling Runs" id="schedulingRuns"><i class="fas fa-calendar-alt ml-2"></i><span id="totalSchedulingRunsUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Management Units" id="managementUnits"><i
+                            class="fas fa-tasks"></i><span id="totalManagementUnitsUsage" class="ml-1">0</span></small>
+                        <small data-toggle="tooltip" title="Scheduling Runs" id="schedulingRuns"><i
+                            class="fas fa-calendar-alt ml-2"></i><span id="totalSchedulingRunsUsage"
+                            class="ml-1">0</span></small>
                       </div>
                     </div>
                     <div class="col-auto">
@@ -456,9 +507,12 @@
                     </div>
                   </div>
                   <div class="row ml-0">
-                    <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span id="totalStationsUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" id="edges" title="Edges"><i class="ml-2 fas fa-server"></i><span id="totalEdgesUsage" class="ml-1">0</span></small>
-                    <small data-toggle="tooltip" id="smsPhoneNumbers" title="SMS Phone Numbers" id="sms"><i class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" title="Stations" id="stations"><i class="fas fa-phone"></i><span
+                        id="totalStationsUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="edges" title="Edges"><i class="ml-2 fas fa-server"></i><span
+                        id="totalEdgesUsage" class="ml-1">0</span></small>
+                    <small data-toggle="tooltip" id="smsPhoneNumbers" title="SMS Phone Numbers" id="sms"><i
+                        class="ml-2 fas fa-sms"></i><span id="totalSMSPhoneNumbersUsage" class="ml-1">0</span></small>
                   </div>
                 </div>
               </div>
@@ -636,7 +690,9 @@
 
     <!-- Bootstrap core JavaScript-->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
@@ -649,7 +705,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
     <!-- moment.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+      integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap Date Picker -->
     <script src="vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -668,94 +725,7 @@
 
       var isUsingPC1 = false, isUsingPC2 = false, isUsingPC3 = false, isUsingCollaborate = false, isUsingCommunicate = false;
 
-      var licenses = {
-        categories: [
-          {
-            name: "Graphical Scripting",
-            id: "graphical-scripting",
-            items: [
-              {
-                name: "Ability to Customize Script",
-                id: "ability-to-customize-script",
-                PureCloud1: false,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              },
-              {
-                name: "Default Script - Basic Contact Info",
-                id: "default-script-basic-contact-info",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              },
-              {
-                name: "Import/Export Scripts",
-                id: "import-export-scripts",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              },
-              {
-                name: "Inbound Call Support",
-                id: "inbound-call-support-scripts",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              },
-              {
-                name: "Outbound Call Support",
-                id: "outbound-call-support-scripts",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              },
-              {
-                name: "URL Screen Pop",
-                id: "url-screen-pop-scripts",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "scripts"
-              }
-            ]
-          },
-          {
-            name: "Integrations",
-            id: "integrations",
-            items: [
-              {
-                name: "Access Control",
-                id: "access-control",
-                PureCloud1: true,
-                PureCloud2: true,
-                PureCloud3: true,
-                Collaborate: false,
-                Communicate: false,
-                mappingItem: "divisions"
-              }
-            ]
-          }
-        ]
-      };
-
-      //#region Date Pickers
+      //#region Date Pickers & Functions
 
       $("#startDatePicker").datepicker({
         format: "yyyy-mm-ddT00:00:00.000Z",
@@ -770,6 +740,28 @@
         autoclose: true,      // Close after selecting date
         weekStart: 1          // weeks start on Mondays
       });
+
+      Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+      }
+
+      function getDates(startDate, stopDate) {
+        var dateArray = [];
+        var currentDate = startDate;
+        while (currentDate < stopDate) {
+          var dateRange = {};
+          dateRange.startDate = new Date(currentDate).toISOString();
+          currentDate = currentDate.addDays(7);
+          if (currentDate > stopDate) {
+            currentDate = stopDate;
+          }
+          dateRange.endDate = new Date(currentDate).toISOString();
+          dateArray.push(dateRange);
+        }
+        return dateArray;
+      }
 
       //#endregion
 
@@ -908,128 +900,380 @@
 
       //#endregion
 
-      //#region Get Data
+      //#region Licenses
 
-      Date.prototype.addDays = function (days) {
-        var date = new Date(this.valueOf());
-        date.setDate(date.getDate() + days);
-        return date;
-      }
-
-      function getDates(startDate, stopDate) {
-        var dateArray = [];
-        var currentDate = startDate;
-        while (currentDate < stopDate) {
-          var dateRange = {};
-          dateRange.startDate = new Date(currentDate).toISOString();
-          currentDate = currentDate.addDays(7);
-          if (currentDate > stopDate) {
-            currentDate = stopDate;
+      var licenses = {
+        categories: [
+          {
+            name: "Graphical Scripting",
+            id: "graphical-scripting",
+            items: [
+              {
+                name: "Ability to Customize Script",
+                id: "ability-to-customize-script",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Default Script - Basic Contact Info",
+                id: "default-script-basic-contact-info",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Import/Export Scripts",
+                id: "import-export-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Inbound Call Support",
+                id: "inbound-call-support-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Outbound Call Support",
+                id: "outbound-call-support-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "URL Screen Pop",
+                id: "url-screen-pop-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Chat",
+                id: "chat-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Email",
+                id: "email-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Messaging - Messaging Platforms",
+                id: "messaging-scripts",
+                PureCloud1: false,
+                PureCloud2: false,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Messaging - SMS",
+                id: "sms-scripts",
+                PureCloud1: false,
+                PureCloud2: false,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Voice",
+                id: "voice-scripts",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Complex Variable Types",
+                id: "complex-variable-types-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Pre-packaged Validations",
+                id: "pre-packaged-validations-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Scripts Error Panel",
+                id: "error-panel-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Templates",
+                id: "templates-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              },
+              {
+                name: "Version Control",
+                id: "version-control-scripts",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "scripts"
+              }
+            ]
+          },
+          {
+            name: "Integrations",
+            id: "integrations",
+            items: [
+              {
+                name: "Access Control",
+                id: "access-control",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "divisions"
+              },
+              {
+                name: "Altocloud",
+                id: "integrations-altocloud",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Amazon Lex Digital Bots",
+                id: "integrations-lex-digital-bots",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Amazon Lex Voicebots",
+                id: "integrations-lex-voice-bots",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Click-to-Dial (tel: links)",
+                id: "integrations-click-to-dial-tel-links",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Make Call from Context Menu",
+                id: "integrations-make-call-from-context-menu",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "PureCloud UI Embedded in Browser Extension",
+                id: "integrations-ui-embedded-in-browser-extension",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Screen Pops",
+                id: "integrations-screen-pops",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Call Logging",
+                id: "integrations-call-logging",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Click-to-Dial",
+                id: "integrations-click-to-dial",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "PureCloud UI Embedded in Salesforce",
+                id: "integrations-ui-embedded-in-salesforce",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "PureCloud UI Embedded in Zendesk",
+                id: "integrations-ui-embedded-in-zendesk",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Microsoft Dynamics (Data Actions)",
+                id: "integrations-microsoft-dynamics-data-actions",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "REST (Access a 3rd Party REST API)",
+                id: "integrations-rest-3rd-party-rest-api",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Salesforce (Data Actions)",
+                id: "integrations-salesforce-data-actions",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Zendesk (Data Actions)",
+                id: "integrations-zendesk-data-actions",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              },
+              {
+                name: "Skype for Business",
+                id: "integrations-skype-for-business",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "integrations"
+              }
+            ]
+          },
+          {
+            name: "Omnichannel Routing",
+            id: "omnichannel-routing",
+            items: [
+              {
+                name: "ACD Voicemail Routing",
+                id: "acd-voicemail-routing",
+                PureCloud1: false,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "omnichannel-routing"
+              },
+              {
+                name: "Bullseye Routing",
+                id: "bullseye-routing",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "omnichannel-routing"
+              }
+            ]
           }
-          dateRange.endDate = new Date(currentDate).toISOString();
-          dateArray.push(dateRange);
-        }
-        return dateArray;
-      }
-
-      async function processMediaMessage(data) {
-        if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
-        if (!data.media.hasOwnProperty("chats")) data.media.chats = 0;
-        if (!data.media.hasOwnProperty("emails")) data.media.emails = 0;
-        if (!data.media.hasOwnProperty("callbacks")) data.media.callbacks = 0;
-        if (!data.media.hasOwnProperty("cobrowses")) data.media.cobrowses = 0;
-        if (!data.media.hasOwnProperty("videos")) data.media.videos = 0;
-        if (!data.media.hasOwnProperty("screenshares")) data.media.screenshares = 0;
-        if (!data.media.hasOwnProperty("messages")) data.media.messages = 0;
-
-        data.media.calls = parseInt($("#totalMediaUsage_calls").text()) + (data.media.hasOwnProperty("calls") ? data.media.calls : 0);
-        data.media.chats = parseInt($("#totalMediaUsage_chats").text()) + (data.media.hasOwnProperty("chats") ? data.media.chats : 0);
-        data.media.emails = parseInt($("#totalMediaUsage_emails").text()) + (data.media.hasOwnProperty("emails") ? data.media.emails : 0);
-        data.media.callbacks = parseInt($("#totalMediaUsage_callbacks").text()) + (data.media.hasOwnProperty("callbacks") ? data.media.callbacks : 0);
-        data.media.cobrowses = parseInt($("#totalMediaUsage_cobrowses").text()) + (data.media.hasOwnProperty("cobrowses") ? data.media.cobrowses : 0);
-        data.media.videos = parseInt($("#totalMediaUsage_videos").text()) + (data.media.hasOwnProperty("videos") ? data.media.videos : 0);
-        data.media.screenshares = parseInt($("#totalMediaUsage_screenshares").text()) + (data.media.hasOwnProperty("screenshares") ? data.media.screenshares : 0);
-        data.media.messages = parseInt($("#totalMediaUsage_messages").text()) + (data.media.hasOwnProperty("messages") ? data.media.messages : 0);
-
-        $("#totalMediaUsage").text(sum(data.media));
-        $("#totalMediaUsage_calls").text(data.media.calls);
-        $("#totalMediaUsage_chats").text(data.media.chats);
-        $("#totalMediaUsage_emails").text(data.media.emails);
-        $("#totalMediaUsage_callbacks").text(data.media.callbacks);
-        $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
-        $("#totalMediaUsage_videos").text(data.media.videos);
-        $("#totalMediaUsage_screenshares").text(data.media.screenshares);
-        $("#totalMediaUsage_messages").text(data.media.messages);
-
-        // Set colors
-        $("#calls").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
-        $("#chats").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
-        $("#emails").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
-        $("#callbacks").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
-        $("#cobrowses").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
-        $("#videos").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.videos) === 0 ? "text-danger" : "text-success");
-        $("#screenshares").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
-        $("#messages").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
-
-        // Set usage percentage
-        let mediaUsagePercentValue = 0;
-        $.each(Object.entries(data.media), (i, media) => {
-          if (parseInt(media[1]) > 0) {
-            mediaUsagePercentValue += 1 / Object.entries(data.media).length;
-          }
-        });
-        mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
-
-        $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
-
-      }
-
-      async function processRecordingsMessage(data) {
-        try {
-          if (!data.recordings.hasOwnProperty("calls")) data.recordings.calls = 0;
-          if (!data.recordings.hasOwnProperty("chats")) data.recordings.chats = 0;
-          if (!data.recordings.hasOwnProperty("emails")) data.recordings.emails = 0;
-          if (!data.recordings.hasOwnProperty("messages")) data.recordings.messages = 0;
-
-          $("#totalRecordingsUsage_calls").text(parseInt($("#totalRecordingsUsage_calls").text()) + data.recordings.calls);
-          $("#totalRecordingsUsage_chats").text(parseInt($("#totalRecordingsUsage_chats").text()) + data.recordings.chats);
-          $("#totalRecordingsUsage_emails").text(parseInt($("#totalRecordingsUsage_emails").text()) + data.recordings.emails);
-          $("#totalRecordingsUsage_messages").text(parseInt($("#totalRecordingsUsage_messages").text()) + data.recordings.messages);
-
-          // Percentage
-          let totalRecordingsUsage = parseInt($("#totalRecordingsUsage_calls").text()) + parseInt($("#totalRecordingsUsage_chats").text()) + parseInt($("#totalRecordingsUsage_emails").text()) + parseInt($("#totalRecordingsUsage_messages").text());
-          let totalMediaUsage = parseInt($("#totalMediaUsage_calls").text()) + parseInt($("#totalMediaUsage_chats").text()) + parseInt($("#totalMediaUsage_emails").text()) + parseInt($("#totalMediaUsage_messages").text());
-          let percRecordings = Math.round((sum(data.recordings) + totalRecordingsUsage) * 100 / totalMediaUsage);
-          $("#percRecordings").text(percRecordings + '%');
-          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-
-          // Set colors
-          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing recordings usage:', error);
-          $("#percRecordings").append(" (Error)");
-        }
-      }
+        ]
+      };
 
       function setLicensingLevel(license) {
         switch (license) {
@@ -1042,6 +1286,274 @@
         }
         $("#licensingLevel").text(`PureCloud1: ${isUsingPC1}, PureCloud2: ${isUsingPC2}, PureCloud3: ${isUsingPC3}, Collaborate: ${isUsingCollaborate}, Communicate: ${isUsingCommunicate}`);
       }
+
+      function populateLicenses(clientId, clientSecret, environment) {
+        $.each(licenses.categories, (i, category) => {
+          // Title
+          $("<h4/>", { class: "text-center mb-3 text-gray-800" }).text(category.name).appendTo("#licensesGuideBody");
+
+          // Table
+          let categoryTableDiv = $("<div/>", { id: "category-" + category.id, class: "table-responsive" }).appendTo("#licensesGuideBody");
+
+          //#region Table Headers
+
+          let table = $("<table/>", { class: "table table-bordered table-hover", width: "100%", cellspacing: "0" }).appendTo(categoryTableDiv);
+          let thead = $("<thead/>").appendTo(table);
+          let theadRow = $("<tr/>").appendTo(thead);
+          $("<th/>", { class: "text-center" }).text("Name").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC1 ? "text-white bg-success" : "") }).text("PureCloud 1").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC2 ? "text-white bg-success" : "") }).text("PureCloud 2").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingPC3 ? "text-white bg-success" : "") }).text("PureCloud 3").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingCollaborate ? "text-white bg-success" : "") }).text("Collaborate").appendTo(theadRow);
+          $("<th/>", { class: "text-center " + (isUsingCommunicate ? "text-white bg-success" : "") }).text("Communicate").appendTo(theadRow);
+          $("<th/>", { class: "text-center" }).text("Current State").appendTo(theadRow);
+
+          //#endregion
+
+          let tbody = $("<tbody/>", { id: "tbody-" + category.id }).appendTo(table);
+
+          // Populate items
+          $.each(category.items, async (i, item) => {
+
+            //#region License Levels
+
+            let row = $("<tr/>", { id: item.id }).appendTo(tbody);
+            $("<td/>", { class: "text-center" }).text(item.name).appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud1 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud2 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.PureCloud3 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.Collaborate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+            $("<td/>", { class: "text-center" }).html(item.Communicate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+
+            //#endregion
+
+            // Check actual usage
+            switch (item.mappingItem) {
+              case "divisions":
+                let accessControlUsage = await getDivisions(clientId, clientSecret, environment);
+                console.log('Access Control Usage:', accessControlUsage);
+                $("<td/>", { class: "text-center" }).text(accessControlUsage.divisions + " divisions").appendTo(row);
+                if (accessControlUsage.divisions > 1) { // There is always one division called "Home" by default
+                  row.addClass('text-success');
+                }
+                else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
+                  row.addClass('text-danger');
+                }
+                break;
+              case "scripts":
+                let allFlowsWithScripts = usages.flows.filter(f => {
+                  if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
+                });
+
+                let commentsCol = undefined, queuesWithScripts = 0;
+                switch (item.id) {
+                  case 'inbound-call-support-scripts':
+                    let allInboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'inboundcall');
+                    allInboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(allInboundFlowsWithScripts.length + " inbound flow(s) with scripts").appendTo(row);
+                    // Are there queues with default scripts?
+                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
+                    if (queuesWithScripts.length > 0) {
+                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queue(s) with a default script`);
+                    }
+                    break;
+                  case 'outbound-call-support-scripts':
+                    let allOutboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'outboundcall');
+                    allOutboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(allOutboundFlowsWithScripts.length + " outbound flow(s) with scripts").appendTo(row);
+                    // Are there queues with default scripts?
+                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
+                    if (queuesWithScripts.length > 0) {
+                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queue(s) with default scripts`);
+                    }
+                    break;
+                  case 'url-screen-pop-scripts':
+                    let scriptsWithUrlScreenPops = usages.scripts.filter(s => s.hasOwnProperty('customActions') && s.customActions.length > 0 && s.customActions.filter(ca => ca.action.block.filter(b => b.actionName === 'scripter.webPage')).length > 0);
+                    scriptsWithUrlScreenPops.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsWithUrlScreenPops.length + " script(s) with URL Screen Pops").appendTo(row);
+                    break;
+                  case 'chat-scripts':
+                    let scriptsUsedWithChat = usages.scripts.filter(s => s.hasOwnProperty('features') && s.features.length > 0 && s.features.filter(f => f.chat.properties.enabled.value === true).length > 0);
+                    scriptsUsedWithChat.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsUsedWithChat.length + " script(s) used for Chats").appendTo(row);
+                    break;
+                  case 'email-scripts':
+                    let scriptsUsedWithEmail = usages.scripts.filter(s => s.hasOwnProperty('features') && s.features.length > 0 && s.features.filter(f => f.email.properties.enabled.value === true).length > 0);
+                    scriptsUsedWithEmail.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsUsedWithEmail.length + " script(s) used for Emails").appendTo(row);
+                    break;
+                  case 'messaging-scripts':
+                    let scriptsUsedWithMessaging = usages.scripts.filter(s => s.hasOwnProperty('features') && s.features.length > 0 && s.features.filter(f => f.message.properties.enabled.value === true).length > 0);
+                    scriptsUsedWithMessaging.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsUsedWithMessaging.length + " script(s) used for Emails").appendTo(row);
+                    break;
+                  case 'sms-scripts':
+                    //Don't know how to find that out
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'voice-scripts':
+                    let scriptsUsedWithVoice = usages.scripts;
+                    scriptsUsedWithVoice.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsUsedWithVoice.length + " script(s) can be used for Voice").appendTo(row);
+                    break;
+                  case 'complex-variable-types-scripts':
+                    //Don't know what this is
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'pre-packaged-validations-scripts':
+                    //Don't know what this is
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'error-panel-scripts':
+                    //Can't really find out whether this is used or not
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'templates-scripts':
+                    //No APIs to list templates
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'version-control-scripts':
+                    //No APIs to get multiple versions of a script
+                    commentsCol = $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  default:
+                    commentsCol = $("<td/>", { class: "text-center" }).text(usages.scripts.length + " scripts").appendTo(row);
+                    if (usages.scripts.length > 0) {
+                      row.addClass('text-success');
+                    }
+                    else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
+                      row.addClass('text-danger');
+                    }
+                    break;
+                }
+
+                break;
+              case "integrations":
+                switch (item.id) {
+                  case 'integrations-altocloud':
+                    let hasAltocloudLicenses = usages.licenses.hasOwnProperty('PureCloud for Altocloud') ? usages.licenses['PureCloud for Altocloud'] : 0;
+                    hasAltocloudLicenses > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(hasAltocloudLicenses + " user(s) with an Altocloud license").appendTo(row);
+                    break;
+                  case 'integrations-lex-digital-bots':
+                    let chatFlowsUsingLex = usages.flows.filter(f => f.type === 'inboundchat' && f.manifest.hasOwnProperty('lexBot') && f.manifest.lexBot.length > 0).length;
+                    console.log('Chat flows using lex:', chatFlowsUsingLex);
+                    chatFlowsUsingLex > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(chatFlowsUsingLex + " chat flow(s) with Lex bots").appendTo(row);
+                    break;
+                  case 'integrations-lex-voice-bots':
+                    let voiceFlowsUsingLex = usages.flows.filter(f => (f.type === 'inboundcall' || f.type === 'securecall') && f.manifest.hasOwnProperty('lexBot') && f.manifest.lexBot.length > 0).length;
+                    voiceFlowsUsingLex > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(voiceFlowsUsingLex + " voice flow(s) with Lex bots").appendTo(row);
+                    break;
+                  case 'integrations-click-to-dial-tel-links':
+                    $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'integrations-make-call-from-context-menu':
+                    $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'integrations-ui-embedded-in-browser-extension':
+                    let embeddableFrameworkApps = usages.integrations.hasOwnProperty('embedded-client-app') ? usages.integrations['embeddable-framework'] : 0;
+                    embeddableFrameworkApps > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(embeddableFrameworkApps + " embedded framework apps").appendTo(row);
+                    break;
+                  case 'integrations-screen-pops':
+                    let scriptsWithUrlScreenPops = usages.scripts.filter(s => s.hasOwnProperty('customActions') && s.customActions.length > 0 && s.customActions.filter(ca => ca.action.block.filter(b => b.actionName === 'scripter.webPage')).length > 0);
+                    scriptsWithUrlScreenPops.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    let flowsWithScreenPops = usages.flows.filter(f => f.uiMetaData.hasOwnProperty('screenPops') && f.uiMetaData.screenPops.length > 0);
+                    let screenPopsTd = $("<td/>", { class: "text-center" }).text(scriptsWithUrlScreenPops.length + " scripts with URL Screen Pops").appendTo(row);
+                    let scriptsInFlowsWithScreenPops = usages.flows.filter(f => f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0 && f.uiMetaData.scripts.filter(s => s.variables.properties.hasOwnProperty('Screen Pop URL')));
+                    if (scriptsInFlowsWithScreenPops.length > 0) {
+                      screenPopsTd.html(`${screenPopsTd.text()}<br>${scriptsInFlowsWithScreenPops.length} screen pop(s) found in script(s) used in flows`);
+                    }
+                    break;
+                  case 'integrations-call-logging':
+                    $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'integrations-click-to-dial':
+                    $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'integrations-ui-embedded-in-salesforce':
+                    $("<td/>", { class: "text-center" }).text("N/A (done in Salesforce)").appendTo(row);
+                    break;
+                  case 'integrations-ui-embedded-in-zendesk':
+                    $("<td/>", { class: "text-center" }).text("N/A (done in Zendesk)").appendTo(row);
+                    break;
+                  case 'integrations-microsoft-dynamics-data-actions':
+                    let microsoftDynamicsDataActions = usages.integrations.hasOwnProperty('microsoft-dynamics-data-actions') ? usages.integrations['microsoft-dynamics-data-actions'] : 0;
+                    microsoftDynamicsDataActions > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(microsoftDynamicsDataActions + " Microsoft Dynamics Data Action(s)").appendTo(row);
+                    break;
+                  case 'integrations-rest-3rd-party-rest-api':
+                    let customRestActions = usages.integrations.hasOwnProperty('custom-rest-actions') ? usages.integrations['custom-rest-actions'] : 0;
+                    customRestActions > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(customRestActions + " Custom REST Action(s)").appendTo(row);
+                    break;
+                  case 'integrations-salesforce-data-actions':
+                    let salesforceDataActions = usages.integrations.hasOwnProperty('salesforce-data-dip') ? usages.integrations['salesforce-data-dip'] : 0;
+                    salesforceDataActions > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(salesforceDataActions + " Salesforce Data Action(s)").appendTo(row);
+                    break;
+                  case 'integrations-zendesk-data-actions':
+                    let zendeskDataActions = usages.integrations.hasOwnProperty('zendesk-data-actions') ? usages.integrations['zendesk-data-actions'] : 0;
+                    zendeskDataActions > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(zendeskDataActions + " Zendesk Data Action(s)").appendTo(row);
+                    break;
+                  case 'integrations-skype-for-business':
+                    let skypeForBusinessUsage = usages.integrations.hasOwnProperty('skype-for-business-client') ? usages.integrations['skype-for-business-client'] : 0;
+                    skypeForBusinessUsage > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(skypeForBusinessUsage + " Skype For Business Client configured").appendTo(row);
+                    break;
+                  default:
+                    break;
+                }
+                break;
+              case "omnichannel-routing":
+                switch (item.id) {
+                  case 'acd-voicemail-routing':
+                    let flowsWithVoicemailRouting = 0;
+                    //This is dirty but I failed to use filter for nested subarrays in array
+                    usages.flows.forEach((flow) => {
+                      flow.flowSequenceItemList.forEach((flowSequenceItem) => {
+                        if (flowSequenceItem.hasOwnProperty('actionList')) {
+                          flowSequenceItem.actionList.forEach((action) => {
+                            if (action.__type == 'TransferVoicemailAction') {
+                              flowsWithVoicemailRouting++;
+                            }
+                          });
+                        }
+                      });
+                    });
+                    flowsWithVoicemailRouting > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(flowsWithVoicemailRouting + " flow(s) with ACD Voicemail Routing").appendTo(row);
+                    break;
+                  case 'bullseye-routing':
+                    let queuesWithBullseyeRouting = usages.queues.filter(q => q.hasOwnProperty('bullseye') && q.bullseye.rings.length > 0).length;
+                    queuesWithBullseyeRouting > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(queuesWithBullseyeRouting + " queue(s) with Bullseye Routing").appendTo(row);
+                    break;
+                  default:
+                    break;
+                }
+                break;
+              default:
+                break;
+            }
+
+            // Customer has PC3 and feature is included in PC3? Flash row (text-danger)
+            // Customer has PC3 and feature is not included in PC3? Disable row (text-muted bg-light font-italic)
+
+
+            if (isUsingPC1 && item.PureCloud1) {
+              row.addClass('text-muted bg-light font-italic');
+            }
+          });
+        });
+      }
+
+      //#endregion
+
+      //#region Get Data
 
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
 
@@ -1182,6 +1694,24 @@
           console.error('Error while processing queues:', error);
         }
 
+        //#endregion
+
+        //#region Integrations
+
+        try {
+          let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
+          usages.integrations = integrationsUsage.integrations;
+          $("#integrationsBody").empty();
+          for (var integration in integrationsUsage.integrations) {
+            if (integrationsUsage.integrations.hasOwnProperty(integration)) {
+              let row = $("<tr/>", {}).appendTo("#integrationsBody");
+              $("<td/>").text(integration).appendTo(row);
+              $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
+            }
+          }
+        } catch (error) {
+          console.error('Error while processing integrations:', error);
+        }
         //#endregion
 
         populateLicenses(clientId, clientSecret, environment);
@@ -1327,23 +1857,6 @@
         //   console.error('Error while processing sms phone numbers:', error);
         // }
 
-        // //#endregion
-
-        // //#region Integrations
-
-        // try {
-        //   let integrationsUsage = await getIntegrations(clientId, clientSecret, environment);
-        //   $("#integrationsBody").empty();
-        //   for (var integration in integrationsUsage.integrations) {
-        //     if (integrationsUsage.integrations.hasOwnProperty(integration)) {
-        //       let row = $("<tr/>", {}).appendTo("#integrationsBody");
-        //       $("<td/>").text(integration).appendTo(row);
-        //       $("<td/>").text(integrationsUsage.integrations[integration]).appendTo(row);
-        //     }
-        //   }
-        // } catch (error) {
-        //   console.error('Error while processing integrations:', error);
-        // }
         // //#endregion
 
         // //#region Locations
@@ -1560,112 +2073,104 @@
         hideSpinner();
       }
 
-      //#region Map Licenses
+      async function processMediaMessage(data) {
+        if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
+        if (!data.media.hasOwnProperty("chats")) data.media.chats = 0;
+        if (!data.media.hasOwnProperty("emails")) data.media.emails = 0;
+        if (!data.media.hasOwnProperty("callbacks")) data.media.callbacks = 0;
+        if (!data.media.hasOwnProperty("cobrowses")) data.media.cobrowses = 0;
+        if (!data.media.hasOwnProperty("videos")) data.media.videos = 0;
+        if (!data.media.hasOwnProperty("screenshares")) data.media.screenshares = 0;
+        if (!data.media.hasOwnProperty("messages")) data.media.messages = 0;
 
-      function populateLicenses(clientId, clientSecret, environment) {
-        $.each(licenses.categories, (i, category) => {
-          // Title
-          $("<h4/>", { class: "text-center mb-3 text-gray-800" }).text(category.name).appendTo("#licensesGuideBody");
+        data.media.calls = parseInt($("#totalMediaUsage_calls").text()) + (data.media.hasOwnProperty("calls") ? data.media.calls : 0);
+        data.media.chats = parseInt($("#totalMediaUsage_chats").text()) + (data.media.hasOwnProperty("chats") ? data.media.chats : 0);
+        data.media.emails = parseInt($("#totalMediaUsage_emails").text()) + (data.media.hasOwnProperty("emails") ? data.media.emails : 0);
+        data.media.callbacks = parseInt($("#totalMediaUsage_callbacks").text()) + (data.media.hasOwnProperty("callbacks") ? data.media.callbacks : 0);
+        data.media.cobrowses = parseInt($("#totalMediaUsage_cobrowses").text()) + (data.media.hasOwnProperty("cobrowses") ? data.media.cobrowses : 0);
+        data.media.videos = parseInt($("#totalMediaUsage_videos").text()) + (data.media.hasOwnProperty("videos") ? data.media.videos : 0);
+        data.media.screenshares = parseInt($("#totalMediaUsage_screenshares").text()) + (data.media.hasOwnProperty("screenshares") ? data.media.screenshares : 0);
+        data.media.messages = parseInt($("#totalMediaUsage_messages").text()) + (data.media.hasOwnProperty("messages") ? data.media.messages : 0);
 
-          // Table
-          let categoryTableDiv = $("<div/>", { id: "category-" + category.id, class: "table-responsive" }).appendTo("#licensesGuideBody");
-          let table = $("<table/>", { class: "table table-bordered table-hover", width: "100%", cellspacing: "0" }).appendTo(categoryTableDiv);
-          let thead = $("<thead/>").appendTo(table);
-          let theadRow = $("<tr/>").appendTo(thead);
-          $("<th/>", { class: "text-center" }).text("Name").appendTo(theadRow);
-          $("<th/>", { class: "text-center " + (isUsingPC1 ? "text-success" : "") }).text("PureCloud 1").appendTo(theadRow);
-          $("<th/>", { class: "text-center " + (isUsingPC2 ? "text-success" : "") }).text("PureCloud 2").appendTo(theadRow);
-          $("<th/>", { class: "text-center " + (isUsingPC3 ? "text-success" : "") }).text("PureCloud 3").appendTo(theadRow);
-          $("<th/>", { class: "text-center " + (isUsingCollaborate ? "text-success" : "") }).text("Collaborate").appendTo(theadRow);
-          $("<th/>", { class: "text-center " + (isUsingCommunicate ? "text-success" : "") }).text("Communicate").appendTo(theadRow);
-          $("<th/>", { class: "text-center" }).text("Current State").appendTo(theadRow);
-          let tbody = $("<tbody/>", { id: "tbody-" + category.id }).appendTo(table);
+        $("#totalMediaUsage").text(sum(data.media));
+        $("#totalMediaUsage_calls").text(data.media.calls);
+        $("#totalMediaUsage_chats").text(data.media.chats);
+        $("#totalMediaUsage_emails").text(data.media.emails);
+        $("#totalMediaUsage_callbacks").text(data.media.callbacks);
+        $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
+        $("#totalMediaUsage_videos").text(data.media.videos);
+        $("#totalMediaUsage_screenshares").text(data.media.screenshares);
+        $("#totalMediaUsage_messages").text(data.media.messages);
 
-          // Populate items
-          $.each(category.items, async (i, item) => {
-            let row = $("<tr/>", { id: item.id }).appendTo(tbody);
-            $("<td/>", { class: "text-center" }).text(item.name).appendTo(row);
-            $("<td/>", { class: "text-center" }).html(item.PureCloud1 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
-            $("<td/>", { class: "text-center" }).html(item.PureCloud2 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
-            $("<td/>", { class: "text-center" }).html(item.PureCloud3 ? '<i class="fas fa-check"></i>' : "").appendTo(row);
-            $("<td/>", { class: "text-center" }).html(item.Collaborate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
-            $("<td/>", { class: "text-center" }).html(item.Communicate ? '<i class="fas fa-check"></i>' : "").appendTo(row);
+        // Set colors
+        $("#calls").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
+        $("#chats").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
+        $("#emails").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
+        $("#callbacks").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
+        $("#cobrowses").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
+        $("#videos").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.videos) === 0 ? "text-danger" : "text-success");
+        $("#screenshares").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
+        $("#messages").removeClass(function (index, className) {
+          return (className.match(/\btext-\S+/g) || []).join(' ');
+        }).addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
 
-            // Check if item is being used
-            switch (item.mappingItem) {
-              case "divisions":
-                let accessControlUsage = await getDivisions(clientId, clientSecret, environment);
-                console.log('Access Control Usage:', accessControlUsage);
-                $("<td/>", { class: "text-center" }).text(accessControlUsage.divisions + " divisions").appendTo(row);
-                if (accessControlUsage.divisions > 1) { // There is always one division called "Home" by default
-                  row.addClass('text-success');
-                }
-                else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
-                  row.addClass('text-danger');
-                }
-                break;
-              case "scripts":
-                let allFlowsWithScripts = usages.flows.filter(f => {
-                  if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
-                });
-
-                // Are there flows with associated scripts?
-                let commentsCol = undefined, queuesWithScripts = 0;
-                switch (item.id) {
-                  case 'inbound-call-support-scripts':
-                    let allInboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'inboundcall');
-                    allInboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
-                    commentsCol = $("<td/>", { class: "text-center" }).text(allInboundFlowsWithScripts.length + " inbound flows with scripts").appendTo(row);
-                    // Are there queues with default scripts?
-                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
-                    if (queuesWithScripts.length > 0) {
-                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queues with default scripts`);
-                    }
-                    break;
-                  case 'outbound-call-support-scripts':
-                    let allOutboundFlowsWithScripts = allFlowsWithScripts.filter(f => f.type === 'outboundcall');
-                    allOutboundFlowsWithScripts.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
-                    commentsCol = $("<td/>", { class: "text-center" }).text(allOutboundFlowsWithScripts.length + " outbound flows with scripts").appendTo(row);
-                    // Are there queues with default scripts?
-                    queuesWithScripts = usages.queues.filter(q => q.hasOwnProperty('defaultScripts') && Object.entries(q.defaultScripts).length > 0);
-                    if (queuesWithScripts.length > 0) {
-                      commentsCol.html(`${commentsCol.text()}<br>${queuesWithScripts.length} queues with default scripts`);
-                    }
-                    break;
-                  case 'url-screen-pop-scripts':
-                    let scriptsWithUrlScreenPops = usages.scripts.filter(s => s.hasOwnProperty('customActions') && s.customActions.length > 0 && s.customActions.filter(ca => ca.action.block.filter(b => b.actionName === 'scripter.webPage')).length > 0);
-                    scriptsWithUrlScreenPops.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
-                    commentsCol = $("<td/>", { class: "text-center" }).text(scriptsWithUrlScreenPops.length + " scripts with URL Screen Pops").appendTo(row);
-                    break;
-                  default:
-                    commentsCol = $("<td/>", { class: "text-center" }).text(usages.scripts.length + " scripts").appendTo(row);
-                    if (usages.scripts.length > 0) {
-                      row.addClass('text-success');
-                    }
-                    else if ((isUsingPC1 && item.PureCloud1) || (isUsingPC2 && item.PureCloud2) || (isUsingPC3 && item.PureCloud3) || (isUsingCollaborate && item.Collaborate) || (isUsingCommunicate && item.Communicate)) {
-                      row.addClass('text-danger');
-                    }
-                    break;
-                }
-
-                break;
-
-              default:
-                break;
-            }
-
-            // Customer has PC3 and feature is included in PC3? Flash row (text-danger)
-            // Customer has PC3 and feature is not included in PC3? Disable row (text-muted bg-light font-italic)
-
-
-            if (isUsingPC1 && item.PureCloud1) {
-              row.addClass('text-muted bg-light font-italic');
-            }
-          });
+        // Set usage percentage
+        let mediaUsagePercentValue = 0;
+        $.each(Object.entries(data.media), (i, media) => {
+          if (parseInt(media[1]) > 0) {
+            mediaUsagePercentValue += 1 / Object.entries(data.media).length;
+          }
         });
+        mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
+
+        $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
+        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
+
       }
 
-      //#endregion
+      async function processRecordingsMessage(data) {
+        try {
+          if (!data.recordings.hasOwnProperty("calls")) data.recordings.calls = 0;
+          if (!data.recordings.hasOwnProperty("chats")) data.recordings.chats = 0;
+          if (!data.recordings.hasOwnProperty("emails")) data.recordings.emails = 0;
+          if (!data.recordings.hasOwnProperty("messages")) data.recordings.messages = 0;
+
+          $("#totalRecordingsUsage_calls").text(parseInt($("#totalRecordingsUsage_calls").text()) + data.recordings.calls);
+          $("#totalRecordingsUsage_chats").text(parseInt($("#totalRecordingsUsage_chats").text()) + data.recordings.chats);
+          $("#totalRecordingsUsage_emails").text(parseInt($("#totalRecordingsUsage_emails").text()) + data.recordings.emails);
+          $("#totalRecordingsUsage_messages").text(parseInt($("#totalRecordingsUsage_messages").text()) + data.recordings.messages);
+
+          // Percentage
+          let totalRecordingsUsage = parseInt($("#totalRecordingsUsage_calls").text()) + parseInt($("#totalRecordingsUsage_chats").text()) + parseInt($("#totalRecordingsUsage_emails").text()) + parseInt($("#totalRecordingsUsage_messages").text());
+          let totalMediaUsage = parseInt($("#totalMediaUsage_calls").text()) + parseInt($("#totalMediaUsage_chats").text()) + parseInt($("#totalMediaUsage_emails").text()) + parseInt($("#totalMediaUsage_messages").text());
+          let percRecordings = Math.round((sum(data.recordings) + totalRecordingsUsage) * 100 / totalMediaUsage);
+          $("#percRecordings").text(percRecordings + '%');
+          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
+
+          // Set colors
+          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
+        } catch (error) {
+          console.error('Error while processing recordings usage:', error);
+          $("#percRecordings").append(" (Error)");
+        }
+      }
 
       async function getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate) {
         $("#spinner-text").text("Getting Media Usage...");
@@ -2503,8 +3008,6 @@
             console.log("getWorkorceManagementUsage completed");
           });
       }
-
-      //#endregion
 
       //#endregion
 
