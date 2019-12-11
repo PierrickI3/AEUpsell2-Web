@@ -1575,11 +1575,54 @@
                 Collaborate: false,
                 Communicate: false,
                 mappingItem: "outbound-campaigns"
+              },
+              {
+                name: "Online DNC.com Integration",
+                id: "online-dnc.com-integration",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "outbound-campaigns"
+              },
+              {
+                name: "Pacing Control and Overrides",
+                id: "pacing-control-and-overrides",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "outbound-campaigns"
+              },
+              {
+                name: "Time Zone Mapping; Automatic for North America",
+                id: "time-zone-mapping",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "outbound-campaigns"
+              },
+              {
+                name: "Time Zone Support",
+                id: "time-zone-support",
+                PureCloud1: true,
+                PureCloud2: true,
+                PureCloud3: true,
+                Collaborate: false,
+                Communicate: false,
+                mappingItem: "outbound-campaigns"
               }
             ]
           }
         ]
       };
+
+      //TODO Start "Outbound Dialing section"
+
 
       function setLicensingLevel(license) {
         switch (license) {
@@ -2015,6 +2058,24 @@
                     campaignsWithMultipleDNCLists.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
                     $("<td/>", { class: "text-center" }).text(campaignsWithMultipleDNCLists.length + " campaign(s) with more than one DNC list").appendTo(row);
                     break;
+                  case 'online-dnc.com-integration':
+                    let dncListsWithDncDotComIntegration = usages.dncLists.filter(c => c.dncSourceType === 'dnc.com');
+                    dncListsWithDncDotComIntegration.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(dncListsWithDncDotComIntegration.length + " DNC list(s) with DNC.com integration").appendTo(row);
+                    break;
+                  case 'pacing-control-and-overrides':
+                    $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
+                    break;
+                  case 'time-zone-mapping':
+                    let contactListsWithAutomaticTimeZoneMapping = usages.contactLists.filter(c => c.automaticTimeZoneMapping);
+                    contactListsWithAutomaticTimeZoneMapping.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(contactListsWithAutomaticTimeZoneMapping.length + " contact list(s) with automatic time zone mapping").appendTo(row);
+                    break;
+                  case 'time-zone-support':
+                    let contactListsWithTimeZoneColumns = usages.contactLists.filter(c => c.phoneColumns.filter(pc => pc.hasOwnProperty('callableTimeColumn')).length > 0);
+                    contactListsWithTimeZoneColumns.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    $("<td/>", { class: "text-center" }).text(contactListsWithTimeZoneColumns.length + " contact list(s) with a time zone column").appendTo(row);
+                    break;
                   default:
                     break;
                 }
@@ -2025,7 +2086,6 @@
 
             // Customer has PC3 and feature is included in PC3? Flash row (text-danger)
             // Customer has PC3 and feature is not included in PC3? Disable row (text-muted bg-light font-italic)
-
 
             if (isUsingPC1 && item.PureCloud1) {
               row.addClass('text-muted bg-light font-italic');
@@ -2322,12 +2382,12 @@
           usages.contactLists = contactListsUsage.contactLists;
 
           if (contactListsUsage.hasOwnProperty('contactLists')) {
-            $("#totalContactLists").text(contactListsUsage.contactLists);
+            $("#totalContactLists").text(contactListsUsage.contactLists.length);
 
             // Set colors
             $("#contactLists").removeClass(function (index, className) {
               return (className.match(/\btext-\S+/g) || []).join(' ');
-            }).addClass(contactListsUsage.contactLists === 0 ? "text-danger" : "text-success");
+            }).addClass(contactListsUsage.contactLists.length === 0 ? "text-danger" : "text-success");
           } else {
             $("#contactLists").removeClass(function (index, className) {
               return (className.match(/\btext-\S+/g) || []).join(' ');
