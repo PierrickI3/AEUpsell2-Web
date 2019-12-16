@@ -2259,8 +2259,20 @@
 
       function setLicensingLevel(license) {
         switch (license) {
+          case 'PureCloud 1 User Usage':
+            isUsingPC1 = true;
+            break;
+          case 'PureCloud 2 User Usage':
+            isUsingPC2 = true;
+            break;
           case 'PureCloud 3 User Usage':
             isUsingPC3 = true;
+            break;
+          case 'PureCloud Communicate User Usage':
+            isUsingCommunicate = true;
+            break;
+          case 'PureCloud Collaborate User Usage':
+            isUsingCollaborate = true;
             break;
 
           default:
