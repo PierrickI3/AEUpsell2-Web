@@ -14,6 +14,50 @@ div.fadeMe {
   position:   fixed;
 }
 
+.panel-heading {
+  padding: 0;
+  margin: 1px 1px 3px 1px;
+}
+
+.panel-heading:hover {
+  padding: 0;
+  margin: 1px 1px 3px 1px;
+  border: 1;
+  border: red;
+  background-color: #eee;
+}
+
+.panel-title>a, .panel-title>a:active{
+	display:block;
+  padding:15px;
+  text-align: center;
+  color:#555;
+  font-size:20px;
+  font-weight:bold;
+	text-transform:uppercase;
+	letter-spacing:1px;
+  word-spacing:3px;
+  text-decoration:none;
+}
+
+.panel-heading  a:before {
+   font-family: 'Font Awesome 5 Free';
+   content: "\f078";
+   font-size: xx-large;
+   float: right;
+   transition: all 0.5s;
+}
+
+.panel-heading.active a:before {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.panel-collapse {
+  margin: 10px 10px 10px 10px;
+}
+
 .spinner {
    position: absolute;
    left: 50%;
