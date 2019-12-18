@@ -148,7 +148,7 @@
                       </div>
                     </div>
                     <div class="col-auto">
-                      <div id="mediaUsagePercentValue">
+                      <div id="mediaUsagePercentValue" class="c100 medium p0">
                         <span id="mediaUsagePercentText">0%</span>
                         <div class="slice">
                           <div class="bar"></div>
@@ -2194,7 +2194,7 @@
         console.log('Media usage percent value (after calculation):', mediaUsagePercentValue);
 
         $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
+        $("#mediaUsagePercentValue").removeClass().addClass("c100 medium p" + mediaUsagePercentValue);
       }
 
       async function processRecordingsMessage(data) {
@@ -2217,10 +2217,10 @@
           $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
 
           // Set colors
-          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
+          $("#calls_recordings").removeClass().addClass(parseInt($("#totalRecordingsUsage_calls").text()) === 0 ? "text-danger" : "text-success");
+          $("#chats_recordings").removeClass().addClass(parseInt($("#totalRecordingsUsage_chats").text()) === 0 ? "text-danger" : "text-success");
+          $("#emails_recordings").removeClass().addClass(parseInt($("#totalRecordingsUsage_emails").text()) === 0 ? "text-danger" : "text-success");
+          $("#messages_recordings").removeClass().addClass(parseInt($("#totalRecordingsUsage_messages").text()) === 0 ? "text-danger" : "text-success");
         } catch (error) {
           console.error('Error while processing recordings usage:', error);
           $("#percRecordings").append(" (Error)");
