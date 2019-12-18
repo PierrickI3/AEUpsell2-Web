@@ -2261,12 +2261,19 @@
         switch (license) {
           case 'PureCloud 1 User Usage':
             isUsingPC1 = true;
+            isUsingCollaborate = true;
+            isUsingCommunicate = true;
             break;
           case 'PureCloud 2 User Usage':
+          case 'PureCloud 2 Concurrent User Usage':
             isUsingPC2 = true;
+            isUsingCollaborate = true;
+            isUsingCommunicate = true;
             break;
           case 'PureCloud 3 User Usage':
             isUsingPC3 = true;
+            isUsingCollaborate = true;
+            isUsingCommunicate = true;
             break;
           case 'PureCloud Communicate User Usage':
             isUsingCommunicate = true;
@@ -2274,11 +2281,10 @@
           case 'PureCloud Collaborate User Usage':
             isUsingCollaborate = true;
             break;
-
           default:
             break;
         }
-        $("#licensingLevel").text(`PureCloud1: ${isUsingPC1}, PureCloud2: ${isUsingPC2}, PureCloud3: ${isUsingPC3}, Collaborate: ${isUsingCollaborate}, Communicate: ${isUsingCommunicate}`);
+        $("#licensingLevel").html(`PureCloud1: ${isUsingPC1}<br>PureCloud2: ${isUsingPC2}<br>PureCloud3: ${isUsingPC3}<br>Collaborate: ${isUsingCollaborate}<br>Communicate: ${isUsingCommunicate}`);
       }
 
       function populateLicenses(clientId, clientSecret, environment) {
@@ -2354,9 +2360,12 @@
                 }
                 break;
               case "scripts":
-                let allFlowsWithScripts = usages.flows.filter(f => {
-                  if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
-                });
+                let allFlowsWithScripts = [];
+                if (usages.flows.length > 0) {
+                  allFlowsWithScripts = usages.flows.filter(f => {
+                    if (f.uiMetaData.hasOwnProperty('scripts') && f.uiMetaData.scripts.length > 0) { return f } else return;
+                  });
+                }
 
                 let commentsCol = undefined, queuesWithScripts = 0;
                 switch (item.id) {
@@ -2436,7 +2445,6 @@
                     }
                     break;
                 }
-
                 break;
               case "integrations":
                 switch (item.id) {
@@ -3192,6 +3200,8 @@
 
       //#region Get Data
 
+      var allDataReceived = false, allMediaDataReceived = false, allFlowDataReceived = false, allRecordingDataReceived = false;
+
       async function getData(clientId, clientSecret, environment, startDate, endDate) {
 
         showSpinner();
@@ -3200,73 +3210,78 @@
         resetValues();
 
         if (!usages.media) usages = {
-          media: {},
-          recordings: {}
+          media: {
+            calls: 0,
+            chats: 0,
+            emails: 0,
+            callbacks: 0,
+            scheduledCallbacks: 0,
+            cobrowses: 0,
+            videos: 0,
+            screenshares: 0,
+            conferences: 0,
+            messages: {}
+          },
+          recordings: {
+            calls: 0,
+            chats: 0,
+            emails: 0,
+            messages: 0
+          },
+          flows: []
         };
-
-        if (!usages.media.hasOwnProperty("calls")) usages.media.calls = 0;
-        if (!usages.media.hasOwnProperty("chats")) usages.media.chats = 0;
-        if (!usages.media.hasOwnProperty("emails")) usages.media.emails = 0;
-        if (!usages.media.hasOwnProperty("callbacks")) usages.media.callbacks = 0;
-        if (!usages.media.hasOwnProperty("scheduledCallbacks")) usages.media.scheduledCallbacks = 0;
-        if (!usages.media.hasOwnProperty("cobrowses")) usages.media.cobrowses = 0;
-        if (!usages.media.hasOwnProperty("videos")) usages.media.videos = 0;
-        if (!usages.media.hasOwnProperty("screenshares")) usages.media.screenshares = 0;
-        if (!usages.media.hasOwnProperty("conferences")) usages.media.conferences = 0;
-        if (!usages.media.hasOwnProperty("messages")) usages.media.messages = {};
-
-        if (!usages.recordings.hasOwnProperty("calls")) usages.recordings.calls = 0;
-        if (!usages.recordings.hasOwnProperty("chats")) usages.recordings.chats = 0;
-        if (!usages.recordings.hasOwnProperty("emails")) usages.recordings.emails = 0;
-        if (!usages.recordings.hasOwnProperty("messages")) usages.recordings.messages = 0;
 
         // Open web socket and process messages
         const websocket = new WebSocket(webSocketUrl);
-        websocket.onmessage = ({ data }) => {
-          var data = JSON.parse(data);
-          console.log('Received data:', data);
-          if (data.hasOwnProperty('media')) {
-            usages.media.calls += data.media.calls || 0;
-            usages.media.conferences += data.media.conferences || 0;
-            usages.media.chats += data.media.chats || 0;
-            usages.media.emails += data.media.emails || 0;
-            usages.media.callbacks += data.media.callbacks || 0;
-            usages.media.scheduledCallbacks += data.media.scheduledCallbacks || 0;
-            usages.media.cobrowses += data.media.cobrowses || 0;
-            usages.media.videos += data.media.videos || 0;
-            usages.media.screenshares += data.media.screenshares || 0;
+        websocket.onmessage = (message) => {
 
-            if (data.media.messages) {
-              for (let [messageType, numberOfOccurrences] of Object.entries(data.media.messages)) {
-                if (messageType === 'sms') {
-                  console.log('Found SMS:', data.media.messages.sms);
-                  if (!usages.media.messages.sms) usages.media.messages.sms = {
-                    inbound: 0,
-                    outbound: 0
-                  };
-                  usages.media.messages.sms.inbound += data.media.messages.sms.inbound;
-                  usages.media.messages.sms.outbound += data.media.messages.sms.outbound;
-                  console.log('SMS Usage:', usages.media.messages.sms);
-                } else {
-                  if (!usages.media.messages[messageType]) {
-                    usages.media.messages[messageType] = 0;
+          console.log('Received data from websocket');
+          var data = JSON.parse(message.data);
+
+          if (data.hasOwnProperty('media')) {
+            $("#spinner-text").text("Receiving media data...");
+            if (data.recordings.hasOwnProperty('status') && data.recordings.status === "FINISHED") {
+              allMediaDataReceived = true;
+              console.log('No more recordings data...');
+              hideCardSpinner("recordingsCard");
+            } else {
+
+              usages.media.calls += data.media.calls || 0;
+              usages.media.conferences += data.media.conferences || 0;
+              usages.media.chats += data.media.chats || 0;
+              usages.media.emails += data.media.emails || 0;
+              usages.media.callbacks += data.media.callbacks || 0;
+              usages.media.scheduledCallbacks += data.media.scheduledCallbacks || 0;
+              usages.media.cobrowses += data.media.cobrowses || 0;
+              usages.media.videos += data.media.videos || 0;
+              usages.media.screenshares += data.media.screenshares || 0;
+
+              if (data.media.messages) {
+                for (let [messageType, numberOfOccurrences] of Object.entries(data.media.messages)) {
+                  if (messageType === 'sms') {
+                    console.log('Found SMS:', data.media.messages.sms);
+                    if (!usages.media.messages.sms) usages.media.messages.sms = {
+                      inbound: 0,
+                      outbound: 0
+                    };
+                    usages.media.messages.sms.inbound += data.media.messages.sms.inbound;
+                    usages.media.messages.sms.outbound += data.media.messages.sms.outbound;
+                    console.log('SMS Usage:', usages.media.messages.sms);
+                  } else {
+                    if (!usages.media.messages[messageType]) {
+                      usages.media.messages[messageType] = 0;
+                    }
+                    usages.media.messages[messageType] += numberOfOccurrences;
                   }
-                  usages.media.messages[messageType] += numberOfOccurrences;
                 }
               }
             }
 
-            // This isn't working properly yet
-            if (data.media.hasOwnProperty('status') && data.media.status === "FINISHED") {
-              console.log('No more media data...');
-              // hideCardSpinner("conversationsCard");
-            } else {
-              processMediaMessage(data);
-            }
           }
+
           if (data.hasOwnProperty('recordings')) {
-            // This isn't working properly yet
             if (data.recordings.hasOwnProperty('status') && data.recordings.status === "FINISHED") {
+              allRecordingDataReceived = true;
               console.log('No more recordings data...');
               hideCardSpinner("recordingsCard");
             } else {
@@ -3277,19 +3292,37 @@
               processRecordingsMessage(data);
             }
           }
+
+          if (data.hasOwnProperty('flow')) {
+            $("#spinner-text").text("Receiving flow data...");
+            if (data.flow.hasOwnProperty('status') && data.flow.status === "FINISHED") {
+              allFlowDataReceived = true;
+              console.log('No more flows data...');
+              hideCardSpinner("flowsCard");
+            } else {
+              usages.flows.push(data.flow);
+            }
+          }
+
+          allDataReceived = allMediaDataReceived && allFlowDataReceived && allRecordingDataReceived;
         };
         websocket.onerror = error => {
           console.error('onerror:', error);
+          alert(error);
         };
-        websocket.onopen = () => {
+        websocket.onopen = async () => {
           console.log('Websocket opened!');
 
+          // Get Media
           // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
           var dateRanges = getDates(new Date(startDate), new Date(endDate));
           $.each(dateRanges, async (i, dateRange) => {
             console.log(`Current date range: ${dateRange.startDate} to ${dateRange.endDate}`);
             await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
           });
+
+          // Get flows
+          await getFlows(clientId, clientSecret, environment);
         };
 
         //#region Organization
@@ -3331,17 +3364,6 @@
           }
         } catch (error) {
           console.error('Error while processing billable usage:', error);
-        }
-
-        //#endregion
-
-        //#region Flows
-
-        try {
-          let flowsUsage = await getFlows(clientId, clientSecret, environment);
-          usages.flows = flowsUsage.flows;
-        } catch (error) {
-          console.error('Error while processing flows:', error);
         }
 
         //#endregion
@@ -3615,9 +3637,23 @@
 
         //#endregion
 
+        //Wait until all data is received
+        await until(() => allDataReceived == true);
+
         populateLicenses(clientId, clientSecret, environment);
 
         hideSpinner();
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function until(fn) {
+        while (!fn()) {
+          console.log('Waiting...: allMediaDataReceived?', allMediaDataReceived, 'allFlowDataReceived?', allFlowDataReceived, 'allRecordingDataReceived?', allRecordingDataReceived);
+          await sleep(1000);
+        }
       }
 
       async function processMediaMessage(data) {
