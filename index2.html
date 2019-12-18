@@ -3245,7 +3245,6 @@
               console.log('No more recordings data...');
               hideCardSpinner("recordingsCard");
             } else {
-
               usages.media.calls += data.media.calls || 0;
               usages.media.conferences += data.media.conferences || 0;
               usages.media.chats += data.media.chats || 0;
@@ -3276,7 +3275,6 @@
                 }
               }
             }
-
           }
 
           if (data.hasOwnProperty('recordings')) {
@@ -3289,7 +3287,6 @@
               usages.recordings.chats += data.recordings.chats || 0;
               usages.recordings.emails += data.recordings.emails || 0;
               usages.recordings.messages += data.recordings.messages || 0;
-              processRecordingsMessage(data);
             }
           }
 
@@ -3653,104 +3650,6 @@
         while (!fn()) {
           console.log('Waiting...: allMediaDataReceived?', allMediaDataReceived, 'allFlowDataReceived?', allFlowDataReceived, 'allRecordingDataReceived?', allRecordingDataReceived);
           await sleep(1000);
-        }
-      }
-
-      async function processMediaMessage(data) {
-        if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
-        if (!data.media.hasOwnProperty("chats")) data.media.chats = 0;
-        if (!data.media.hasOwnProperty("emails")) data.media.emails = 0;
-        if (!data.media.hasOwnProperty("callbacks")) data.media.callbacks = 0;
-        if (!data.media.hasOwnProperty("cobrowses")) data.media.cobrowses = 0;
-        if (!data.media.hasOwnProperty("videos")) data.media.videos = 0;
-        if (!data.media.hasOwnProperty("screenshares")) data.media.screenshares = 0;
-        if (!data.media.hasOwnProperty("messages")) data.media.messages = {};
-
-        data.media.calls = parseInt($("#totalMediaUsage_calls").text()) + (data.media.hasOwnProperty("calls") ? data.media.calls : 0);
-        data.media.chats = parseInt($("#totalMediaUsage_chats").text()) + (data.media.hasOwnProperty("chats") ? data.media.chats : 0);
-        data.media.emails = parseInt($("#totalMediaUsage_emails").text()) + (data.media.hasOwnProperty("emails") ? data.media.emails : 0);
-        data.media.callbacks = parseInt($("#totalMediaUsage_callbacks").text()) + (data.media.hasOwnProperty("callbacks") ? data.media.callbacks : 0);
-        data.media.cobrowses = parseInt($("#totalMediaUsage_cobrowses").text()) + (data.media.hasOwnProperty("cobrowses") ? data.media.cobrowses : 0);
-        data.media.videos = parseInt($("#totalMediaUsage_videos").text()) + (data.media.hasOwnProperty("videos") ? data.media.videos : 0);
-        data.media.screenshares = parseInt($("#totalMediaUsage_screenshares").text()) + (data.media.hasOwnProperty("screenshares") ? data.media.screenshares : 0);
-        data.media.messages = parseInt($("#totalMediaUsage_messages").text()) + (data.media.hasOwnProperty("messages") ? sum(data.media.messages) : 0);
-
-        $("#totalMediaUsage").text(sum(data.media));
-        $("#totalMediaUsage_calls").text(data.media.calls);
-        $("#totalMediaUsage_chats").text(data.media.chats);
-        $("#totalMediaUsage_emails").text(data.media.emails);
-        $("#totalMediaUsage_callbacks").text(data.media.callbacks);
-        $("#totalMediaUsage_cobrowses").text(data.media.cobrowses);
-        $("#totalMediaUsage_videos").text(data.media.videos);
-        $("#totalMediaUsage_screenshares").text(data.media.screenshares);
-        $("#totalMediaUsage_messages").text(data.media.messages);
-
-        // Set colors
-        $("#calls").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.calls) === 0 ? "text-danger" : "text-success");
-        $("#chats").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.chats) === 0 ? "text-danger" : "text-success");
-        $("#emails").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.emails) === 0 ? "text-danger" : "text-success");
-        $("#callbacks").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.callbacks) === 0 ? "text-danger" : "text-success");
-        $("#cobrowses").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.cobrowses) === 0 ? "text-danger" : "text-success");
-        $("#videos").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.videos) === 0 ? "text-danger" : "text-success");
-        $("#screenshares").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.screenshares) === 0 ? "text-danger" : "text-success");
-        $("#messages").removeClass(function (index, className) {
-          return (className.match(/\btext-\S+/g) || []).join(' ');
-        }).addClass(parseInt(data.media.messages) === 0 ? "text-danger" : "text-success");
-
-        // Set usage percentage
-        let mediaUsagePercentValue = 0;
-        $.each(Object.entries(data.media), (i, media) => {
-          if (parseInt(media[1]) > 0) {
-            mediaUsagePercentValue += 1 / Object.entries(data.media).length;
-          }
-        });
-        mediaUsagePercentValue = (mediaUsagePercentValue * 100).toFixed(0);
-
-        $("#mediaUsagePercentText").text(mediaUsagePercentValue + "%");
-        $("#mediaUsagePercentValue").removeClass().addClass("c100 small p" + mediaUsagePercentValue);
-      }
-
-      async function processRecordingsMessage(data) {
-        try {
-          if (!data.recordings.hasOwnProperty("calls")) data.recordings.calls = 0;
-          if (!data.recordings.hasOwnProperty("chats")) data.recordings.chats = 0;
-          if (!data.recordings.hasOwnProperty("emails")) data.recordings.emails = 0;
-          if (!data.recordings.hasOwnProperty("messages")) data.recordings.messages = 0;
-
-          $("#totalRecordingsUsage_calls").text(parseInt($("#totalRecordingsUsage_calls").text()) + data.recordings.calls);
-          $("#totalRecordingsUsage_chats").text(parseInt($("#totalRecordingsUsage_chats").text()) + data.recordings.chats);
-          $("#totalRecordingsUsage_emails").text(parseInt($("#totalRecordingsUsage_emails").text()) + data.recordings.emails);
-          $("#totalRecordingsUsage_messages").text(parseInt($("#totalRecordingsUsage_messages").text()) + data.recordings.messages);
-
-          // Percentage
-          let totalRecordingsUsage = parseInt($("#totalRecordingsUsage_calls").text()) + parseInt($("#totalRecordingsUsage_chats").text()) + parseInt($("#totalRecordingsUsage_emails").text()) + parseInt($("#totalRecordingsUsage_messages").text());
-          let totalMediaUsage = parseInt($("#totalMediaUsage_calls").text()) + parseInt($("#totalMediaUsage_chats").text()) + parseInt($("#totalMediaUsage_emails").text()) + parseInt($("#totalMediaUsage_messages").text());
-          let percRecordings = Math.round((sum(data.recordings) + totalRecordingsUsage) * 100 / totalMediaUsage);
-          $("#percRecordings").text(percRecordings + '%');
-          $("#recordings_progressbar").prop('style', 'width:' + percRecordings + '%');
-
-          // Set colors
-          $("#calls_recordings").removeClass().addClass(parseInt(data.recordings.calls) === 0 ? "text-danger" : "text-success");
-          $("#chats_recordings").removeClass().addClass(parseInt(data.recordings.chats) === 0 ? "text-danger" : "text-success");
-          $("#emails_recordings").removeClass().addClass(parseInt(data.recordings.emails) === 0 ? "text-danger" : "text-success");
-          $("#messages_recordings").removeClass().addClass(parseInt(data.recordings.messages) === 0 ? "text-danger" : "text-success");
-        } catch (error) {
-          console.error('Error while processing recordings usage:', error);
-          $("#percRecordings").append(" (Error)");
         }
       }
 
