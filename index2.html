@@ -99,7 +99,7 @@
                     </div>
                     <div class="form-group">
                       <label for="startDatePicker" class="col-form-label">Start Date:</label>
-                      <input type="text" class="form-control" id="startDatePicker" value="2019-09-01T00:00:00.000Z">
+                      <input type="text" class="form-control" id="startDatePicker" value="2019-12-17T00:00:00.000Z">
                     </div>
                     <div class="form-group">
                       <label for="endDatePicker" class="col-form-label">End Date:</label>
@@ -221,8 +221,9 @@
         const urlBasePath = devMode ? 'http://localhost:3000' : 'https://spkhldip36.execute-api.eu-central-1.amazonaws.com/dev';
         const webSocketUrl = devMode ? 'ws://localhost:3001' : 'wss://anr7mnvwrg.execute-api.eu-central-1.amazonaws.com/dev';
 
-        var usages = {}, queue = new TimerQueue(), totalTasks = 0;
+        var usages = {}, queue = new TimerQueue(), totalTasks = 0, uniqueId = uuidv4();;
         var isUsingPC1 = false, isUsingPC2 = false, isUsingPC3 = false, isUsingCollaborate = false, isUsingCommunicate = false;
+        var allDataReceived = false, allMediaDataReceived = false, allFlowDataReceived = false, allRecordingDataReceived = false;
 
         //#region Panel
 
@@ -3160,8 +3161,6 @@
 
         //#region Get Data
 
-        var allDataReceived = false, allMediaDataReceived = false, allFlowDataReceived = false, allRecordingDataReceived = false;
-
         async function getData(clientId, clientSecret, environment, startDate, endDate) {
 
           showSpinner();
@@ -3285,7 +3284,6 @@
           queue.addTask(() => getOrganization(clientId, clientSecret, environment), 1000);
           queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), 1000);
           queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), 1000);
-          queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), 1000);
           queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), 1000);
           queue.addTask(() => getScripts(clientId, clientSecret, environment), 1000);
           queue.addTask(() => getQueues(clientId, clientSecret, environment), 1000);
@@ -3336,7 +3334,8 @@
               environment: environment,
               startDate: startDate,
               endDate: endDate,
-              originalEndDate: originalEndDate
+              originalEndDate: originalEndDate,
+              uniqueId: uniqueId
             }
           })
             .done((data, textStatus, jqXHR) => {
@@ -3359,7 +3358,7 @@
                 console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
                 showMessage('Too many requests (429). Some tasks might be delayed...');
-                setTimeout(() => queue.addTask(() => getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate), 60000));
+                setTimeout(() => queue.addTask(() => getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate), queue.getNextDelay()), 0);
                 console.warn('getMedia has been rescheduled');
                 resolve();
                 return;
@@ -3394,18 +3393,17 @@
                   switch (jqXHR.status) {
                     case 200:
                       console.log('Organizations:', jqXHR.responseJSON);
-                      let organizationUsage = jqXHR.responseJSON;
-                      if (Object.entries(organizationUsage).length === 0) { console.error('No organization information returned!') };
-                      usages.organization = organizationUsage.organization;
+                      usages.organization = jqXHR.responseJSON.organization;
+                      if (Object.entries(usages.organization).length === 0) { console.error('No organization information returned!') };
 
                       $("#title").text("Genesys Cloud Adoption Metrics (" + usages.organization.name + ")");
                       $("#organizationFeaturesBody").empty();
-                      for (var feature in organizationUsage.organization.features) {
-                        if (organizationUsage.organization.features.hasOwnProperty(feature)) {
+                      for (var feature in usages.organization.features) {
+                        if (usages.organization.features.hasOwnProperty(feature)) {
                           let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
                           $("<td/>").text(feature).appendTo(row);
-                          $("<td/>").text(organizationUsage.organization.features[feature]).appendTo(row);
-                          row.addClass(organizationUsage.organization.features[feature] ? "text-success" : "text-danger");
+                          $("<td/>").text(usages.organization.features[feature]).appendTo(row);
+                          row.addClass(usages.organization.features[feature] ? "text-success" : "text-danger");
                         }
                       }
                       resolve();
@@ -3418,7 +3416,7 @@
                   if (jqXHR.status === 429) {
                     console.warn('Got 429 (trunks)');
                     $("#spinner-text").text("Too many requests...");
-                    setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), 60000));
+                    setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                     console.warn('getOrganization has been rescheduled');
                     resolve();
                     return;
@@ -3434,7 +3432,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getOrganization has been rescheduled');
                   resolve();
                   return;
@@ -3487,7 +3485,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getScripts(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getScripts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getScripts has been rescheduled');
                   resolve();
                   return;
@@ -3541,7 +3539,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getQueues(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getQueues(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getQueues has been rescheduled');
                   resolve();
                   return;
@@ -3569,7 +3567,8 @@
               data: {
                 clientId: clientId,
                 clientSecret: clientSecret,
-                environment: environment
+                environment: environment,
+                uniqueId: uniqueId
               }
             })
               .done((data, textStatus, jqXHR) => {
@@ -3592,7 +3591,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getFlows(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getFlows(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getFlows has been rescheduled');
                   resolve();
                   return;
@@ -3658,7 +3657,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), 60000));
+                  setTimeout(() => queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getBillableUsage has been rescheduled');
                   resolve();
                   return;
@@ -3711,7 +3710,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getStations(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getStations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getStations has been rescheduled');
                   resolve();
                   return;
@@ -3764,7 +3763,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getIntegrations(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getIntegrations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getIntegrations has been rescheduled');
                   resolve();
                   return;
@@ -3817,7 +3816,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getDialerCampaigns has been rescheduled');
                   resolve();
                   return;
@@ -3870,7 +3869,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getContactLists(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getContactLists(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getContactLists has been rescheduled');
                   resolve();
                   return;
@@ -3934,7 +3933,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDocuments(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getDocuments(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getDocuments has been rescheduled');
                   resolve();
                   return;
@@ -3987,7 +3986,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getExternalContacts has been rescheduled');
                   resolve();
                   return;
@@ -4040,7 +4039,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getGDPRRequests has been rescheduled');
                   resolve();
                   return;
@@ -4093,7 +4092,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getEvaluationForms has been rescheduled');
                   resolve();
                   return;
@@ -4146,7 +4145,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getResponseLibraries has been rescheduled');
                   resolve();
                   return;
@@ -4199,7 +4198,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getWrapUpCodes has been rescheduled');
                   resolve();
                   return;
@@ -4252,7 +4251,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDivisions(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getDivisions(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getDivisions has been rescheduled');
                   resolve();
                   return;
@@ -4305,7 +4304,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCampaignSequences(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getCampaignSequences(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getCampaignSequences has been rescheduled');
                   resolve();
                   return;
@@ -4358,7 +4357,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCallableTimeSets(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getCallableTimeSets(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getCallableTimeSets has been rescheduled');
                   resolve();
                   return;
@@ -4411,7 +4410,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDncLists(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getDncLists(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getDncLists has been rescheduled');
                   resolve();
                   return;
@@ -4464,7 +4463,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCallAnalysisResponseSets(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getCallAnalysisResponseSets(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getCallAnalysisResponseSets has been rescheduled');
                   resolve();
                   return;
@@ -4517,7 +4516,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getInteractionStatsRules(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getInteractionStatsRules(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getInteractionStatsRules has been rescheduled');
                   resolve();
                   return;
@@ -4572,7 +4571,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), 60000));
+                  setTimeout(() => queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getEvaluations has been rescheduled');
                   resolve();
                   return;
@@ -4625,7 +4624,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getTrunks(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getTrunks(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getTrunks has been rescheduled');
                   resolve();
                   return;
@@ -4679,7 +4678,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getMediaRetentionPolicies(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getMediaRetentionPolicies(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getMediaRetentionPolicies has been rescheduled');
                   resolve();
                   return;
@@ -4732,7 +4731,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getScreenSessions(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getScreenSessions(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getScreenSessions has been rescheduled');
                   resolve();
                   return;
@@ -4787,7 +4786,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), 60000));
+                  setTimeout(() => queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getSurveys has been rescheduled');
                   resolve();
                   return;
@@ -4840,7 +4839,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getGroups(clientId, clientSecret, environment), 60000));
+                  setTimeout(() => queue.addTask(() => getGroups(clientId, clientSecret, environment), queue.getNextDelay()), 0);
                   console.warn('getGroups has been rescheduled');
                   resolve();
                   return;
@@ -4924,7 +4923,14 @@
           this.tasks.length = 0;
         };
 
-        //TODO How to find out when all tasks have completed? Not just launched
+        TimerQueue.prototype.getNextDelay = function () {
+          console.log(`Getting next delay: Tasks length: ${this.tasks.length}, Last task: ${JSON.stringify(this.tasks[this.tasks.length - 1])}`);
+          let longTasks = this.tasks.filter(t => t.delay > 30000);
+          if (longTasks && longTasks.length > 0) {
+            return 1000;
+          }
+          return 60000;
+        }
 
         //#endregion
 
@@ -4950,11 +4956,11 @@
           isUsingCollaborate = false;
           isUsingCommunicate = false;
 
-          usages = {}, totalTasks = 0;
-
           $("#licensesGuideBody").empty();
           $("#licensingLevel").empty();
           $("#billableUsageBody").empty();
+
+          usages = {}, totalTasks = 0, uniqueId = uuidv4();
 
           // Clear conversations
           $("#totalMediaUsage").text(0);
@@ -4990,6 +4996,13 @@
             $("#spinner-text").text(`Waiting for next task(s) (${queue.tasks.length}/${totalTasks})`);
             await sleep(1000);
           }
+        }
+
+        function uuidv4() {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
         }
 
       </script>
