@@ -609,6 +609,7 @@
       gtag('js', new Date());
 
       gtag('config', 'UA-155607114-1');
+      gtag('set', { 'user_id': uuidv4() });
     </script>
 
     <!-- Bootstrap core JavaScript-->
@@ -2533,6 +2534,8 @@
       }
 
       //#endregion
+
+      //#region Process Media Messages
 
       async function processMediaMessage(data) {
         if (!data.media.hasOwnProperty("calls")) data.media.calls = 0;
