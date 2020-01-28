@@ -107,11 +107,15 @@
                       <label for="endDatePicker" class="col-form-label">End Date:</label>
                       <input type="text" class="form-control" id="endDatePicker" value="2019-12-18T00:00:00.000Z">
                     </div>
+                    <div class="custom-control custom-checkbox form-group">
+                      <input type="checkbox" class="custom-control-input" id="consentCheck">
+                      <label class="custom-control-label" for="consentCheck">I have obtained the consent from the owner of this organization to run this against</label>
+                    </div>
                   </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-tertiary pull-left" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="getData">Go!</button>
+                  <button type="button" class="btn btn-primary" id="getData" disabled>Go!</button>
                 </div>
               </div>
             </div>
@@ -188,17 +192,6 @@
       </a>
 
       <!-- #region Imports -->
-
-      <!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155607114-1"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-155607114-1');
-        gtag('set', { 'user_id': uuidv4() });
-      </script>
 
       <!-- Bootstrap core JavaScript-->
       <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -294,6 +287,10 @@
 
         $('#configModal').on('show.bs.modal', function (event) {
           //$("#configModal #clientId").trigger('focus'); //TODO Not working and causing an issue with DatePicker
+        });
+
+        $("#consentCheck").on("click", (e) => {
+          $("#getData").attr('disabled', !$("#consentCheck").is(":checked"));
         });
 
         $("#getData").on("click", async (e) => {
