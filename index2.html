@@ -4918,7 +4918,7 @@
               await nextTask.callback();
             } catch (error) {
               console.error('Error while calling', nextTask.callback, ':', error);
-              if (error.hasOwnProperty('responseJSON') && error.responseJSON.hasOwnProperty('message')) {
+              if (error.hasOwnProperty('responseJSON') && error.responseJSON && error.responseJSON.hasOwnProperty('message')) {
                 showErrorMessage('Error', error.responseJSON.message);
               }
               else {
