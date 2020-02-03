@@ -2666,11 +2666,11 @@
                       campaignsWithCallerIdControl.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
                       $("<td/>", { class: "text-center" }).text(campaignsWithCallerIdControl.length + " campaign(s) with caller address set").appendTo(row);
                       break;
-                    case 'campaign-sequences':
-                      let campaignSequences = usages.campaignSequences;
-                      campaignSequences.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
-                      $("<td/>", { class: "text-center" }).text(campaignSequences.length + " campaign sequence(s)").appendTo(row);
-                      break;
+                    // case 'campaign-sequences':
+                    //   let campaignSequences = usages.campaignSequences;
+                    //   campaignSequences.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                    //   $("<td/>", { class: "text-center" }).text(campaignSequences.length + " campaign sequence(s)").appendTo(row);
+                    //   break;
                     case 'filtering-for-call-lists':
                       let campaignsWithCallListFilters = usages.dialerCampaigns.filter(c => c.contactListFilters.length > 0);
                       campaignsWithCallListFilters.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
@@ -2719,6 +2719,7 @@
                       $("<td/>", { class: "text-center" }).text(contactListsWithTimeZoneColumns.length + " contact list(s) with a time zone column").appendTo(row);
                       break;
                     default:
+                      $("<td/>", { class: "text-center" }).text("N/A").appendTo(row);
                       break;
                   }
                   break;
@@ -4917,7 +4918,12 @@
               await nextTask.callback();
             } catch (error) {
               console.error('Error while calling', nextTask.callback, ':', error);
-              showErrorMessage('Error', error.responseJSON.message);
+              if (error.hasOwnProperty('responseJSON') && error.responseJSON.hasOwnProperty('message')) {
+                showErrorMessage('Error', error.responseJSON.message);
+              }
+              else {
+                showErrorMessage('Error', 'Unknown error for ' + nextTask.callback);
+              }
             }
             console.log('End of call for next task:', nextTask);
             if (self.tasks.length > 0) self.tasks.shift(); // Remove task from list
