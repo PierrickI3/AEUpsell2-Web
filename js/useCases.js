@@ -149,7 +149,7 @@ function analyzeUseCases(_usages) {
 
   })
 
-  if (_usages.queues.length > 0 && flowConfigurationFound2.length > 0) useCases.ce01.configured = true;
+  if (flowConfigurationFound2.length > 0) useCases.ce01.configured = true;
   if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
     useCases.ce01.used = true
   else
@@ -180,7 +180,7 @@ function analyzeUseCases(_usages) {
 
   })
 
-  if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce03.configured = true
+  if (flowConfigurationFound.length > 0) useCases.ce03.configured = true
   if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
     useCases.ce03.used = true
   else
@@ -204,7 +204,7 @@ function analyzeUseCases(_usages) {
     }
   })
 
-  if (_usages.queues.length > 0 && flowConfigurationFound2.length > 0) useCases.ce07.configured = true
+  if (flowConfigurationFound2.length > 0) useCases.ce07.configured = true
   if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
     useCases.ce07.used = true
   else
@@ -219,7 +219,7 @@ function analyzeUseCases(_usages) {
 
 
 
-  
+
   return useCases
 
 }
