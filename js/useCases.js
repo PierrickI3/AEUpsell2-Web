@@ -12,7 +12,10 @@ function findFlowTools(_flows, _query, _flowType) {
         if (flowTaskType.includes(item)) iCount++;
       });
       if (_query.length == iCount) {
-        matchFlows.push(_flows[aItem].id);
+        matchFlows.push({
+          id: _flows[aItem].id,
+          index: aItem
+        });
       }
     }
   } catch (error) {
@@ -24,7 +27,7 @@ function findFlowTools(_flows, _query, _flowType) {
 
 function findInUsedFlows(_flows, _historyFlow) {
   for (var x = 0; x < _flows.length; x++) {
-    if (_historyFlow.includes(_flows[x])) {
+    if (_historyFlow.includes(_flows[x].id)) {
       return true
     }
   }
@@ -56,6 +59,44 @@ function findValuesHelper(obj, key, list) {
   return list;
 }
 
+function getToolsDetailsFromFlow(_flow, _type) {
+  retValues = [];
+
+  if (usages.flows[_flow.index].flowSequenceItemList) {
+    usages.flows[_flow.index].flowSequenceItemList.forEach(function (aSequenceItem) {
+      if (aSequenceItem.actionList) {
+        aSequenceItem.actionList.forEach(function (aAction) {
+
+          switch (aAction['__type']) {
+            case 'DataAction':
+              if (aAction['__type'] != _type) break;
+              if (aAction.inputs) {
+                aAction.inputs.forEach(function (item) {
+                  retValues.push(item.value.text);
+                });
+              }
+              break;
+            case 'TransferPureMatchAction':
+              if (aAction['__type'] != _type) break;
+              if (aAction.queues) {
+                aAction.queues.forEach(function (item) {
+                  retValues.push(item.text);
+                });
+              }
+              break;
+
+            default:
+              break;
+          }
+
+        })
+      }
+    })
+  }
+
+  return retValues
+}
+
 function analyzeUseCases(_usages) {
   console.log('function analyzeUseCases');
   useCases = {
@@ -82,38 +123,103 @@ function analyzeUseCases(_usages) {
   if (_usages.flows != undefined && _usages.flows.length == 0)
     return useCases
 
-  var query, flowConfigurationFound;
+  var query, flowConfigurationFound, flowConfigurationFound2;
 
-  // CE01 /Genesys Call Routing
+
+  //#region CE01 /Genesys Call Routing
   query = ['PlayAudioAction', 'Menu', 'TransferPureMatchAction', 'EvaluateScheduleAction']; // check if TransferPureMatchAction transfer to Queue
   flowConfigurationFound = findFlowTools(_usages.flows, query);
-  if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce01.configured = true;
-  if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
+  flowConfigurationFound2 = [];
+
+  flowConfigurationFound.forEach(function (aItem) {
+    iCount = 0;
+    // Check if defined in Flow QueueName exists in GenesysCloud definition:
+    let usedQueues = getToolsDetailsFromFlow(aItem, 'TransferPureMatchAction');
+
+    for (x = 0; x < usages.queues.length; x++) {
+      if (usedQueues.includes(usages.queues[x].name)) {
+        iCount++;
+      }
+      if (iCount == usedQueues.length) break;
+    }
+
+    if (iCount == usedQueues.length) {
+      flowConfigurationFound2.push(aItem)
+    }
+
+  })
+
+  if (_usages.queues.length > 0 && flowConfigurationFound2.length > 0) useCases.ce01.configured = true;
+  if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
     useCases.ce01.used = true
   else
     useCases.ce01.used = false
 
-  // CE03 /Genesys Callback
+  //#endregion
+
+  //#region CE03 /Genesys Callback
   query = ['TransferPureMatchAction', 'DecisionAction', 'CreateCallbackAction', 'PlayEstimatedWaitTimeAction', 'PlayAudioAction'];
   flowConfigurationFound = findFlowTools(_usages.flows, query, 'inqueuecall');
+  flowConfigurationFound2 = [];
+
+  flowConfigurationFound.forEach(function (aItem) {
+    iCount = 0;
+    // Check if defined in Flow QueueName exists in GenesysCloud definition:
+    let usedQueues = getToolsDetailsFromFlow(aItem, 'TransferPureMatchAction');
+
+    for (x = 0; x < usages.queues.length; x++) {
+      if (usedQueues.includes(usages.queues[x].name)) {
+        iCount++;
+      }
+      if (iCount == usedQueues.length) break;
+    }
+
+    if (iCount == usedQueues.length) {
+      flowConfigurationFound2.push(aItem)
+    }
+
+  })
+
   if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce03.configured = true
   if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
     useCases.ce03.used = true
   else
     useCases.ce03.used = false;
 
-  // CE04 /Genesys Skype for Business 
+  //#endregion
+
+  //#region CE04 /Genesys Skype for Business 
   if (_usages.integrations['skype-for-business-client'] != undefined) useCases.ce04.configured = true
 
+  //#endregion 
+
+  //#region CE07 /Genesys Customer Authentication 
+  query = ['TransferPureMatchAction', 'DecisionAction', 'DataAction'];
+  flowConfigurationFound = findFlowTools(_usages.flows, query);
+  flowConfigurationFound2 = [];
+
+  flowConfigurationFound.forEach(function (aItem) {
+    if (getToolsDetailsFromFlow(aItem, 'DataAction').includes('Call.Ani')) {
+      flowConfigurationFound2.push(aItem);
+    }
+  })
+
+  if (_usages.queues.length > 0 && flowConfigurationFound2.length > 0) useCases.ce07.configured = true
+  if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
+    useCases.ce07.used = true
+  else
+    useCases.ce07.used = false;
+
+  //#endregion 
 
 
-  // UseCase CE07// Genesys Customer Authentication 
-  // cAll.ANI, Decision, transfer , DataAction in inboundFlow
 
 
 
 
 
+
+  
   return useCases
 
 }
