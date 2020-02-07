@@ -11,17 +11,16 @@
 
   <title>Genesys Cloud Adoption Metrics</title>
 
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
   <!--#region Stylesheets -->
 
   <!-- Custom fonts-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link
-    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Open Layers -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
-    type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
@@ -72,20 +71,14 @@
           <div class="mb-4">
             <h1 id="title" class="h3 mb-0 text-gray-800">Genesys Cloud Adoption Metrics</h1>
             <div class="row ml-0 mt-2">
-              <button class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i
-                  class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
-              <button href="#" id="generateReport"
-                class="ml-2 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                  class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
-              <button href="#" id="generateUseCases"
-                class="ml-2 d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm"><i
-                  class="fas fa-code fa-sm text-white-50"></i> Offline UseCases</button>
+              <button class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
+              <button href="#" id="generateReport" class="ml-2 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
+              <button href="#" id="generateUseCases" class="ml-2 d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm"><i class="fas fa-code fa-sm text-white-50"></i> Offline UseCases</button>
             </div>
           </div>
 
           <!-- Configuration Modal -->
-          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel"
-            aria-hidden="true">
+          <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -97,22 +90,18 @@
                 <div class="modal-body">
                   <form>
                     <div class="form-group">
-                      <p>How to get credentials? Follow <a rel="noopener noreferrer"
-                          href="https://help.mypurecloud.com/articles/create-an-oauth-client/" target="_blank">these
+                      <p>How to get credentials? Follow <a rel="noopener noreferrer" href="https://help.mypurecloud.com/articles/create-an-oauth-client/" target="_blank">these
                           steps</a> and use the <strong>Client Credentials</strong> type</p>
                       <label for="clientId" class="col-form-label">OAuth Client Id:</label>
-                      <input type="text" class="form-control" id="clientId"
-                        value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
+                      <input type="text" class="form-control" id="clientId" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
                     </div>
                     <div class="form-group">
                       <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
-                      <input type="password" class="form-control" id="clientSecret"
-                        value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
+                      <input type="password" class="form-control" id="clientSecret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
                     </div>
                     <div class="form-group">
                       <label for="environment" class="col-form-label">PureCloud Environment:</label>
-                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie"
-                        value="mypurecloud.ie">
+                      <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
                     </div>
                     <div class="form-group">
                       <label for="startDatePicker" class="col-form-label">Start Date:</label>
@@ -145,8 +134,7 @@
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
                   <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span
-                        class="endDate">yyyy/mm/dd</span></small>
+                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
                   </div>
                 </div>
                 <div class="card-body">
@@ -173,9 +161,7 @@
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Licenses Guide</h6>
                   <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500">Taken from <a
-                        href="https://www.genesys.com/platform/purecloud/purecloud-pricing"
-                        target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
+                    <small class="date-range-start text-gray-500">Taken from <a href="https://www.genesys.com/platform/purecloud/purecloud-pricing" target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
                   </div>
                 </div>
                 <div class="card-body">
@@ -187,6 +173,34 @@
             </div>
 
           </div>
+
+          <!-- Use Cases -->
+          <div class="col-xl-3 col-lg-5">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Use Cases</h6>
+                <div class="row ml-0 mt-1 mb-1">
+                  <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Use Case</th>
+                        <th>Configured</th>
+                        <th>Used</th>
+                      </tr>
+                    </thead>
+                    <tbody id="useCasesBody">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- End of Main Content -->
 
           <!-- Footer -->
@@ -216,9 +230,7 @@
 
       <!-- Bootstrap core JavaScript-->
       <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
       <!-- Core plugin JavaScript-->
@@ -231,8 +243,7 @@
       <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
       <!-- moment.js -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
-        integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 
       <!-- Bootstrap Date Picker -->
       <script src="vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -2285,7 +2296,6 @@
             default:
               break;
           }
-          $("#licensingLevel").html(`PureCloud1: ${isUsingPC1}<br>PureCloud2: ${isUsingPC2}<br>PureCloud3: ${isUsingPC3}<br>Collaborate: ${isUsingCollaborate}<br>Communicate: ${isUsingCommunicate}`);
         }
 
         function populateLicenses(clientId, clientSecret, environment) {
@@ -2690,11 +2700,11 @@
                       campaignsWithCallerIdControl.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
                       $("<td/>", { class: "text-center" }).text(campaignsWithCallerIdControl.length + " campaign(s) with caller address set").appendTo(row);
                       break;
-                    // case 'campaign-sequences':
-                    //   let campaignSequences = usages.campaignSequences;
-                    //   campaignSequences.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
-                    //   $("<td/>", { class: "text-center" }).text(campaignSequences.length + " campaign sequence(s)").appendTo(row);
-                    //   break;
+                    case 'campaign-sequences':
+                      let campaignSequences = usages.campaignSequences;
+                      campaignSequences.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
+                      $("<td/>", { class: "text-center" }).text(campaignSequences.length + " campaign sequence(s)").appendTo(row);
+                      break;
                     case 'filtering-for-call-lists':
                       let campaignsWithCallListFilters = usages.dialerCampaigns.filter(c => c.contactListFilters.length > 0);
                       campaignsWithCallListFilters.length > 0 ? row.addClass('text-success') : row.addClass('text-danger');
@@ -4915,7 +4925,6 @@
 
         //#region UseCases
 
-
         // Load local GenesysCloud Cached Data // Test Only
         $("#generateUseCases").on("click", () => {
           if (Object.entries(usages).length === 0 && usages.constructor === Object) {
@@ -4941,7 +4950,23 @@
           usages.useCases = analyzeUseCases(usages);
           console.log(`useCases: ${JSON.stringify(usages.useCases)}`);
 
+          showUseCases();
         });
+
+        function showUseCases() {
+          if (!usages.useCases) return;
+
+          for (let useCase of Object.keys(usages.useCases)) {
+            let configured = usages.useCases[useCase].configured;
+            let used = usages.useCases[useCase].used;
+
+            let row = $("<tr/>", {}).appendTo("#useCasesBody");
+            $("<td/>", {}).html(`<a href="https://all.docs.genesys.com/UseCases/Public/PureCloud/${useCase}" target="_blank">${useCase}</a>`).appendTo(row);
+            $("<td/>", { class: configured ? "text-success" : "text-danger" }).text(configured).appendTo(row);
+            $("<td/>", { class: used != undefined ? (used ? "text-success" : "text-danger") : "" }).text(used != undefined ? used : "N/A").appendTo(row);
+          }
+
+        }
 
         //#endregion
 
