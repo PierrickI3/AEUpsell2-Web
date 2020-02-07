@@ -128,38 +128,69 @@
 
           <div class="row">
 
-            <!-- Licenses (Billable Usage) -->
             <div class="col-xl-3 col-lg-5">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
-                  <div class="row ml-0 mt-1 mb-1">
-                    <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+
+              <!-- Licenses (Billable Usage) -->
+              <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
+                    <div class="row ml-0 mt-1 mb-1">
+                      <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                    </div>
                   </div>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Count</th>
-                        </tr>
-                      </thead>
-                      <tbody id="billableUsageBody">
-                      </tbody>
-                    </table>
-                    <small id="licensingLevel" class="text-muted"></small>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Count</th>
+                          </tr>
+                        </thead>
+                        <tbody id="billableUsageBody">
+                        </tbody>
+                      </table>
+                      <small id="licensingLevel" class="text-muted"></small>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Use Cases -->
+              <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Use Cases</h6>
+                    <div class="row ml-0 mt-1 mb-1">
+                      <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Use Case</th>
+                            <th>Configured</th>
+                            <th>Used</th>
+                          </tr>
+                        </thead>
+                        <tbody id="useCasesBody">
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Licenses Guide -->
+            <!-- Licenses Usage -->
             <div class="col-xl-9 col-lg-7">
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Licenses Guide</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Licenses Usage</h6>
                   <div class="row ml-0 mt-1 mb-1">
                     <small class="date-range-start text-gray-500">Taken from <a href="https://www.genesys.com/platform/purecloud/purecloud-pricing" target="_blank">https://www.genesys.com/platform/purecloud/purecloud-pricing</a></small>
                   </div>
@@ -172,33 +203,6 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- Use Cases -->
-          <div class="col-xl-3 col-lg-5">
-            <div class="card shadow mb-4">
-              <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Use Cases</h6>
-                <div class="row ml-0 mt-1 mb-1">
-                  <small class="date-range-start text-gray-500"><span class="startDate">yyyy/mm/dd</span> to <span class="endDate">yyyy/mm/dd</span></small>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-bordered" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th>Use Case</th>
-                        <th>Configured</th>
-                        <th>Used</th>
-                      </tr>
-                    </thead>
-                    <tbody id="useCasesBody">
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- End of Main Content -->
@@ -4945,7 +4949,9 @@
           }
 
           // UseCases Analyze
-          usages.history.usedFlowIds.push('14901382-c959-46fe-bc0e-c0c36131152c');  // for test only to show offline 'used' func      
+          usages.history = {
+            usedFlowIds: ['14901382-c959-46fe-bc0e-c0c36131152c']  // for test only to show offline 'used' func      
+          }
 
           usages.useCases = analyzeUseCases(usages);
           console.log(`useCases: ${JSON.stringify(usages.useCases)}`);
