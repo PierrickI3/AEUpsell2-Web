@@ -100,19 +100,19 @@ function getToolsDetailsFromFlow(_flow, _type) {
 function analyzeUseCases(_usages) {
   console.log('function analyzeUseCases');
   useCases = {
-    ce01: {
+    CE01: {
       configured: false,
       used: undefined
     },
-    ce03: {
+    CE03: {
       configured: false,
       used: undefined
     },
-    ce04: {
+    CE04: {
       configured: false,
       used: undefined
     },
-    ce07: {
+    CE07: {
       configured: false,
       used: undefined
     }
@@ -149,11 +149,11 @@ function analyzeUseCases(_usages) {
 
   })
 
-  if (flowConfigurationFound2.length > 0) useCases.ce01.configured = true;
+  if (flowConfigurationFound2.length > 0) useCases.CE01.configured = true;
   if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
-    useCases.ce01.used = true
+    useCases.CE01.used = true
   else
-    useCases.ce01.used = false
+    useCases.CE01.used = false
 
   //#endregion
 
@@ -180,16 +180,16 @@ function analyzeUseCases(_usages) {
 
   })
 
-  if (flowConfigurationFound.length > 0) useCases.ce03.configured = true
+  if (flowConfigurationFound.length > 0) useCases.CE03.configured = true
   if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
-    useCases.ce03.used = true
+    useCases.CE03.used = true
   else
-    useCases.ce03.used = false;
+    useCases.CE03.used = false;
 
   //#endregion
 
   //#region CE04 /Genesys Skype for Business 
-  if (_usages.integrations['skype-for-business-client'] != undefined) useCases.ce04.configured = true
+  if (_usages.integrations['skype-for-business-client'] != undefined) useCases.CE04.configured = true
 
   //#endregion 
 
@@ -204,11 +204,11 @@ function analyzeUseCases(_usages) {
     }
   })
 
-  if (flowConfigurationFound2.length > 0) useCases.ce07.configured = true
+  if (flowConfigurationFound2.length > 0) useCases.CE07.configured = true
   if (findInUsedFlows(flowConfigurationFound2, _usages.history.usedFlowIds))
-    useCases.ce07.used = true
+    useCases.CE07.used = true
   else
-    useCases.ce07.used = false;
+    useCases.CE07.used = false;
 
   //#endregion 
 
