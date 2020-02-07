@@ -85,16 +85,22 @@ function analyzeUseCases(_usages) {
   var query, flowConfigurationFound;
 
   // CE01 /Genesys Call Routing
-  query = ['PlayAudioAction', 'Menu', 'TransferPureMatchAction', 'EvaluateScheduleAction'];
+  query = ['PlayAudioAction', 'Menu', 'TransferPureMatchAction', 'EvaluateScheduleAction']; // check if TransferPureMatchAction transfer to Queue
   flowConfigurationFound = findFlowTools(_usages.flows, query);
   if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce01.configured = true;
-  if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds)) useCases.ce01.used = true;
+  if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
+    useCases.ce01.used = true
+  else
+    useCases.ce01.used = false
 
   // CE03 /Genesys Callback
-  query = ['PlayAudioAction', 'Menu', 'TransferPureMatchAction', 'DecisionAction', 'CreateCallbackAction'];
+  query = ['TransferPureMatchAction', 'DecisionAction', 'CreateCallbackAction', 'PlayEstimatedWaitTimeAction', 'PlayAudioAction'];
   flowConfigurationFound = findFlowTools(_usages.flows, query, 'inqueuecall');
-  if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce03.configured = true;
-  if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds)) useCases.ce03.used = true;
+  if (_usages.queues.length > 0 && flowConfigurationFound.length > 0) useCases.ce03.configured = true
+  if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
+    useCases.ce03.used = true
+  else
+    useCases.ce03.used = false;
 
   // CE04 /Genesys Skype for Business 
   if (_usages.integrations['skype-for-business-client'] != undefined) useCases.ce04.configured = true
@@ -102,7 +108,7 @@ function analyzeUseCases(_usages) {
 
 
   // UseCase CE07// Genesys Customer Authentication 
-  // cAll.ANI, Decision, transfer , DataAction in inqueueFLow
+  // cAll.ANI, Decision, transfer , DataAction in inboundFlow
 
 
 
