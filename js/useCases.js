@@ -60,7 +60,11 @@ function findValuesHelper(obj, key, list) {
 }
 
 function getToolsDetailsFromFlow(_flow, _type) {
-  retValues = [];
+  retValues = {
+    queues: [],
+    skills: [],
+    generic: []
+  };
 
   if (usages.flows[_flow.index].flowSequenceItemList) {
     usages.flows[_flow.index].flowSequenceItemList.forEach(function (aSequenceItem) {
@@ -72,7 +76,7 @@ function getToolsDetailsFromFlow(_flow, _type) {
               if (aAction['__type'] != _type) break;
               if (aAction.inputs) {
                 aAction.inputs.forEach(function (item) {
-                  retValues.push(item.value.text);
+                  retValues.generic.push(item.value.text);
                 });
               }
               break;
@@ -80,7 +84,12 @@ function getToolsDetailsFromFlow(_flow, _type) {
               if (aAction['__type'] != _type) break;
               if (aAction.queues) {
                 aAction.queues.forEach(function (item) {
-                  retValues.push(item.text);
+                  retValues.queues.push(item.text);
+                });
+              }
+              if (aAction.skills) {
+                aAction.skills.forEach(function (item) {
+                  retValues.skills.push(item.skill.text);
                 });
               }
               break;
@@ -133,17 +142,17 @@ function analyzeUseCases(_usages) {
 
   flowConfigurationFound.forEach(function (aItem) {
     iCount = 0;
-    // Check if defined in Flow QueueName exists in GenesysCloud definition:
+    // Check if defined in Flow QueueName exists in GenesysCloud definition + skills
     let usedQueues = getToolsDetailsFromFlow(aItem, 'TransferPureMatchAction');
 
     for (x = 0; x < usages.queues.length; x++) {
-      if (usedQueues.includes(usages.queues[x].name)) {
+      if (usedQueues.queues.includes(usages.queues[x].name)) {
         iCount++;
       }
-      if (iCount == usedQueues.length) break;
+      if (iCount == usedQueues.queues.length) break;
     }
 
-    if (iCount == usedQueues.length) {
+    if (iCount == usedQueues.queues.length && usedQueues.skills.length > 0) {
       flowConfigurationFound2.push(aItem)
     }
 
@@ -164,23 +173,24 @@ function analyzeUseCases(_usages) {
 
   flowConfigurationFound.forEach(function (aItem) {
     iCount = 0;
+    console.log('Check for CE03 single Flow');
     // Check if defined in Flow QueueName exists in GenesysCloud definition:
     let usedQueues = getToolsDetailsFromFlow(aItem, 'TransferPureMatchAction');
-
+    console.log(usedQueues);
     for (x = 0; x < usages.queues.length; x++) {
-      if (usedQueues.includes(usages.queues[x].name)) {
+      if (usedQueues.queues.includes(usages.queues[x].name)) {
         iCount++;
       }
-      if (iCount == usedQueues.length) break;
+      if (iCount == usedQueues.queues.length) break;
     }
 
-    if (iCount == usedQueues.length) {
+    if (iCount == usedQueues.queues.length) {
       flowConfigurationFound2.push(aItem)
     }
 
   })
 
-  if (flowConfigurationFound.length > 0) useCases.CE03.configured = true
+  if (flowConfigurationFound.length > 0 && usedQueues.skills.length > 0) useCases.CE03.configured = true
   if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
     useCases.CE03.used = true
   else
@@ -199,7 +209,7 @@ function analyzeUseCases(_usages) {
   flowConfigurationFound2 = [];
 
   flowConfigurationFound.forEach(function (aItem) {
-    if (getToolsDetailsFromFlow(aItem, 'DataAction').includes('Call.Ani')) {
+    if (getToolsDetailsFromFlow(aItem, 'DataAction').generic.includes('Call.Ani')) {
       flowConfigurationFound2.push(aItem);
     }
   })
@@ -211,10 +221,6 @@ function analyzeUseCases(_usages) {
     useCases.CE07.used = false;
 
   //#endregion 
-
-
-
-
 
 
 
