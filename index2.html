@@ -73,7 +73,6 @@
             <div class="row ml-0 mt-2">
               <button class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#configModal"><i class="fas fa-sync-alt fa-sm text-white-50"></i> Get Data</button>
               <button href="#" id="generateReport" class="ml-2 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Print Report</button>
-              <button href="#" id="generateUseCases" class="ml-2 d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm"><i class="fas fa-code fa-sm text-white-50"></i> Offline UseCases</button>
             </div>
           </div>
 
@@ -3376,7 +3375,11 @@
             return allDataReceived == true && queue.tasks.length === 0;
           });
 
+          console.warn('All queued tasks are complete...');
+
           populateLicenses(clientId, clientSecret, environment);
+          usages.useCases = analyzeUseCases(usages)
+          showUseCases();
 
           hideSpinner();
         }
@@ -4929,36 +4932,6 @@
 
         //#region UseCases
 
-        // Load local GenesysCloud Cached Data // Test Only
-        $("#generateUseCases").on("click", () => {
-          if (Object.entries(usages).length === 0 && usages.constructor === Object) {
-            console.log('usage object is empty - load definitions from file');
-            usages = (function () {
-              var json = null;
-              $.ajax({
-                'async': false,
-                'global': false,
-                'url': "sampleData.json",
-                'dataType': "json",
-                'success': function (data) {
-                  json = data;
-                }
-              });
-              return json;
-            })();
-          }
-
-          // UseCases Analyze
-          usages.history = {
-            usedFlowIds: ['14901382-c959-46fe-bc0e-c0c36131152c']  // for test only to show offline 'used' func      
-          }
-
-          usages.useCases = analyzeUseCases(usages);
-          console.log(`useCases: ${JSON.stringify(usages.useCases)}`);
-
-          showUseCases();
-        });
-
         function showUseCases() {
           if (!usages.useCases) return;
 
@@ -4971,7 +4944,6 @@
             $("<td/>", { class: configured ? "text-success" : "text-danger" }).text(configured).appendTo(row);
             $("<td/>", { class: used != undefined ? (used ? "text-success" : "text-danger") : "" }).text(used != undefined ? used : "N/A").appendTo(row);
           }
-
         }
 
         //#endregion
