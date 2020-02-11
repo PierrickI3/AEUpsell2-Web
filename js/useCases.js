@@ -26,6 +26,7 @@ function findFlowTools(_flows, _query, _flowType) {
 }
 
 function findInUsedFlows(_flows, _historyFlow) {
+  if (!_historyFlow) return false;
   for (var x = 0; x < _flows.length; x++) {
     if (_historyFlow.includes(_flows[x].id)) {
       return true
