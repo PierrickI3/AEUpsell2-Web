@@ -184,13 +184,13 @@ function analyzeUseCases(_usages) {
       if (iCount == usedQueues.queues.length) break;
     }
 
-    if (iCount == usedQueues.queues.length) {
+    if (iCount == usedQueues.queues.length && usedQueues.skills.length > 0) {
       flowConfigurationFound2.push(aItem)
     }
 
   })
 
-  if (flowConfigurationFound.length > 0 && usedQueues.skills.length > 0) useCases.CE03.configured = true
+  if (flowConfigurationFound.length > 0) useCases.CE03.configured = true
   if (findInUsedFlows(flowConfigurationFound, _usages.history.usedFlowIds))
     useCases.CE03.used = true
   else
