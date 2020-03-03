@@ -310,6 +310,7 @@
 
         let gcToken;
         let clientSecret;
+        let startDate, endDate;
         let environment = getUrlParameter("environment");
         let clientId = getUrlParameter('clientId');
 
@@ -363,8 +364,10 @@
 
           environment = getUrlParameter('environment');
           clientId = getUrlParameter('clientId');
+          startDate = getUrlParameter('startDate');
+          endDate = getUrlParameter('endDate')
 
-          getData(clientId, clientSecret, environment, getUrlParameter('startDate'), getUrlParameter('endDate'));
+          getData(clientId, clientSecret, environment);
         }
 
 
@@ -448,8 +451,8 @@
           try {
             console.log('Getting data...');
 
-            let startDate = $("#configModal #startDatePicker").val();
-            let endDate = $("#configModal #endDatePicker").val();
+            startDate = $("#configModal #startDatePicker").val();
+            endDate = $("#configModal #endDatePicker").val();
 
             if (!startDate || !endDate) {
               alert('Invalid or missing parameters');
@@ -493,7 +496,7 @@
             // Close the modal
             $('#configModal').modal('toggle');
 
-            await getData(clientId, clientSecret, environment, startDate, endDate);
+            await getData(clientId, clientSecret, environment);
 
           } catch (error) {
             console.error(error);
@@ -3342,7 +3345,7 @@
 
         //#region Get Data
 
-        async function getData(clientId, clientSecret, environment, startDate, endDate) {
+        async function getData(clientId, clientSecret, environment) {
 
           showSpinner();
           $("#spinner-text").text("Loading... Please Wait...");
@@ -3486,9 +3489,9 @@
           // Tasks
           queue.addTask(() => getOrganization(), 1000);
           queue.addTask(() => getDivisions(), 1000);
-          queue.addTask(() => getBillableUsage(startDate, endDate), 1000);          
-          queue.addTask(() => getEvaluations(startDate, endDate), 1000);
-          queue.addTask(() => getSurveys(startDate, endDate), 1000);
+          queue.addTask(() => getBillableUsage(), 1000);          
+          queue.addTask(() => getEvaluations(), 1000);
+          queue.addTask(() => getSurveys(), 1000);
           queue.addTask(() => getScripts(), 1000);
           queue.addTask(() => getQueues(), 1000);
           queue.addTask(() => getContactLists(), 1000);
@@ -3527,7 +3530,7 @@
           hideSpinner();
         }
 
-        async function getMedia(startDate, endDate, originalEndDate) {
+        async function getMedia(_startDate, _endDate, _originalEndDate) {
           $("#spinner-text").text("Getting Media Usage...");
           console.log('Unique Id:', uniqueId);
           return await $.ajax({
@@ -3539,9 +3542,9 @@
             data: {
               environment: environment,
               token: gcToken,
-              startDate: startDate,
-              endDate: endDate,
-              originalEndDate: originalEndDate,
+              startDate: _startDate,
+              endDate: _endDate,
+              originalEndDate: _originalEndDate,
               uniqueId: uniqueId
             }
           })
@@ -3565,7 +3568,7 @@
                 console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
                 showMessage('Too many requests (429). Some tasks might be delayed...');
-                setTimeout(() => queue.addTask(() => getMedia(startDate, endDate, originalEndDate), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getMedia(_startDate, _endDate, _originalEndDate), queue.getNextDelay()), 0);
                 console.warn('getMedia has been rescheduled');
                 resolve();
                 return;
@@ -3812,7 +3815,7 @@
           });
         }
 
-        async function getBillableUsage(startDate, endDate) {
+        async function getBillableUsage() {
           $("#spinner-text").text("Getting Billable Usage...");
           usages.licenses = {};
           return new Promise(async (resolve, reject) => {
@@ -4722,7 +4725,7 @@
           });
         }
 
-        async function getEvaluations(startDate, endDate) {
+        async function getEvaluations() {
           $("#spinner-text").text("Getting Evaluations...");
           usages.evaluations = 0;
           return new Promise(async (resolve, reject) => {
@@ -4933,7 +4936,7 @@
           });
         }
 
-        async function getSurveys(startDate, endDate) {
+        async function getSurveys() {
           $("#spinner-text").text("Getting Surveys...");
           usages.surveys = [];
           return new Promise(async (resolve, reject) => {
