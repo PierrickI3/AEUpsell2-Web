@@ -130,7 +130,7 @@ function analyzeUseCases(_usages) {
 
 
 
-  if (_usages.flows != undefined && _usages.flows.length == 0)
+  if (!_usages.flows || _usages.flows.length == 0 || !_usages.queues)
     return useCases
 
   var query, flowConfigurationFound, flowConfigurationFound2;
