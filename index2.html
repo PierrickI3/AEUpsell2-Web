@@ -3484,36 +3484,32 @@
 
 
           // Tasks
-          //queue.addTask(() => getOrganization(clientId, clientSecret, environment), 1000);
+          queue.addTask(() => getOrganization(), 1000);
           queue.addTask(() => getDivisions(), 1000);
-          /*
-          queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate, _token), 1000);          
-          queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), 1000);
-          queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), 1000);
-          queue.addTask(() => getScripts(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getQueues(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getContactLists(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getStations(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getIntegrations(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getCampaignSequences(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getCallableTimeSets(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getDncLists(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getCallAnalysisResponseSets(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getInteractionStatsRules(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getTrunks(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getDocuments(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getMediaRetentionPolicies(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getScreenSessions(clientId, clientSecret, environment), 1000);
-          
-          
-          queue.addTask(() => getGroups(clientId, clientSecret, environment), 1000);
-          */
+          queue.addTask(() => getBillableUsage(startDate, endDate), 1000);          
+          queue.addTask(() => getEvaluations(startDate, endDate), 1000);
+          queue.addTask(() => getSurveys(startDate, endDate), 1000);
+          queue.addTask(() => getScripts(), 1000);
+          queue.addTask(() => getQueues(), 1000);
+          queue.addTask(() => getContactLists(), 1000);
+          queue.addTask(() => getWrapUpCodes(), 1000);
+          queue.addTask(() => getStations(), 1000);
+          queue.addTask(() => getIntegrations(), 1000);
+          queue.addTask(() => getResponseLibraries(), 1000);
+          queue.addTask(() => getExternalContacts(), 1000);
+          queue.addTask(() => getDialerCampaigns(), 1000);
+          queue.addTask(() => getCampaignSequences(), 1000);
+          queue.addTask(() => getCallableTimeSets(), 1000);
+          queue.addTask(() => getDncLists(), 1000);
+          queue.addTask(() => getCallAnalysisResponseSets(), 1000);
+          queue.addTask(() => getInteractionStatsRules(), 1000);
+          queue.addTask(() => getGDPRRequests(), 1000);
+          queue.addTask(() => getEvaluationForms(), 1000);
+          queue.addTask(() => getTrunks(), 1000);
+          queue.addTask(() => getDocuments(), 1000);
+          queue.addTask(() => getMediaRetentionPolicies(), 1000);
+          queue.addTask(() => getScreenSessions(), 1000);
+          queue.addTask(() => getGroups(), 1000);
 
           totalTasks = queue.tasks.length;
 
@@ -3541,8 +3537,6 @@
             dataType: 'text',
             cache: false,
             data: {
-              //clientId: clientId,
-              //clientSecret: clientSecret,
               environment: environment,
               token: gcToken,
               startDate: startDate,
@@ -3662,7 +3656,7 @@
           });
         }
 
-        async function getScripts(clientId, clientSecret, environment) {
+        async function getScripts() {
           $("#spinner-text").text("Getting Scripts...");
           usages.scripts = [];
           return new Promise(async (resolve, reject) => {
@@ -3672,8 +3666,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -3698,7 +3691,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getScripts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getScripts(), queue.getNextDelay()), 0);
                   console.warn('getScripts has been rescheduled');
                   resolve();
                   return;
@@ -3715,7 +3708,7 @@
           });
         }
 
-        async function getQueues(clientId, clientSecret, environment) {
+        async function getQueues() {
           $("#spinner-text").text("Getting Queues Usage...");
           usages.queues = [];
           return new Promise(async (resolve, reject) => {
@@ -3725,8 +3718,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -3752,7 +3744,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getQueues(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getQueues(), queue.getNextDelay()), 0);
                   console.warn('getQueues has been rescheduled');
                   resolve();
                   return;
@@ -3820,7 +3812,7 @@
           });
         }
 
-        async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate, _token) {
+        async function getBillableUsage(startDate, endDate) {
           $("#spinner-text").text("Getting Billable Usage...");
           usages.licenses = {};
           return new Promise(async (resolve, reject) => {
@@ -3830,12 +3822,10 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment,
                 startDate: startDate,
-                endDate: endDate,
-                token: _token
+                endDate: endDate
               }
             })
               .done((data, textStatus, jqXHR) => {
@@ -3870,7 +3860,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getBillableUsage(startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getBillableUsage has been rescheduled');
                   resolve();
                   return;
@@ -3887,7 +3877,7 @@
           });
         }
 
-        async function getStations(clientId, clientSecret, environment) {
+        async function getStations() {
           $("#spinner-text").text("Getting Stations...");
           usages.stations = {};
           return new Promise(async (resolve, reject) => {
@@ -3897,8 +3887,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -3923,7 +3912,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getStations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getStations(), queue.getNextDelay()), 0);
                   console.warn('getStations has been rescheduled');
                   resolve();
                   return;
@@ -3940,7 +3929,7 @@
           });
         }
 
-        async function getIntegrations(clientId, clientSecret, environment) {
+        async function getIntegrations() {
           $("#spinner-text").text("Getting Integrations...");
           usages.integrations = {};
           return new Promise(async (resolve, reject) => {
@@ -3950,8 +3939,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -3976,7 +3964,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getIntegrations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getIntegrations(), queue.getNextDelay()), 0);
                   console.warn('getIntegrations has been rescheduled');
                   resolve();
                   return;
@@ -3993,7 +3981,7 @@
           });
         }
 
-        async function getDialerCampaigns(clientId, clientSecret, environment) {
+        async function getDialerCampaigns() {
           $("#spinner-text").text("Getting Dialer Campaigns...");
           usages.dialerCampaigns = [];
           return new Promise(async (resolve, reject) => {
@@ -4003,8 +3991,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4029,7 +4016,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getDialerCampaigns(), queue.getNextDelay()), 0);
                   console.warn('getDialerCampaigns has been rescheduled');
                   resolve();
                   return;
@@ -4046,7 +4033,7 @@
           });
         }
 
-        async function getContactLists(clientId, clientSecret, environment) {
+        async function getContactLists() {
           $("#spinner-text").text("Getting Contact Lists...");
           usages.contactLists = [];
           return new Promise(async (resolve, reject) => {
@@ -4056,8 +4043,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4082,7 +4068,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getContactLists(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getContactLists(), queue.getNextDelay()), 0);
                   console.warn('getContactLists has been rescheduled');
                   resolve();
                   return;
@@ -4099,7 +4085,7 @@
           });
         }
 
-        async function getDocuments(clientId, clientSecret, environment) {
+        async function getDocuments() {
           $("#spinner-text").text("Getting Documents...");
           usages.documents = 0;
           return new Promise(async (resolve, reject) => {
@@ -4109,8 +4095,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4146,7 +4131,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDocuments(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getDocuments(), queue.getNextDelay()), 0);
                   console.warn('getDocuments has been rescheduled');
                   resolve();
                   return;
@@ -4163,7 +4148,7 @@
           });
         }
 
-        async function getExternalContacts(clientId, clientSecret, environment) {
+        async function getExternalContacts() {
           $("#spinner-text").text("Getting External Contacts...");
           usages.externalContacts = 0;
           return new Promise(async (resolve, reject) => {
@@ -4173,8 +4158,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4199,7 +4183,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getExternalContacts(), queue.getNextDelay()), 0);
                   console.warn('getExternalContacts has been rescheduled');
                   resolve();
                   return;
@@ -4216,7 +4200,7 @@
           });
         }
 
-        async function getGDPRRequests(clientId, clientSecret, environment) {
+        async function getGDPRRequests() {
           $("#spinner-text").text("Getting GDPR Requests...");
           usages.gdprRequests = 0;
           return new Promise(async (resolve, reject) => {
@@ -4226,8 +4210,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4252,7 +4235,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getGDPRRequests(), queue.getNextDelay()), 0);
                   console.warn('getGDPRRequests has been rescheduled');
                   resolve();
                   return;
@@ -4269,7 +4252,7 @@
           });
         }
 
-        async function getEvaluationForms(clientId, clientSecret, environment) {
+        async function getEvaluationForms() {
           $("#spinner-text").text("Getting Evaluation Forms...");
           usages.evaluationForms = [];
           return new Promise(async (resolve, reject) => {
@@ -4279,8 +4262,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4305,7 +4287,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getEvaluationForms(), queue.getNextDelay()), 0);
                   console.warn('getEvaluationForms has been rescheduled');
                   resolve();
                   return;
@@ -4322,7 +4304,7 @@
           });
         }
 
-        async function getResponseLibraries(clientId, clientSecret, environment) {
+        async function getResponseLibraries() {
           $("#spinner-text").text("Getting Response Libraries...");
           usages.responseLibraries = 0;
           return new Promise(async (resolve, reject) => {
@@ -4332,8 +4314,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4358,7 +4339,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getResponseLibraries(), queue.getNextDelay()), 0);
                   console.warn('getResponseLibraries has been rescheduled');
                   resolve();
                   return;
@@ -4375,7 +4356,7 @@
           });
         }
 
-        async function getWrapUpCodes(clientId, clientSecret, environment) {
+        async function getWrapUpCodes() {
           $("#spinner-text").text("Getting Wrapup Codes...");
           usages.wrapUpCodes = 0;
           return new Promise(async (resolve, reject) => {
@@ -4385,8 +4366,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4411,7 +4391,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getWrapUpCodes(), queue.getNextDelay()), 0);
                   console.warn('getWrapUpCodes has been rescheduled');
                   resolve();
                   return;
@@ -4465,7 +4445,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDivisions(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getDivisions(), queue.getNextDelay()), 0);
                   console.warn('getDivisions has been rescheduled');
                   resolve();
                   return;
@@ -4482,7 +4462,7 @@
           });
         }
 
-        async function getCampaignSequences(clientId, clientSecret, environment) {
+        async function getCampaignSequences() {
           $("#spinner-text").text("Getting Campaign Sequences...");
           usages.campaignSequences = [];
           return new Promise(async (resolve, reject) => {
@@ -4492,8 +4472,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4518,7 +4497,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCampaignSequences(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getCampaignSequences(), queue.getNextDelay()), 0);
                   console.warn('getCampaignSequences has been rescheduled');
                   resolve();
                   return;
@@ -4535,7 +4514,7 @@
           });
         }
 
-        async function getCallableTimeSets(clientId, clientSecret, environment) {
+        async function getCallableTimeSets() {
           $("#spinner-text").text("Getting Callable Time Sets...");
           usages.callableTimeSets = [];
           return new Promise(async (resolve, reject) => {
@@ -4545,8 +4524,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4571,7 +4549,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCallableTimeSets(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getCallableTimeSets(), queue.getNextDelay()), 0);
                   console.warn('getCallableTimeSets has been rescheduled');
                   resolve();
                   return;
@@ -4588,7 +4566,7 @@
           });
         }
 
-        async function getDncLists(clientId, clientSecret, environment) {
+        async function getDncLists() {
           $("#spinner-text").text("Getting DNC Lists...");
           usages.dncLists = [];
           return new Promise(async (resolve, reject) => {
@@ -4598,8 +4576,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4624,7 +4601,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getDncLists(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getDncLists(), queue.getNextDelay()), 0);
                   console.warn('getDncLists has been rescheduled');
                   resolve();
                   return;
@@ -4641,7 +4618,7 @@
           });
         }
 
-        async function getCallAnalysisResponseSets(clientId, clientSecret, environment) {
+        async function getCallAnalysisResponseSets() {
           $("#spinner-text").text("Getting Call Analysis Response Sets...");
           usages.callAnalysisResponseSets = [];
           return new Promise(async (resolve, reject) => {
@@ -4651,8 +4628,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,                
                 environment: environment
               }
             })
@@ -4677,7 +4653,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getCallAnalysisResponseSets(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getCallAnalysisResponseSets(), queue.getNextDelay()), 0);
                   console.warn('getCallAnalysisResponseSets has been rescheduled');
                   resolve();
                   return;
@@ -4694,7 +4670,7 @@
           });
         }
 
-        async function getInteractionStatsRules(clientId, clientSecret, environment) {
+        async function getInteractionStatsRules() {
           $("#spinner-text").text("Getting Interaction Stats Rules...");
           usages.interactionStatsRules = 0;
           return new Promise(async (resolve, reject) => {
@@ -4704,8 +4680,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4730,7 +4705,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getInteractionStatsRules(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getInteractionStatsRules(), queue.getNextDelay()), 0);
                   console.warn('getInteractionStatsRules has been rescheduled');
                   resolve();
                   return;
@@ -4747,7 +4722,7 @@
           });
         }
 
-        async function getEvaluations(clientId, clientSecret, environment, startDate, endDate) {
+        async function getEvaluations(startDate, endDate) {
           $("#spinner-text").text("Getting Evaluations...");
           usages.evaluations = 0;
           return new Promise(async (resolve, reject) => {
@@ -4757,8 +4732,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment,
                 startDate: startDate,
                 endDate: endDate
@@ -4785,7 +4759,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getEvaluations(startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getEvaluations has been rescheduled');
                   resolve();
                   return;
@@ -4802,7 +4776,7 @@
           });
         }
 
-        async function getTrunks(clientId, clientSecret, environment) {
+        async function getTrunks() {
           $("#spinner-text").text("Getting Trunks...");
           usages.trunks = []; // Set default value
           return new Promise(async (resolve, reject) => {
@@ -4812,8 +4786,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4838,7 +4811,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getTrunks(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getTrunks(), queue.getNextDelay()), 0);
                   console.warn('getTrunks has been rescheduled');
                   resolve();
                   return;
@@ -4856,7 +4829,7 @@
 
         }
 
-        async function getMediaRetentionPolicies(clientId, clientSecret, environment) {
+        async function getMediaRetentionPolicies() {
           $("#spinner-text").text("Getting Media Retention Policies...");
           usages.mediaRetentionPolicies = [];
           return new Promise(async (resolve, reject) => {
@@ -4866,8 +4839,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4892,7 +4864,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getMediaRetentionPolicies(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getMediaRetentionPolicies(), queue.getNextDelay()), 0);
                   console.warn('getMediaRetentionPolicies has been rescheduled');
                   resolve();
                   return;
@@ -4909,7 +4881,7 @@
           });
         }
 
-        async function getScreenSessions(clientId, clientSecret, environment) {
+        async function getScreenSessions() {
           $("#spinner-text").text("Getting Screen Sessions...");
           usages.screenSessions = [];
           return new Promise(async (resolve, reject) => {
@@ -4919,8 +4891,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -4945,7 +4916,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getScreenSessions(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getScreenSessions(), queue.getNextDelay()), 0);
                   console.warn('getScreenSessions has been rescheduled');
                   resolve();
                   return;
@@ -4962,7 +4933,7 @@
           });
         }
 
-        async function getSurveys(clientId, clientSecret, environment, startDate, endDate) {
+        async function getSurveys(startDate, endDate) {
           $("#spinner-text").text("Getting Surveys...");
           usages.surveys = [];
           return new Promise(async (resolve, reject) => {
@@ -4972,8 +4943,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment,
                 startDate: startDate,
                 endDate: endDate
@@ -5000,7 +4970,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getSurveys(startDate, endDate), queue.getNextDelay()), 0);
                   console.warn('getSurveys has been rescheduled');
                   resolve();
                   return;
@@ -5017,7 +4987,7 @@
           });
         }
 
-        async function getGroups(clientId, clientSecret, environment) {
+        async function getGroups() {
           usages.groups = [];
           $("#spinner-text").text("Getting Groups...");
           return new Promise(async (resolve, reject) => {
@@ -5027,8 +4997,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+                token: gcToken,
                 environment: environment
               }
             })
@@ -5053,7 +5022,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getGroups(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getGroups(), queue.getNextDelay()), 0);
                   console.warn('getGroups has been rescheduled');
                   resolve();
                   return;
