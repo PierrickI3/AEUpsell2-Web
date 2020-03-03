@@ -3465,7 +3465,7 @@
 
             $.each(dateRanges, async (i, dateRange) => {
               console.log(`Current date range: ${dateRange.startDate} to ${dateRange.endDate}`);
-              await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
+              await getMedia(dateRange.startDate, dateRange.endDate, endDate);
             });
 
             // Get flows
@@ -3523,7 +3523,7 @@
           hideSpinner();
         }
 
-        async function getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate) {
+        async function getMedia(startDate, endDate, originalEndDate) {
           $("#spinner-text").text("Getting Media Usage...");
           console.log('Unique Id:', uniqueId);
           return await $.ajax({
@@ -3533,9 +3533,10 @@
             dataType: 'text',
             cache: false,
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              //clientId: clientId,
+              //clientSecret: clientSecret,
               environment: environment,
+              token: gcToken,
               startDate: startDate,
               endDate: endDate,
               originalEndDate: originalEndDate,
@@ -3562,7 +3563,7 @@
                 console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
                 showMessage('Too many requests (429). Some tasks might be delayed...');
-                setTimeout(() => queue.addTask(() => getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getMedia(startDate, endDate, originalEndDate), queue.getNextDelay()), 0);
                 console.warn('getMedia has been rescheduled');
                 resolve();
                 return;
