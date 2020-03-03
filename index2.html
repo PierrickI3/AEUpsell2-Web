@@ -43,12 +43,18 @@
   <!-- Custom styles -->
   <link rel="stylesheet" href="css/main.css">
 
+  <!-- Genesys Cloud -->
+  <script src="https://sdk-cdn.mypurecloud.com/javascript/61.0.0/purecloud-platform-client-v2.min.js"></script>
+
+
   <!--#endregion -->
 
 </head>
 
 
 <body id="page-top">
+
+
 
   <div id="fadeMe" style="display:none">
     <div class="spinner"></div>
@@ -86,31 +92,52 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
+
+                <!-- Login Options -->
+                <br>
+                <div class="container-fluid">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <button class="btn btn-light" style="float: right;" id="btnImplicitGrant" onclick="switchLoginOption('implicitGrant');">Use
+                        Personal Account</button>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <button class="btn btn-light" id="btnClientCredentials" onclick="switchLoginOption('clientCredentials');">Use
+                        clientId /
+                        clientSecret</button>
+                    </div>
+                  </div>
+
+                </div>
+                <!-- /Login Options -->
+
                 <div class="modal-body">
                   <form>
-                    <div class="form-group">
+                    <div class="form-group" id="OAuth_clientId" hidden>
                       <p>How to get credentials? Follow <a rel="noopener noreferrer" href="https://help.mypurecloud.com/articles/create-an-oauth-client/" target="_blank">these
                           steps</a> and use the <strong>Client Credentials</strong> type</p>
+
+
                       <label for="clientId" class="col-form-label">OAuth Client Id:</label>
                       <input type="text" class="form-control" id="clientId" value="a49ab989-0802-40a6-8c95-da1b6a44ecf0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="OAuth_clientSecret" hidden>
                       <label for="clientSecret" class="col-form-label">OAuth Client Secret:</label>
                       <input type="password" class="form-control" id="clientSecret" value="4p5mgg6ooH80DNqRj2Xro51VtO87YyhgBe323TaVIVk">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="OAuth_env" hidden>
                       <label for="environment" class="col-form-label">PureCloud Environment:</label>
                       <input type="text" class="form-control" id="environment" placeholder="e.g. mypurecloud.ie" value="mypurecloud.ie">
                     </div>
                     <div class="form-group">
                       <label for="startDatePicker" class="col-form-label">Start Date:</label>
-                      <input type="text" class="form-control" id="startDatePicker" value="2019-12-17T00:00:00.000Z">
+                      <input type="text" class="form-control" id="startDatePicker" value="2010-12-17T00:00:00.000Z">
                     </div>
                     <div class="form-group">
                       <label for="endDatePicker" class="col-form-label">End Date:</label>
-                      <input type="text" class="form-control" id="endDatePicker" value="2019-12-18T00:00:00.000Z">
+                      <input type="text" class="form-control" id="endDatePicker" value="2010-12-18T00:00:00.000Z">
                     </div>
-                    <div class="custom-control custom-checkbox form-group">
+                    <div class="custom-control custom-checkbox form-group" id="OAuth_consent" hidden>
                       <input type="checkbox" class="custom-control-input" id="consentCheck">
                       <label class="custom-control-label" for="consentCheck">I have obtained the consent from the owner of this organization to run this tool using their credentials</label>
                     </div>
@@ -255,6 +282,12 @@
 
       <script src="js/message.js"></script>
 
+      <!-- Genesys Cloud API -->
+      <script src="js/gc.js"></script>
+
+
+
+
       <!-- #endregion -->
 
       <script>
@@ -267,6 +300,66 @@
         var usages = {}, queue = new TimerQueue(), totalTasks = 0, uniqueId = uuidv4();;
         var isUsingPC1 = false, isUsingPC2 = false, isUsingPC3 = false, isUsingCollaborate = false, isUsingCommunicate = false;
         var allDataReceived = false, allMediaDataReceived = false, allFlowDataReceived = false, allRecordingDataReceived = false;
+
+        let gcToken;
+        let clientSecret;
+        let environment = getUrlParameter("environment");
+        let clientId = getUrlParameter('clientId');
+
+        console.log(`found env: ${environment}`);
+        console.log(`found clientId: ${clientId}`);
+
+
+        function switchLoginOption(_loginOption) {
+          if (_loginOption == 'implicitGrant') {
+            // UserContext
+            $('#btnImplicitGrant')[0].classList.remove('btn-light');
+            $('#btnImplicitGrant')[0].classList.add('btn-success');
+            $('#btnClientCredentials')[0].classList.remove('btn-success');
+            $('#btnClientCredentials')[0].classList.add('btn-light');
+            $('#OAuth_clientId').attr("hidden", "");
+            $('#OAuth_clientSecret').attr("hidden", "");
+            $('#OAuth_env').attr("hidden", "");
+            $('#OAuth_consent').attr("hidden", "");
+            $("#getData").attr('disabled', false);
+          } else {
+            $('#btnClientCredentials')[0].classList.remove('btn-light');
+            $('#btnClientCredentials')[0].classList.add('btn-success');
+            $('#btnImplicitGrant')[0].classList.remove('btn-success');
+            $('#btnImplicitGrant')[0].classList.add('btn-light');
+
+            $('#OAuth_clientId').removeAttr('hidden');
+            $('#OAuth_clientSecret').removeAttr('hidden');
+            $('#OAuth_env').removeAttr('hidden');
+            $('#OAuth_consent').removeAttr('hidden');
+            $("#getData").attr('disabled', true);
+
+          }
+        }
+
+        gcToken = getUrlParameter('access_token');
+        let sReturnedParams = unescape(getUrlParameter('state'));
+
+        if (gcToken && sReturnedParams.length > 0) {
+          environment = getParameterFromString('environment', sReturnedParams);
+          clientId = getParameterFromString('clientId', sReturnedParams);
+          startDate = getParameterFromString('startDate', sReturnedParams);
+          endDate = getParameterFromString('endDate', sReturnedParams);
+          // we get rid of # in URL param
+          window.open(`https://localhost/index2.html?token=${gcToken}&environment=${environment}&clientId=${clientId}&startDate=${startDate}&endDate=${endDate}`,"_self");            
+        }
+
+       
+        gcToken = getUrlParameter('token');
+        if (gcToken) {
+          // Auto-Start getData
+
+          environment = getUrlParameter('environment');
+          clientId = getUrlParameter('clientId');
+
+          getData(clientId, clientSecret, environment, getUrlParameter('startDate'), getUrlParameter('endDate'));
+        }
+
 
         //#region Panel
 
@@ -324,6 +417,17 @@
 
         $('#configModal').on('show.bs.modal', function (event) {
           //$("#configModal #clientId").trigger('focus'); //TODO Not working and causing an issue with DatePicker
+
+          if (environment && clientId) {
+            $('#btnImplicitGrant').prop('disabled', false);
+            switchLoginOption('implicitGrant');
+          }
+          else {
+            $('#btnImplicitGrant').prop('disabled', true);
+            switchLoginOption('clientCredentials');
+
+          }
+
         });
 
         $("#consentCheck").on("click", (e) => {
@@ -332,17 +436,15 @@
 
         $("#getData").on("click", async (e) => {
           e.preventDefault();
+          // First Auth user if ImplicitGrant was selected
 
           try {
             console.log('Getting data...');
 
-            let clientId = $("#configModal #clientId").val();
-            let clientSecret = $("#configModal #clientSecret").val();
-            let environment = $("#configModal #environment").val();
             let startDate = $("#configModal #startDatePicker").val();
             let endDate = $("#configModal #endDatePicker").val();
 
-            if (!clientId || !clientSecret || !environment || !startDate || !endDate) {
+            if (!startDate || !endDate) {
               alert('Invalid or missing parameters');
               return;
             }
@@ -353,9 +455,6 @@
               return;
             }
 
-            // Close the modal
-            $('#configModal').modal('toggle')
-
             // Update date fields
             var d = new Date(startDate);
             var startDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
@@ -364,14 +463,37 @@
             var endDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
             $(".endDate").text(endDateString);
 
+            if ($('#OAuth_clientId').attr("hidden") && !gcToken) {
+              // Active AuthType is implicitGrant (userContext)
+              gcToken = await login(environment, clientId, startDate, endDate);
+              if (!gcToken) {
+                alert('Missing Token!');
+                return;
+              }
+
+            } else {
+              gcToken = "";
+              clientId = $("#configModal #clientId").val();
+              clientSecret = $("#configModal #clientSecret").val();
+              environment = $("#configModal #environment").val();
+
+              if (!clientId || !clientSecret || !environment) {
+                alert('Invalid or missing parameters');
+                return;
+              }
+            }
+
+            // Close the modal
+            $('#configModal').modal('toggle');
+
             await getData(clientId, clientSecret, environment, startDate, endDate);
 
           } catch (error) {
             console.error(error);
             alert(error.message);
           }
-
         });
+
 
         //#endregion
 
@@ -3243,12 +3365,20 @@
             history: {}
           };
 
+          console.log('check parameters:');
+          console.log(`clientId: ${clientId}`);
+          console.log(`token: ${gcToken}`);
+
+          // Call first primary function. As a result gcToken will be assigned (and reused for other queries)
+          await getOrganization();
+          console.log('Now try to open WebSocket');
           // Open web socket and process messages
           const websocket = new WebSocket(webSocketUrl);
           websocket.onmessage = (message) => {
 
             console.log('Received data from websocket');
             var data = JSON.parse(message.data);
+            console.log(data);
 
             if (data.hasOwnProperty('media')) {
               $("#spinner-text").text("Receiving media data... ");
@@ -3320,6 +3450,7 @@
             };
 
             allDataReceived = allMediaDataReceived && allFlowDataReceived && allRecordingDataReceived;
+
           };
           websocket.onerror = error => {
             console.error('onerror:', error);
@@ -3329,19 +3460,26 @@
 
             // Get Media
             // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
+
             var dateRanges = getDates(new Date(startDate), new Date(endDate));
+
             $.each(dateRanges, async (i, dateRange) => {
               console.log(`Current date range: ${dateRange.startDate} to ${dateRange.endDate}`);
               await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
             });
 
             // Get flows
-            await getFlows(clientId, clientSecret, environment);
+            await getFlows();
+
+
           };
 
+
           // Tasks
-          queue.addTask(() => getOrganization(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), 1000);
+          //queue.addTask(() => getOrganization(clientId, clientSecret, environment), 1000);
+          queue.addTask(() => getDivisions(), 1000);
+          /*
+          queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate, _token), 1000);          
           queue.addTask(() => getEvaluations(clientId, clientSecret, environment, startDate, endDate), 1000);
           queue.addTask(() => getSurveys(clientId, clientSecret, environment, startDate, endDate), 1000);
           queue.addTask(() => getScripts(clientId, clientSecret, environment), 1000);
@@ -3364,8 +3502,10 @@
           queue.addTask(() => getDocuments(clientId, clientSecret, environment), 1000);
           queue.addTask(() => getMediaRetentionPolicies(clientId, clientSecret, environment), 1000);
           queue.addTask(() => getScreenSessions(clientId, clientSecret, environment), 1000);
-          queue.addTask(() => getDivisions(clientId, clientSecret, environment), 1000);
+          
+          
           queue.addTask(() => getGroups(clientId, clientSecret, environment), 1000);
+          */
 
           totalTasks = queue.tasks.length;
 
@@ -3437,8 +3577,9 @@
             });
         }
 
-        async function getOrganization(clientId, clientSecret, environment) {
+        async function getOrganization() {
           $("#spinner-text").text("Getting Organization...");
+          console.log(`gcToken: ${gcToken}`);
           return new Promise(async (resolve, reject) => {
             $.ajax({
               method: 'GET',
@@ -3448,50 +3589,35 @@
               data: {
                 clientId: clientId,
                 clientSecret: clientSecret,
-                environment: environment
+                environment: environment,
+                token: gcToken
               }
-            })
-              .done((data, textStatus, jqXHR) => {
-                try {
-                  switch (jqXHR.status) {
-                    case 200:
-                      console.log('Organizations:', jqXHR.responseJSON);
-                      usages.organization = jqXHR.responseJSON.organization;
-                      if (Object.entries(usages.organization).length === 0) { console.error('No organization information returned!') };
+            }).done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log('Organizations:', jqXHR.responseJSON);
+                    usages.organization = jqXHR.responseJSON.organization;
+                    if (Object.entries(usages.organization).length === 0) { console.error('No organization information returned!') };
 
-                      $("#title").text("Genesys Cloud Adoption Metrics (" + usages.organization.name + ")");
-                      $("#organizationFeaturesBody").empty();
-                      for (var feature in usages.organization.features) {
-                        if (usages.organization.features.hasOwnProperty(feature)) {
-                          let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
-                          $("<td/>").text(feature).appendTo(row);
-                          $("<td/>").text(usages.organization.features[feature]).appendTo(row);
-                          row.addClass(usages.organization.features[feature] ? "text-success" : "text-danger");
-                        }
+                    $("#title").text("Genesys Cloud Adoption Metrics (" + usages.organization.name + ")");
+                    $("#organizationFeaturesBody").empty();
+                    for (var feature in usages.organization.features) {
+                      if (usages.organization.features.hasOwnProperty(feature)) {
+                        let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
+                        $("<td/>").text(feature).appendTo(row);
+                        $("<td/>").text(usages.organization.features[feature]).appendTo(row);
+                        row.addClass(usages.organization.features[feature] ? "text-success" : "text-danger");
                       }
-                      resolve();
-                      break;
-                    default:
-                      console.error(jqXHR);
-                      throw new Error(textStatus);
-                  }
-                } catch (error) {
-                  if (jqXHR.status === 429) {
-                    console.warn('Got 429 (trunks)');
-                    $("#spinner-text").text("Too many requests...");
-                    setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                    console.warn('getOrganization has been rescheduled');
+                    }
+                    gcToken = data.token;
                     resolve();
-                    return;
-                  } else {
+                    break;
+                  default:
                     console.error(jqXHR);
-                    console.error(textStatus);
-                    console.error(errorThrown);
-                    reject(jqXHR);
-                  }
+                    throw new Error(textStatus);
                 }
-              })
-              .fail((jqXHR, textStatus, errorThrown) => {
+              } catch (error) {
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
@@ -3505,10 +3631,24 @@
                   console.error(errorThrown);
                   reject(jqXHR);
                 }
-              })
-              .always(() => {
-                console.log("getOrganization completed");
-              });
+              }
+            }).fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429 (trunks)');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                console.warn('getOrganization has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            }).always(() => {
+              console.log("getOrganization completed");
+            });
           });
         }
 
@@ -3619,7 +3759,7 @@
           });
         }
 
-        async function getFlows(clientId, clientSecret, environment) {
+        async function getFlows() {
           $("#spinner-text").text("Getting Flows...");
           return new Promise(async (resolve, reject) => {
             $.ajax({
@@ -3627,10 +3767,9 @@
               url: `${urlBasePath}/flows`,
               contentType: 'application/json',
               dataType: 'json',
-              data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
+              data: {                
                 environment: environment,
+                token: gcToken,
                 uniqueId: uniqueId
               }
             })
@@ -3654,7 +3793,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getFlows(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getFlows(), queue.getNextDelay()), 0);
                   console.warn('getFlows has been rescheduled');
                   resolve();
                   return;
@@ -3671,7 +3810,7 @@
           });
         }
 
-        async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate) {
+        async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate, _token) {
           $("#spinner-text").text("Getting Billable Usage...");
           usages.licenses = {};
           return new Promise(async (resolve, reject) => {
@@ -3685,7 +3824,8 @@
                 clientSecret: clientSecret,
                 environment: environment,
                 startDate: startDate,
-                endDate: endDate
+                endDate: endDate,
+                token: _token
               }
             })
               .done((data, textStatus, jqXHR) => {
@@ -4278,8 +4418,10 @@
           });
         }
 
-        async function getDivisions(clientId, clientSecret, environment) {
+        async function getDivisions() {
           $("#spinner-text").text("Getting Divisions...");
+          console.log(`gcToken: ${gcToken}`);
+          console.log(`env: ${environment}`);
           usages.divisions = {};
           return new Promise(async (resolve, reject) => {
             $.ajax({
@@ -4288,9 +4430,8 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                clientId: clientId,
-                clientSecret: clientSecret,
-                environment: environment
+                environment: environment,
+                token: gcToken
               }
             })
               .done((data, textStatus, jqXHR) => {
