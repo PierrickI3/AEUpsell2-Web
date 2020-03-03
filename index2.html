@@ -341,6 +341,7 @@
             $('#OAuth_env').removeAttr('hidden');
             $('#OAuth_consent').removeAttr('hidden');
             $("#getData").attr('disabled', true);
+            $("#consentCheck")[0].checked = false;
 
           }
         }
@@ -367,7 +368,7 @@
           startDate = getUrlParameter('startDate');
           endDate = getUrlParameter('endDate')
 
-          getData(clientId, clientSecret, environment);
+          getData();
         }
 
 
@@ -473,8 +474,10 @@
             var endDateString = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + "-" + d.getFullYear();
             $(".endDate").text(endDateString);
 
-            if ($('#OAuth_clientId').attr("hidden") && !gcToken) {
+            if ($('#OAuth_clientId').attr("hidden")) {
               // Active AuthType is implicitGrant (userContext)
+              environment = getUrlParameter("environment");
+              clientId = getUrlParameter('clientId');
               gcToken = await login(environment, clientId, startDate, endDate);
               if (!gcToken) {
                 alert('Missing Token!');
@@ -496,7 +499,7 @@
             // Close the modal
             $('#configModal').modal('toggle');
 
-            await getData(clientId, clientSecret, environment);
+            await getData();
 
           } catch (error) {
             console.error(error);
@@ -3345,7 +3348,8 @@
 
         //#region Get Data
 
-        async function getData(clientId, clientSecret, environment) {
+        async function getData() {
+          resetValues();
 
           showSpinner();
           $("#spinner-text").text("Loading... Please Wait...");
@@ -3488,6 +3492,7 @@
 
           // Tasks
           queue.addTask(() => getOrganization(), 1000);
+          /*
           queue.addTask(() => getDivisions(), 1000);
           queue.addTask(() => getBillableUsage(), 1000);          
           queue.addTask(() => getEvaluations(), 1000);
@@ -3513,6 +3518,7 @@
           queue.addTask(() => getMediaRetentionPolicies(), 1000);
           queue.addTask(() => getScreenSessions(), 1000);
           queue.addTask(() => getGroups(), 1000);
+          */
 
           totalTasks = queue.tasks.length;
 
@@ -3628,7 +3634,7 @@
                 if (jqXHR.status === 429) {
                   console.warn('Got 429 (trunks)');
                   $("#spinner-text").text("Too many requests...");
-                  setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                  setTimeout(() => queue.addTask(() => getOrganization(), queue.getNextDelay()), 0);
                   console.warn('getOrganization has been rescheduled');
                   resolve();
                   return;
@@ -3643,7 +3649,7 @@
               if (jqXHR.status === 429) {
                 console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getOrganization(), queue.getNextDelay()), 0);
                 console.warn('getOrganization has been rescheduled');
                 resolve();
                 return;
@@ -4631,7 +4637,7 @@
               contentType: 'application/json',
               dataType: 'json',
               data: {
-                token: gcToken,                
+                token: gcToken,
                 environment: environment
               }
             })
@@ -5158,8 +5164,6 @@
         }
 
         function resetValues() {
-
-          uniqueId = uuidv4();
 
           isUsingPC1 = false;
           isUsingPC2 = false;
