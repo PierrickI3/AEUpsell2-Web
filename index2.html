@@ -3456,7 +3456,8 @@
             console.error('onerror:', error);
           };
           websocket.onopen = async () => {
-            console.log('Websocket opened!');
+            console.log('Websocket opened!', websocket);
+            //TODO How to get socket connection id?
 
             // Get Media
             // Call time-dependent functions 7 days at a time (some PureCloud API functions can't accept date range greater than 7 days)
