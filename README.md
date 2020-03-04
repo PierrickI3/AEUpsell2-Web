@@ -33,6 +33,8 @@ The [Genesys Cloud Adoption Metrics - Summary](https://pierricki3.github.io/AEUp
 
 ## Requirements
 
+Depending on how you want to login via this application you'll need to create either `Client Credentials` or `Implicit Grant (Browser)` OAuth Client:
+
 You will need the following to use this tool:
 
 * A `Client Credentials` OAuth id & secret: 
@@ -45,6 +47,47 @@ You will need the following to use this tool:
   * Select all divisions
   * Click on the `Save` button
   * Copy the `Client ID` and `Client Secret` values somewhere safe. **DO NOT SHARE THESE WITH ANYONE OUTSIDE OF YOUR ORGANIZATION OR OF GENESYS**
+
+* In Case you want to use `Implicit Grant (Browser)` you need to specify appropiate Scope that application will be able to use.
+  *  alerting:readonly
+  *  analytics:readonly
+  *  architect:readonly
+  *  audits:readonly
+  *  authorization:readonly
+  *  billing:readonly
+  *  content-management:readonly
+  *  conversations:readonly
+  *  devices:readonly
+  *  dialog:readonly
+  *  external-contacts:readonly
+  *  fax:readonly
+  *  gdpr:readonly
+  *  geolocation:readonly
+  *  greetings:readonly
+  *  locations:readonly
+  *  messaging:readonly
+  *  oauth:readonly
+  *  organization-authorization:readonly
+  *  organization:readonly
+  *  outbound:readonly
+  *  presence:readonly
+  *  quality:readonly
+  *  recordings:readonly
+  *  response-management:readonly
+  *  routing:readonly
+  *  scim:readonly
+  *  scripts:readonly
+  *  search:readonly
+  *  speech-and-text-analytics:readonly
+  *  stations-authorization:readonly
+  *  streaming-events:readonly
+  *  telephony:readonly
+  *  user-recordings:readonly
+  *  user:readonly
+  *  voicemail:readonly
+  *  web-chat:readonly
+  *  workforce-management:readonly
+
 * Know your Genesys Cloud environment. Available environments:
   * mypurecloud.com - North America (East)
   * mypurecloud.com.au - Australia/New Zealand
@@ -193,6 +236,9 @@ These features might not be enabled in your org if it was created a long time ag
   * Enable the `Set divisions for 1 assigned people` option and select all divisions (or enable the `All future divisions` option directly)
   * Click on `Save`
 * Go back to the [Requirements](#requirements) section to continue
+
+To use `Implicit Grant (Browser)` lunch application with following 2 parameters
+?environment=[Genesys Cloud environment]&clientId=[defined in previous step OAUth ClientId]
 
 ## Troubleshooting
 
