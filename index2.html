@@ -118,6 +118,9 @@
                 </div>
                 <!-- /Login Options -->
                 <div class="modal-body">
+                  <small id="personalAccountInfo">
+                    To use <span class="badge badge-success">Personal Account</span> URL should contain following queryStringParameters<br> `?environment=[region]&clientId=[OAuth ClientId]`<br><br>
+                  </small>
                   <center>
                     <a data-toggle="collapse" href="#permissions" role="button" aria-expanded="false" aria-controls="permissions">Required permissions</a>
                   </center>
@@ -130,48 +133,48 @@
                               steps</a> and use the <br> <strong>Client Credentials</strong> type.</p>
                           <p>
                             Required Permissions / Scope definition:
-                          
-                          <hr>
-                          <p>
-                            <span class="badge badge-info">alerting:readonly</span>
-                            <span class="badge badge-info">analytics:readonly</span>
-                            <span class="badge badge-info">architect:readonly</span>
-                            <span class="badge badge-info">audits:readonly</span>
-                            <span class="badge badge-info">authorization:readonly</span>
-                            <span class="badge badge-info">billing:readonly</span>
-                            <span class="badge badge-info">content-management:readonly</span>
-                            <span class="badge badge-info">conversations:readonly</span>
-                            <span class="badge badge-info">devices:readonly</span>
-                            <span class="badge badge-info">dialog:readonly</span>
-                            <span class="badge badge-info">external-contacts:readonly</span>
-                            <span class="badge badge-info">fax:readonly</span>
-                            <span class="badge badge-info">gdpr:readonly</span>
-                            <span class="badge badge-info">geolocation:readonly</span>
-                            <span class="badge badge-info">greetings:readonly</span>
-                            <span class="badge badge-info">locations:readonly</span>
-                            <span class="badge badge-info">messaging:readonly</span>
-                            <span class="badge badge-info">oauth:readonly</span>
-                            <span class="badge badge-info">organization-authorization:readonly</span>
-                            <span class="badge badge-info">organization:readonly</span>
-                            <span class="badge badge-info">outbound:readonly</span>
-                            <span class="badge badge-info">presence:readonly</span>
-                            <span class="badge badge-info">quality:readonly</span>
-                            <span class="badge badge-info">recordings:readonly</span>
-                            <span class="badge badge-info">response-management:readonly</span>
-                            <span class="badge badge-info">routing:readonly</span>
-                            <span class="badge badge-info">scim:readonly</span>
-                            <span class="badge badge-info">scripts:readonly</span>
-                            <span class="badge badge-info">search:readonly</span>
-                            <span class="badge badge-info">speech-and-text-analytics:readonly</span>
-                            <span class="badge badge-info">stations-authorization:readonly</span>
-                            <span class="badge badge-info">streaming-events:readonly</span>
-                            <span class="badge badge-info">telephony:readonly</span>
-                            <span class="badge badge-info">user-recordings:readonly</span>
-                            <span class="badge badge-info">user:readonly</span>
-                            <span class="badge badge-info">voicemail:readonly</span>
-                            <span class="badge badge-info">web-chat:readonly</span>
-                            <span class="badge badge-info">workforce-management:readonly</span>
-                          </p>
+
+                            <hr>
+                            <p>
+                              <span class="badge badge-info">alerting:readonly</span>
+                              <span class="badge badge-info">analytics:readonly</span>
+                              <span class="badge badge-info">architect:readonly</span>
+                              <span class="badge badge-info">audits:readonly</span>
+                              <span class="badge badge-info">authorization:readonly</span>
+                              <span class="badge badge-info">billing:readonly</span>
+                              <span class="badge badge-info">content-management:readonly</span>
+                              <span class="badge badge-info">conversations:readonly</span>
+                              <span class="badge badge-info">devices:readonly</span>
+                              <span class="badge badge-info">dialog:readonly</span>
+                              <span class="badge badge-info">external-contacts:readonly</span>
+                              <span class="badge badge-info">fax:readonly</span>
+                              <span class="badge badge-info">gdpr:readonly</span>
+                              <span class="badge badge-info">geolocation:readonly</span>
+                              <span class="badge badge-info">greetings:readonly</span>
+                              <span class="badge badge-info">locations:readonly</span>
+                              <span class="badge badge-info">messaging:readonly</span>
+                              <span class="badge badge-info">oauth:readonly</span>
+                              <span class="badge badge-info">organization-authorization:readonly</span>
+                              <span class="badge badge-info">organization:readonly</span>
+                              <span class="badge badge-info">outbound:readonly</span>
+                              <span class="badge badge-info">presence:readonly</span>
+                              <span class="badge badge-info">quality:readonly</span>
+                              <span class="badge badge-info">recordings:readonly</span>
+                              <span class="badge badge-info">response-management:readonly</span>
+                              <span class="badge badge-info">routing:readonly</span>
+                              <span class="badge badge-info">scim:readonly</span>
+                              <span class="badge badge-info">scripts:readonly</span>
+                              <span class="badge badge-info">search:readonly</span>
+                              <span class="badge badge-info">speech-and-text-analytics:readonly</span>
+                              <span class="badge badge-info">stations-authorization:readonly</span>
+                              <span class="badge badge-info">streaming-events:readonly</span>
+                              <span class="badge badge-info">telephony:readonly</span>
+                              <span class="badge badge-info">user-recordings:readonly</span>
+                              <span class="badge badge-info">user:readonly</span>
+                              <span class="badge badge-info">voicemail:readonly</span>
+                              <span class="badge badge-info">web-chat:readonly</span>
+                              <span class="badge badge-info">workforce-management:readonly</span>
+                            </p>
 
 
                           </p>
@@ -378,11 +381,16 @@
         console.log(`found env: ${environment}`);
         console.log(`found clientId: ${clientId}`);
 
+        if (!environment || !clientId)
+          $('#personalAccountInfo').removeAttr('hidden');
+        else
+          $('#personalAccountInfo').attr("hidden", "");
 
         function switchLoginOption(_loginOption) {
           if (_loginOption == 'implicitGrant') {
             // UserContext
             $('#OAuth_description').attr("hidden", "");
+
             $('#btnImplicitGrant')[0].classList.remove('btn-light');
             $('#btnImplicitGrant')[0].classList.add('btn-success');
             $('#btnClientCredentials')[0].classList.remove('btn-success');
@@ -393,6 +401,7 @@
             $('#OAuth_consent').attr("hidden", "");
             $("#getData").attr('disabled', false);
           } else {
+
             $('#btnClientCredentials')[0].classList.remove('btn-light');
             $('#btnClientCredentials')[0].classList.add('btn-success');
             $('#btnImplicitGrant')[0].classList.remove('btn-success');
@@ -485,7 +494,7 @@
         }
 
         //#endregion
-        
+
 
 
         //#region Configuration Modal
