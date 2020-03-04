@@ -578,17 +578,6 @@
 
     <!-- #region Imports -->
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-155607114-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-
-      gtag('config', 'UA-155607114-1');
-      gtag('set', { 'user_id': uuidv4() });
-    </script>
-
     <!-- Bootstrap core JavaScript-->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -943,7 +932,7 @@
         queue.addTask(() => getTrunks(), 1000);
         queue.addTask(() => getDocuments(), 1000);
         queue.addTask(() => getDivisions(), 1000);
-            
+
 
         totalTasks = queue.tasks.length;
 
@@ -2306,7 +2295,7 @@
               try {
                 switch (jqXHR.status) {
                   case 200:
-                  console.log(jqXHR.responseJSON);
+                    console.log(jqXHR.responseJSON);
                     usages.responseLibraries = jqXHR.responseJSON.responseLibraries;
                     $("#totalResponseLibraries").text(parseInt(usages.responseLibraries) || 0);
 
@@ -2424,7 +2413,7 @@
               try {
                 switch (jqXHR.status) {
                   case 200:
-                   console.log(jqXHR.responseJSON);
+                    console.log(jqXHR.responseJSON);
                     usages.divisions = jqXHR.responseJSON.divisions;
                     $("#totalDivisionsUsage").text(usages.divisions);
 
@@ -2482,7 +2471,7 @@
               try {
                 switch (jqXHR.status) {
                   case 200:
-                  console.log(jqXHR.responseJSON);
+                    console.log(jqXHR.responseJSON);
                     usages.trunks = jqXHR.responseJSON.trunks;
                     $("#totalTrunksUsage").text(usages.trunks.length);
 
