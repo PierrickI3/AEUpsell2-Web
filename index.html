@@ -627,6 +627,12 @@
       var usages = {}, queue = new TimerQueue(), totalTasks = 0, uniqueId = uuidv4();
       var allDataReceived = false, allMediaDataReceived = false, allFlowDataReceived = false, allRecordingDataReceived = false;
 
+      let gcToken;
+      let clientSecret;
+      let startDate, endDate;
+      let environment; //= getUrlParameter("environment");
+      let clientId; //= getUrlParameter('clientId');
+
       //#region Date Functions
 
       $("#startDatePicker").datepicker({
@@ -679,11 +685,11 @@
         try {
           console.log('Getting data...');
 
-          let clientId = $("#configModal #clientId").val();
-          let clientSecret = $("#configModal #clientSecret").val();
-          let environment = $("#configModal #environment").val();
-          let startDate = $("#configModal #startDatePicker").val();
-          let endDate = $("#configModal #endDatePicker").val();
+          clientId = $("#configModal #clientId").val();
+          clientSecret = $("#configModal #clientSecret").val();
+          environment = $("#configModal #environment").val();
+          startDate = $("#configModal #startDatePicker").val();
+          endDate = $("#configModal #endDatePicker").val();
 
           if (!clientId || !clientSecret || !environment || !startDate || !endDate) {
             alert('Invalid or missing parameters');
@@ -709,7 +715,8 @@
 
           showSpinner();
 
-          await getData(clientId, clientSecret, environment, startDate, endDate);
+          //await getData(clientId, clientSecret, environment, startDate, endDate);
+          await getData();
 
         } catch (error) {
           console.error(error);
@@ -806,7 +813,7 @@
 
       //#region Get Data
 
-      async function getData(clientId, clientSecret, environment, startDate, endDate) {
+      async function getData() {
 
         showCardSpinner("conversationsCard");
         showCardSpinner("recordingsCard");
@@ -835,6 +842,9 @@
           },
           flows: []
         };
+
+        // Call first primary function. As a result gcToken will be assigned (and reused for other queries)
+        await getOrganization();
 
         // Open web socket and process messages
         const websocket = new WebSocket(webSocketUrl);
@@ -901,37 +911,39 @@
           var dateRanges = getDates(new Date(startDate), new Date(endDate));
           $.each(dateRanges, async (i, dateRange) => {
             console.log('Getting media. Date Range:', dateRange);
-            await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
+            //await getMedia(clientId, clientSecret, environment, dateRange.startDate, dateRange.endDate, endDate);
+            await getMedia(dateRange.startDate, dateRange.endDate, endDate);
           });
 
           // Get flows
-          await getFlows(clientId, clientSecret, environment);
+          await getFlows();
         };
 
-        queue.addTask(() => getOrganization(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), 1000);
-        queue.addTask(() => getUsers(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getSkills(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getEdges(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getSMSPhoneNumbers(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getScripts(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getRoutingLanguages(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getIdentityProviders(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getWorkforceManagementUsage(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getQueues(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getContactLists(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getStations(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getIntegrations(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getLocations(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getTrunks(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getDocuments(clientId, clientSecret, environment), 1000);
-        queue.addTask(() => getDivisions(clientId, clientSecret, environment), 1000);
+        // Tasks
+        queue.addTask(() => getBillableUsage(), 1000);
+        queue.addTask(() => getUsers(), 1000);
+        queue.addTask(() => getSkills(), 1000);
+        queue.addTask(() => getEdges(), 1000);
+        queue.addTask(() => getSMSPhoneNumbers(), 1000);
+        queue.addTask(() => getScripts(), 1000);
+        queue.addTask(() => getRoutingLanguages(), 1000);
+        queue.addTask(() => getIdentityProviders(), 1000);
+        queue.addTask(() => getWorkforceManagementUsage(), 1000);
+        queue.addTask(() => getQueues(), 1000);
+        queue.addTask(() => getContactLists(), 1000);
+        queue.addTask(() => getWrapUpCodes(), 1000);
+        queue.addTask(() => getStations(), 1000);
+        queue.addTask(() => getIntegrations(), 1000);
+        queue.addTask(() => getResponseLibraries(), 1000);
+        queue.addTask(() => getLocations(), 1000);
+        queue.addTask(() => getExternalContacts(), 1000);
+        queue.addTask(() => getDialerCampaigns(), 1000);
+        queue.addTask(() => getGDPRRequests(), 1000);
+        queue.addTask(() => getEvaluationForms(), 1000);
+        queue.addTask(() => getTrunks(), 1000);
+        queue.addTask(() => getDocuments(), 1000);
+        queue.addTask(() => getDivisions(), 1000);
+            
 
         totalTasks = queue.tasks.length;
 
@@ -943,51 +955,65 @@
         hideSpinner();
       }
 
-      async function getMedia(clientId, clientSecret, environment, startDate, endDate, originalEndDate) {
-        $("#spinner-text").text("Getting Media Usage...");
-        return await $.ajax({
-          method: 'GET',
-          url: `${urlBasePath}/media`,
-          contentType: 'application/json',
-          dataType: 'text',
-          cache: false,
-          data: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            environment: environment,
-            startDate: startDate,
-            endDate: endDate,
-            originalEndDate: originalEndDate,
-            uniqueId: uniqueId
-          }
-        })
-          .done((data, textStatus, jqXHR) => {
-            try {
-              switch (jqXHR.status) {
-                case 200:
-                  //console.log(jqXHR.responseJSON);
-                  //return jqXHR.responseJSON;
-                  break;
-                default:
-                  showMessage("Unexpected error: " + textStatus, true);
-                  throw new Error(textStatus);
-              }
-            } catch (error) {
-              console.error(error);
-              throw error;
+      async function getSkills() {
+        $("#spinner-text").text("Getting Skills...");
+        usages.skills = 0;
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/skills`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
             }
           })
-          .fail((jqXHR, textStatus, errorThrown) => {
-            console.error(jqXHR);
-            console.error(textStatus);
-            console.error(errorThrown);
-          })
-          .always(() => {
-            console.log("getMedia completed");
-          });
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.skills = jqXHR.responseJSON.skills;
+                    $("#totalSkills").text(parseInt(usages.skills) || 0);
+
+                    // Set colors
+                    $("#skills").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(parseInt(usages.skills) === 0 ? "text-danger" : "text-success");
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getSkills(), queue.getNextDelay()), 0);
+                console.warn('getSkills has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getSkills completed");
+            });
+        });
       }
 
-      async function getUsers(clientId, clientSecret, environment) {
+      async function getUsers() {
         $("#spinner-text").text("Getting Users Usage...");
         usages.users = 0;
         return new Promise(async (resolve, reject) => {
@@ -997,8 +1023,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1029,7 +1054,7 @@
               if (jqXHR.status === 429) {
                 console.warn('Got 429');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getUsers(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getUsers(), queue.getNextDelay()), 0);
                 console.warn('getUsers has been rescheduled');
                 resolve();
                 return;
@@ -1046,18 +1071,17 @@
         });
       }
 
-      async function getOrganization(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Organization...");
-        usages.organization = {};
+      async function getWorkforceManagementUsage() {
+        $("#spinner-text").text("Getting Workforce Management Usage...");
+        usages.wfm = {};
         return new Promise(async (resolve, reject) => {
           $.ajax({
             method: 'GET',
-            url: `${urlBasePath}/organization`,
+            url: `${urlBasePath}/workforceManagement`,
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1066,17 +1090,19 @@
                 switch (jqXHR.status) {
                   case 200:
                     console.log(jqXHR.responseJSON);
-                    usages.organization = jqXHR.responseJSON.organization;
-                    $("#title").text("Genesys Cloud Adoption Metrics (" + usages.organization.name + ")");
-                    $("#organizationFeaturesBody").empty();
-                    for (var feature in usages.organization.features) {
-                      if (usages.organization.features.hasOwnProperty(feature)) {
-                        let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
-                        $("<td/>").text(feature).appendTo(row);
-                        $("<td/>").text(usages.organization.features[feature]).appendTo(row);
-                        row.addClass(usages.organization.features[feature] ? "text-success" : "text-danger");
-                      }
-                    }
+                    usages.wfm = jqXHR.responseJSON.wfm;
+
+                    $("#totalManagementUnitsUsage").text(usages.wfm.managementUnits);
+                    $("#totalSchedulingRunsUsage").text(usages.wfm.schedulingRuns);
+
+                    // Set colors
+                    $("#managementUnits").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(parseInt(usages.managementUnits) === 0 ? "text-danger" : "text-success");
+
+                    $("#schedulingRuns").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(parseInt(usages.schedulingRuns) === 0 ? "text-danger" : "text-success");
                     resolve();
                     break;
                   default:
@@ -1092,8 +1118,8 @@
               if (jqXHR.status === 429) {
                 console.warn('Got 429');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getOrganization(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getOrganization has been rescheduled');
+                setTimeout(() => queue.addTask(() => getWorkforceManagementUsage(), queue.getNextDelay()), 0);
+                console.warn('getWorkforceManagementUsage has been rescheduled');
                 resolve();
                 return;
               } else {
@@ -1104,12 +1130,606 @@
               }
             })
             .always(() => {
-              console.log("getOrganization completed");
+              console.log("getWorkorceManagementUsage completed");
             });
         });
       }
 
-      async function getBillableUsage(clientId, clientSecret, environment, startDate, endDate) {
+      async function getLocations() {
+        $("#spinner-text").text("Getting Locations...");
+        usages.locations = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/locations`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.locations = jqXHR.responseJSON.locations;
+                    var interval = 1 * 1000; // 1 second
+                    $.each(usages.locations, (i, location) => {
+                      setTimeout(async (i) => {
+                        if (location.hasOwnProperty('address')) {
+                          let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
+                          addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
+                        } else {
+                          console.log(`No address set for location ${location.name}`);
+                        }
+                      }, interval * i, i);
+                    });
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getLocations(), queue.getNextDelay()), 0);
+                console.warn('getLocations has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getLocations completed");
+            });
+        });
+      }
+
+      async function getIdentityProviders() {
+        $("#spinner-text").text("Getting Identity Providers...");
+        usages.identityProviders = {};
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/identityProviders`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.identityProviders = jqXHR.responseJSON.identityProviders;
+                    $("#identityProvidersBody").empty();
+                    Object.keys(usages.identityProviders).forEach((identityProvider) => {
+                      let row = $("<tr/>", {}).appendTo("#identityProvidersBody");
+                      $("<td/>").text(identityProvider).appendTo(row);
+                      $("<td/>").text(usages.identityProviders[identityProvider]).appendTo(row);
+                    });
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getIdentityProviders(), queue.getNextDelay()), 0);
+                console.warn('getIdentityProviders has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getIdentityProviders completed");
+            });
+        });
+      }
+
+      async function getRoutingLanguages() {
+        $("#spinner-text").text("Getting Routing Languages...");
+        usages.routingLanguages = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/routingLanguages`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.routingLanguages = jqXHR.responseJSON.routingLanguages;
+                    $("#routingLanguagesBody").empty();
+                    $.each(usages.routingLanguages, (i, routingLanguage) => {
+                      let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
+                      $("<td/>").text(routingLanguage.name).appendTo(row);
+                    });
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                //setTimeout(() => queue.addTask(() => getRoutingLanguages(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getRoutingLanguages(), queue.getNextDelay()), 0);
+                console.warn('getRoutingLanguages has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getRoutingLanguages completed");
+            });
+        });
+      }
+
+      async function getEdges() {
+        $("#spinner-text").text("Getting Edges...");
+        usages.edges = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/edges`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.edges = jqXHR.responseJSON.edges;
+                    $("#totalEdgesUsage").text(usages.edges.length);
+
+                    // Set colors
+                    $("#edges").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(usages.edges.length === 0 ? "text-danger" : "text-success");
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getEdges(), queue.getNextDelay()), 0);
+                console.warn('getEdges has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getEdges completed");
+            });
+        });
+      }
+
+      async function getSMSPhoneNumbers() {
+        $("#spinner-text").text("Getting SMS Phone Numbers...");
+        usages.smsPhoneNumbers = 0;
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/smsPhoneNumbers`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.smsPhoneNumbers = jqXHR.responseJSON.smsPhoneNumbers;
+                    $("#totalSMSPhoneNumbersUsage").text(usages.smsPhoneNumbers || 0);
+
+                    // Set colors
+                    $("#smsPhoneNumbers").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(usages.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429');
+                $("#spinner-text").text("Too many requests...");
+                //setTimeout(() => queue.addTask(() => getSMSPhoneNumbers(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getSMSPhoneNumbers(), queue.getNextDelay()), 0);
+                console.warn('getSMSPhoneNumbers has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getSMSPhoneNumbers completed");
+            });
+        });
+      }
+
+      async function getMedia(_startDate, _endDate, _originalEndDate) {
+        $("#spinner-text").text("Getting Media Usage...");
+        console.log('Unique Id:', uniqueId);
+        return await $.ajax({
+          method: 'GET',
+          url: `${urlBasePath}/media`,
+          contentType: 'application/json',
+          dataType: 'text',
+          cache: false,
+          data: {
+            environment: environment,
+            token: gcToken,
+            startDate: _startDate,
+            endDate: _endDate,
+            originalEndDate: _originalEndDate,
+            uniqueId: uniqueId
+          }
+        })
+          .done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  // Data is received via websocket
+                  break;
+                default:
+                  console.error(jqXHR);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              console.error(error);
+              throw error;
+            }
+          })
+          .fail((jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status === 429) {
+              console.warn('Got 429 (trunks)');
+              $("#spinner-text").text("Too many requests...");
+              showMessage('Too many requests (429). Some tasks might be delayed...');
+              setTimeout(() => queue.addTask(() => getMedia(_startDate, _endDate, _originalEndDate), queue.getNextDelay()), 0);
+              console.warn('getMedia has been rescheduled');
+              resolve();
+              return;
+            } else {
+              console.error(jqXHR);
+              console.error(textStatus);
+              console.error(errorThrown);
+              reject(jqXHR);
+            }
+          })
+          .always(() => {
+            console.log("getMedia completed");
+          });
+      }
+
+      async function getOrganization() {
+        $("#spinner-text").text("Getting Organization...");
+
+        console.log(`gcToken: ${gcToken}`);
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/organization`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              clientId: clientId,
+              clientSecret: clientSecret,
+              environment: environment,
+              token: gcToken
+            }
+          }).done((data, textStatus, jqXHR) => {
+            try {
+              switch (jqXHR.status) {
+                case 200:
+                  console.log(jqXHR.responseJSON);
+                  usages.organization = jqXHR.responseJSON.organization;
+                  $("#title").text("Genesys Cloud Adoption Metrics (" + usages.organization.name + ")");
+                  $("#organizationFeaturesBody").empty();
+                  for (var feature in usages.organization.features) {
+                    if (usages.organization.features.hasOwnProperty(feature)) {
+                      let row = $("<tr/>", {}).appendTo("#organizationFeaturesBody");
+                      $("<td/>").text(feature).appendTo(row);
+                      $("<td/>").text(usages.organization.features[feature]).appendTo(row);
+                      row.addClass(usages.organization.features[feature] ? "text-success" : "text-danger");
+                    }
+                  }
+                  gcToken = data.token;
+                  resolve();
+
+
+                  break;
+                default:
+                  console.error(jqXHR);
+                  throw new Error(textStatus);
+              }
+            } catch (error) {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429 (trunks)');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getOrganization(), queue.getNextDelay()), 0);
+                console.warn('getOrganization has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            }
+          }).fail((jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status === 429) {
+              console.warn('Got 429 (trunks)');
+              $("#spinner-text").text("Too many requests...");
+              setTimeout(() => queue.addTask(() => getOrganization(), queue.getNextDelay()), 0);
+              console.warn('getOrganization has been rescheduled');
+              resolve();
+              return;
+            } else {
+              console.error(jqXHR);
+              console.error(textStatus);
+              console.error(errorThrown);
+              reject(jqXHR);
+            }
+          }).always(() => {
+            console.log("getOrganization completed");
+          });
+        });
+      }
+
+      async function getScripts() {
+        $("#spinner-text").text("Getting Scripts...");
+        usages.scripts = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/scripts`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log(jqXHR.responseJSON);
+                    usages.scripts = jqXHR.responseJSON.scripts;
+                    $("#totalScripts").text(usages.scripts.length);
+
+                    // Set colors
+                    $("#scripts").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(usages.scripts.length === 0 ? "text-danger" : "text-success");
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429 (trunks)');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getScripts(), queue.getNextDelay()), 0);
+                console.warn('getScripts has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getScripts completed");
+            });
+        });
+      }
+
+      async function getQueues() {
+        $("#spinner-text").text("Getting Queues Usage...");
+        usages.queues = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/queues`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              token: gcToken,
+              environment: environment
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    console.log("queues:", jqXHR.responseJSON);
+                    usages.queues = jqXHR.responseJSON.queues;
+                    $("#totalQueuesUsage").text(usages.queues.length);
+
+                    // Set colors
+                    $("#queues").removeClass(function (index, className) {
+                      return (className.match(/\btext-\S+/g) || []).join(' ');
+                    }).addClass(usages.queues.length === 0 ? "text-danger" : "text-success");
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429 (trunks)');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getQueues(), queue.getNextDelay()), 0);
+                console.warn('getQueues has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getQueues completed");
+            });
+        });
+      }
+
+      async function getFlows() {
+        $("#spinner-text").text("Getting Flows...");
+        usages.flows = [];
+        return new Promise(async (resolve, reject) => {
+          $.ajax({
+            method: 'GET',
+            url: `${urlBasePath}/flows`,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+              environment: environment,
+              token: gcToken,
+              uniqueId: uniqueId
+            }
+          })
+            .done((data, textStatus, jqXHR) => {
+              try {
+                switch (jqXHR.status) {
+                  case 200:
+                    // Data is received via websocket
+                    resolve();
+                    break;
+                  default:
+                    console.error(jqXHR);
+                    throw new Error(textStatus);
+                }
+              } catch (error) {
+                console.error(error);
+                throw error;
+              }
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+              if (jqXHR.status === 429) {
+                console.warn('Got 429 (trunks)');
+                $("#spinner-text").text("Too many requests...");
+                setTimeout(() => queue.addTask(() => getFlows(), queue.getNextDelay()), 0);
+                console.warn('getFlows has been rescheduled');
+                resolve();
+                return;
+              } else {
+                console.error(jqXHR);
+                console.error(textStatus);
+                console.error(errorThrown);
+                reject(jqXHR);
+              }
+            })
+            .always(() => {
+              console.log("getFlows completed");
+            });
+        });
+      }
+
+      async function getBillableUsage() {
         $("#spinner-text").text("Getting Billable Usage...");
         usages.licenses = {};
         return new Promise(async (resolve, reject) => {
@@ -1119,8 +1739,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment,
               startDate: startDate,
               endDate: endDate
@@ -1153,9 +1772,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getBillableUsage(clientId, clientSecret, environment, startDate, endDate), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getBillableUsage(startDate, endDate), queue.getNextDelay()), 0);
                 console.warn('getBillableUsage has been rescheduled');
                 resolve();
                 return;
@@ -1172,120 +1791,8 @@
         });
       }
 
-      async function getFlows(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Flows...");
-        usages.flows = [];
-        return new Promise((resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/flows`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment,
-              uniqueId: uniqueId
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    resolve();
-                    break;
-                  default:
-                    showMessage("Unexpected error: " + textStatus, true);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getFlows(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getFlows has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getFlows completed");
-            });
-        });
-      }
-
-      async function getQueues(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Queues Usage...");
-        usages.queues = [];
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/queues`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log("queues:", jqXHR.responseJSON);
-                    usages.queues = jqXHR.responseJSON.queues;
-                    $("#totalQueuesUsage").text(usages.queues.length);
-
-                    // Set colors
-                    $("#queues").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(usages.queues.length === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getQueues(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getQueues has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getQueues completed");
-            });
-        });
-      }
-
-      async function getStations(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting License Usage...");
+      async function getStations() {
+        $("#spinner-text").text("Getting Stations...");
         usages.stations = {};
         return new Promise(async (resolve, reject) => {
           $.ajax({
@@ -1294,8 +1801,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1335,9 +1841,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getStations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getStations(), queue.getNextDelay()), 0);
                 console.warn('getStations has been rescheduled');
                 resolve();
                 return;
@@ -1354,126 +1860,7 @@
         });
       }
 
-      async function getEdges(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Edges...");
-        usages.edges = [];
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/edges`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.edges = jqXHR.responseJSON.edges;
-                    $("#totalEdgesUsage").text(usages.edges.length);
-
-                    // Set colors
-                    $("#edges").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(usages.edges.length === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getEdges(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getEdges has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getEdges completed");
-            });
-        });
-      }
-
-      async function getSMSPhoneNumbers(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting SMS Phone Numbers...");
-        usages.smsPhoneNumbers = 0;
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/smsPhoneNumbers`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.smsPhoneNumbers = jqXHR.responseJSON.smsPhoneNumbers;
-                    $("#totalSMSPhoneNumbersUsage").text(usages.smsPhoneNumbers || 0);
-
-                    // Set colors
-                    $("#smsPhoneNumbers").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(usages.smsPhoneNumbers === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                //setTimeout(() => queue.addTask(() => getSMSPhoneNumbers(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                setTimeout(() => queue.addTask(() => getSMSPhoneNumbers(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getSMSPhoneNumbers has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getSMSPhoneNumbers completed");
-            });
-        });
-      }
-
-      async function getIntegrations(clientId, clientSecret, environment) {
+      async function getIntegrations() {
         $("#spinner-text").text("Getting Integrations...");
         usages.integrations = {};
         return new Promise(async (resolve, reject) => {
@@ -1483,8 +1870,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1505,7 +1891,7 @@
                     resolve();
                     break;
                   default:
-                    console.error(jqXHR);
+                    console.error(textStatus);
                     throw new Error(textStatus);
                 }
               } catch (error) {
@@ -1515,9 +1901,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getIntegrations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getIntegrations(), queue.getNextDelay()), 0);
                 console.warn('getIntegrations has been rescheduled');
                 resolve();
                 return;
@@ -1534,71 +1920,7 @@
         });
       }
 
-      async function getLocations(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Locations...");
-        usages.locations = [];
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/locations`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.locations = jqXHR.responseJSON.locations;
-                    var interval = 1 * 1000; // 1 second
-                    $.each(usages.locations, (i, location) => {
-                      setTimeout(async (i) => {
-                        if (location.hasOwnProperty('address')) {
-                          let lonlat = await getLonLat(`${location.address.hasOwnProperty('street1') ? location.address.street1 : ''}, ${location.address.city}, ${location.address.countryName}`);
-                          addMapMarker(parseFloat(lonlat.lon), parseFloat(lonlat.lat));
-                        } else {
-                          console.log(`No address set for location ${location.name}`);
-                        }
-                      }, interval * i, i);
-                    });
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getLocations(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getLocations has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getLocations completed");
-            });
-        });
-      }
-
-      async function getDialerCampaigns(clientId, clientSecret, environment) {
+      async function getDialerCampaigns() {
         $("#spinner-text").text("Getting Dialer Campaigns...");
         usages.dialerCampaigns = [];
         return new Promise(async (resolve, reject) => {
@@ -1608,8 +1930,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1644,9 +1965,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getDialerCampaigns(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getDialerCampaigns(), queue.getNextDelay()), 0);
                 console.warn('getDialerCampaigns has been rescheduled');
                 resolve();
                 return;
@@ -1663,7 +1984,7 @@
         });
       }
 
-      async function getContactLists(clientId, clientSecret, environment) {
+      async function getContactLists() {
         $("#spinner-text").text("Getting Contact Lists...");
         usages.contactLists = [];
         return new Promise(async (resolve, reject) => {
@@ -1673,8 +1994,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1709,9 +2029,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getContactLists(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getContactLists(), queue.getNextDelay()), 0);
                 console.warn('getContactLists has been rescheduled');
                 resolve();
                 return;
@@ -1728,7 +2048,7 @@
         });
       }
 
-      async function getDocuments(clientId, clientSecret, environment) {
+      async function getDocuments() {
         $("#spinner-text").text("Getting Documents...");
         usages.documents = {};
         return new Promise(async (resolve, reject) => {
@@ -1738,8 +2058,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1776,9 +2095,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getDocuments(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getDocuments(), queue.getNextDelay()), 0);
                 console.warn('getDocuments has been rescheduled');
                 resolve();
                 return;
@@ -1795,7 +2114,7 @@
         });
       }
 
-      async function getExternalContacts(clientId, clientSecret, environment) {
+      async function getExternalContacts() {
         $("#spinner-text").text("Getting External Contacts...");
         usages.externalContacts = 0;
         return new Promise(async (resolve, reject) => {
@@ -1805,8 +2124,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1835,9 +2153,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getExternalContacts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getExternalContacts(), queue.getNextDelay()), 0);
                 console.warn('getExternalContacts has been rescheduled');
                 resolve();
                 return;
@@ -1854,7 +2172,7 @@
         });
       }
 
-      async function getGDPRRequests(clientId, clientSecret, environment) {
+      async function getGDPRRequests() {
         $("#spinner-text").text("Getting GDPR Requests...");
         usages.gdprRequests = 0;
         return new Promise(async (resolve, reject) => {
@@ -1864,8 +2182,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -1894,9 +2211,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getGDPRRequests(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getGDPRRequests(), queue.getNextDelay()), 0);
                 console.warn('getGDPRRequests has been rescheduled');
                 resolve();
                 return;
@@ -1913,125 +2230,7 @@
         });
       }
 
-      async function getRoutingLanguages(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Routing Languages...");
-        usages.routingLanguages = [];
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/routingLanguages`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.routingLanguages = jqXHR.responseJSON.routingLanguages;
-                    $("#routingLanguagesBody").empty();
-                    $.each(usages.routingLanguages, (i, routingLanguage) => {
-                      let row = $("<tr/>", {}).appendTo("#routingLanguagesBody");
-                      $("<td/>").text(routingLanguage.name).appendTo(row);
-                    });
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                //setTimeout(() => queue.addTask(() => getRoutingLanguages(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                setTimeout(() => queue.addTask(() => getRoutingLanguages(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getRoutingLanguages has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getRoutingLanguages completed");
-            });
-        });
-      }
-
-      async function getIdentityProviders(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Identity Providers...");
-        usages.identityProviders = {};
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/identityProviders`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.identityProviders = jqXHR.responseJSON.identityProviders;
-                    $("#identityProvidersBody").empty();
-                    Object.keys(usages.identityProviders).forEach((identityProvider) => {
-                      let row = $("<tr/>", {}).appendTo("#identityProvidersBody");
-                      $("<td/>").text(identityProvider).appendTo(row);
-                      $("<td/>").text(usages.identityProviders[identityProvider]).appendTo(row);
-                    });
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getIdentityProviders(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getIdentityProviders has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getIdentityProviders completed");
-            });
-        });
-      }
-
-      async function getEvaluationForms(clientId, clientSecret, environment) {
+      async function getEvaluationForms() {
         $("#spinner-text").text("Getting Evaluation Forms...");
         usages.evaluationForms = [];
         return new Promise(async (resolve, reject) => {
@@ -2041,8 +2240,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -2071,9 +2269,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getEvaluationForms(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getEvaluationForms(), queue.getNextDelay()), 0);
                 console.warn('getEvaluationForms has been rescheduled');
                 resolve();
                 return;
@@ -2090,7 +2288,7 @@
         });
       }
 
-      async function getResponseLibraries(clientId, clientSecret, environment) {
+      async function getResponseLibraries() {
         $("#spinner-text").text("Getting Response Libraries...");
         usages.responseLibraries = 0;
         return new Promise(async (resolve, reject) => {
@@ -2100,8 +2298,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -2109,7 +2306,7 @@
               try {
                 switch (jqXHR.status) {
                   case 200:
-                    console.log(jqXHR.responseJSON);
+                  console.log(jqXHR.responseJSON);
                     usages.responseLibraries = jqXHR.responseJSON.responseLibraries;
                     $("#totalResponseLibraries").text(parseInt(usages.responseLibraries) || 0);
 
@@ -2130,9 +2327,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getResponseLibraries(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getResponseLibraries(), queue.getNextDelay()), 0);
                 console.warn('getResponseLibraries has been rescheduled');
                 resolve();
                 return;
@@ -2149,66 +2346,7 @@
         });
       }
 
-      async function getSkills(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Skills...");
-        usages.skills = 0;
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/skills`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.skills = jqXHR.responseJSON.skills;
-                    $("#totalSkills").text(parseInt(usages.skills) || 0);
-
-                    // Set colors
-                    $("#skills").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(parseInt(usages.skills) === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getSkills(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getSkills has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getSkills completed");
-            });
-        });
-      }
-
-      async function getWrapUpCodes(clientId, clientSecret, environment) {
+      async function getWrapUpCodes() {
         $("#spinner-text").text("Getting Wrapup Codes...");
         usages.wrapUpCodes = 0;
         return new Promise(async (resolve, reject) => {
@@ -2218,8 +2356,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -2248,9 +2385,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getWrapUpCodes(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getWrapUpCodes(), queue.getNextDelay()), 0);
                 console.warn('getWrapUpCodes has been rescheduled');
                 resolve();
                 return;
@@ -2267,67 +2404,10 @@
         });
       }
 
-      async function getScripts(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Scripts...");
-        usages.scripts = [];
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/scripts`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.scripts = jqXHR.responseJSON.scripts;
-                    $("#totalScripts").text(usages.scripts.length);
-
-                    // Set colors
-                    $("#scripts").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(usages.scripts.length === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getScripts(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getScripts has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getScripts completed");
-            });
-        });
-      }
-
-      async function getDivisions(clientId, clientSecret, environment) {
+      async function getDivisions() {
         $("#spinner-text").text("Getting Divisions...");
+        console.log(`gcToken: ${gcToken}`);
+        console.log(`env: ${environment}`);
         usages.divisions = {};
         return new Promise(async (resolve, reject) => {
           $.ajax({
@@ -2336,16 +2416,15 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
+              environment: environment,
+              token: gcToken
             }
           })
             .done((data, textStatus, jqXHR) => {
               try {
                 switch (jqXHR.status) {
                   case 200:
-                    console.log(jqXHR.responseJSON);
+                   console.log(jqXHR.responseJSON);
                     usages.divisions = jqXHR.responseJSON.divisions;
                     $("#totalDivisionsUsage").text(usages.divisions);
 
@@ -2366,9 +2445,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getDivisions(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getDivisions(), queue.getNextDelay()), 0);
                 console.warn('getDivisions has been rescheduled');
                 resolve();
                 return;
@@ -2385,72 +2464,7 @@
         });
       }
 
-      async function getWorkforceManagementUsage(clientId, clientSecret, environment) {
-        $("#spinner-text").text("Getting Workforce Management Usage...");
-        usages.wfm = {};
-        return new Promise(async (resolve, reject) => {
-          $.ajax({
-            method: 'GET',
-            url: `${urlBasePath}/workforceManagement`,
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
-              environment: environment
-            }
-          })
-            .done((data, textStatus, jqXHR) => {
-              try {
-                switch (jqXHR.status) {
-                  case 200:
-                    console.log(jqXHR.responseJSON);
-                    usages.wfm = jqXHR.responseJSON.wfm;
-
-                    $("#totalManagementUnitsUsage").text(usages.wfm.managementUnits);
-                    $("#totalSchedulingRunsUsage").text(usages.wfm.schedulingRuns);
-
-                    // Set colors
-                    $("#managementUnits").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(parseInt(usages.managementUnits) === 0 ? "text-danger" : "text-success");
-
-                    $("#schedulingRuns").removeClass(function (index, className) {
-                      return (className.match(/\btext-\S+/g) || []).join(' ');
-                    }).addClass(parseInt(usages.schedulingRuns) === 0 ? "text-danger" : "text-success");
-                    resolve();
-                    break;
-                  default:
-                    console.error(jqXHR);
-                    throw new Error(textStatus);
-                }
-              } catch (error) {
-                console.error(error);
-                throw error;
-              }
-            })
-            .fail((jqXHR, textStatus, errorThrown) => {
-              if (jqXHR.status === 429) {
-                console.warn('Got 429');
-                $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getWorkforceManagementUsage(clientId, clientSecret, environment), queue.getNextDelay()), 0);
-                console.warn('getWorkforceManagementUsage has been rescheduled');
-                resolve();
-                return;
-              } else {
-                console.error(jqXHR);
-                console.error(textStatus);
-                console.error(errorThrown);
-                reject(jqXHR);
-              }
-            })
-            .always(() => {
-              console.log("getWorkorceManagementUsage completed");
-            });
-        });
-      }
-
-      async function getTrunks(clientId, clientSecret, environment) {
+      async function getTrunks() {
         $("#spinner-text").text("Getting Trunks...");
         usages.trunks = []; // Set default value
         return new Promise(async (resolve, reject) => {
@@ -2460,8 +2474,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: {
-              clientId: clientId,
-              clientSecret: clientSecret,
+              token: gcToken,
               environment: environment
             }
           })
@@ -2469,7 +2482,7 @@
               try {
                 switch (jqXHR.status) {
                   case 200:
-                    console.log(jqXHR.responseJSON);
+                  console.log(jqXHR.responseJSON);
                     usages.trunks = jqXHR.responseJSON.trunks;
                     $("#totalTrunksUsage").text(usages.trunks.length);
 
@@ -2490,9 +2503,9 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
               if (jqXHR.status === 429) {
-                console.warn('Got 429');
+                console.warn('Got 429 (trunks)');
                 $("#spinner-text").text("Too many requests...");
-                setTimeout(() => queue.addTask(() => getTrunks(clientId, clientSecret, environment), queue.getNextDelay()), 0);
+                setTimeout(() => queue.addTask(() => getTrunks(), queue.getNextDelay()), 0);
                 console.warn('getTrunks has been rescheduled');
                 resolve();
                 return;
@@ -2509,6 +2522,8 @@
         });
 
       }
+
+
 
       //#endregion
 
